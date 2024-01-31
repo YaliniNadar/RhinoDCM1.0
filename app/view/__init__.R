@@ -6,4 +6,5 @@ box::use(
   app/view/home,
   app/view/ui_components,
   app/view/param_specs,
+  app/view/q_matrix,
 )

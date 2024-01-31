@@ -76,7 +76,7 @@ server <- function(id) {
       }
     })
 
-    ui_components$server("nextButton")
+    ui_components$server("nextButton", "q_matrix")
 
   })
 }

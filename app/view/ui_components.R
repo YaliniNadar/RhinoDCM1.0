@@ -27,10 +27,10 @@ next_button <- function(id) {
 }
 
 #' @export
-server <- function(id) {
+server <- function(id, route) {
   moduleServer(id, function(input, output, session) {
     observeEvent(input$nextButton, {
-      change_page("/")
+      change_page(route)
     })
   })
 }

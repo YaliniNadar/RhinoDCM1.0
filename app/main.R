@@ -4,7 +4,7 @@ box::use(
 )
 
 box::use(
-  app/view[home, ui_components, param_specs],
+  app/view[home, ui_components, param_specs, q_matrix],
 )
 
 #' @export
@@ -17,7 +17,8 @@ ui <- function(id) {
 
     router_ui(
       route("/", home$ui(ns("home"))),
-      route("param_specs", param_specs$ui(ns("param_specs")))
+      route("param_specs", param_specs$ui(ns("param_specs"))),
+      route("q_matrix", q_matrix$ui(ns("q_matrix"))),
     )
   )
 }
@@ -26,7 +27,7 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     router_server("/")
-    ui_components$server("navbar")
+    ui_components$server("navbar", "/")
     home$server("home")
     param_specs$server("param_specs")
   })
