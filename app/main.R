@@ -4,7 +4,7 @@ box::use(
 )
 
 box::use(
-  app/view[home, navbar, param_specs],
+  app/view[home, ui_components, param_specs],
 )
 
 #' @export
@@ -12,7 +12,7 @@ ui <- function(id) {
   ns <- NS(id)
   bootstrapPage(
     div(
-      navbar$ui(ns("navbar")),
+      ui_components$navbar_ui(ns("navbar")),
     ),
 
     router_ui(
@@ -26,6 +26,7 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     router_server("/")
+    ui_components$server("navbar")
     home$server("home")
     param_specs$server("param_specs")
   })

@@ -16,6 +16,10 @@ box::use(
         observe],
 )
 
+box::use(
+  app/view[ui_components, ],
+)
+
 #' @export
 ui <- function(id) {
   ns <- NS(id)
@@ -50,14 +54,16 @@ ui <- function(id) {
                 "Enter number of items for each time point separated by commas (no spaces): ")
     ),
 
-    uiOutput(ns("conditional_num_items"))
+    uiOutput(ns("conditional_num_items")),
 
+    ui_components$next_button(ns("nextButton")),
   )
 }
 
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
+
     # Render UI conditionally based on q_matrix_choice
     output$conditional_num_items <- renderUI({
       if (input$q_matrix_choice == "No") {
@@ -69,6 +75,8 @@ server <- function(id) {
                   "Enter number of items for each time point separated by commas (no spaces): ")
       }
     })
+
+    ui_components$server("nextButton")
 
   })
 }

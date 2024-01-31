@@ -4,6 +4,6 @@
 #' @export
 box::use(
   app/view/home,
-  app/view/navbar,
-  app/view/param_specs
+  app/view/ui_components,
+  app/view/param_specs,
 )
