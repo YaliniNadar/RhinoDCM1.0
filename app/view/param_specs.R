@@ -56,7 +56,8 @@ ui <- function(id) {
 
     uiOutput(ns("conditional_num_items")),
 
-    ui_components$next_button(ns("nextButton1")),
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
   )
 }
 
@@ -76,7 +77,7 @@ server <- function(id) {
       }
     })
 
-    ui_components$server("nextButton1", "q_matrix")
+    ui_components$nb_server("nextButton", "q_matrix")
 
   })
 }

@@ -27,7 +27,20 @@ next_button <- function(id) {
 }
 
 #' @export
-server <- function(id, route) {
+back_button <- function(id) {
+  ns <- NS(id)
+
+  actionButton(
+    ns("backButton"),
+    "Back",
+    class = "btn-primary",
+    style = "float: right; margin-right: 5px; margin-left: 5px;",
+    onclick = "App.goBack();"
+  )
+}
+
+#' @export
+nb_server <- function(id, route) {
   moduleServer(id, function(input, output, session) {
     observeEvent(input$nextButton, {
       change_page(route)
