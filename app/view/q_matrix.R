@@ -9,7 +9,12 @@ box::use(
         textInput,
         checkboxInput,
         conditionalPanel,
-        moduleServer],
+        moduleServer,
+        observe,
+        renderUI,
+        uiOutput],
+  DT[DTOutput, renderDT, datatable],
+  data.table[fread],
 )
 
 box::use(
@@ -27,18 +32,19 @@ ui <- function(id) {
     # Input: Upload Q-Matrix file
     fileInput(ns("fileQ"), "Choose Q-Matrix File"),
 
+    # File preview using DTOutput
+    DTOutput(ns("filePreviewQ")),
+
     # Input: Separator type
     radioButtons(ns("separatorType"), "Separator Type:",
-                 choices = c("Tab", "Comma", "Custom"), selected = "Comma"),
+                 choices = c("Tab" = "\t", "Comma" = ",", "Custom" = ""),
+                 selected = ","),
 
-    # Input: Custom separator
-    conditionalPanel(
-      condition = "input.separatorType == 'Custom'",
-      textInput(ns("customSeparator"), "Enter Custom Separator:")
-    ),
+    # Conditional Separator
+    uiOutput(ns("custom_separator_input")),
 
     # Input: Additional options
-    checkboxInput(ns("excludeHeaders"), "Exclude Header Rows", value = FALSE),
+    checkboxInput(ns("excludeHeaders"), "Exclude Header Row", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
 
     ui_components$next_button(ns("nextButton")),
@@ -49,6 +55,34 @@ ui <- function(id) {
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
+
+    # Conditional Rendering for Custom Separator
+    output$custom_separator_input <- renderUI({
+      if (input$separatorType == "") {
+        textInput(session$ns("customSeparator"), "Enter Custom Separator:")
+      }
+    })
+
+    observe({
+      # Read the uploaded file
+      file <- input$fileQ
+      if (!is.null(file$datapath)) {
+        separator <- input$separatorType
+        if (separator == "") {
+          data <- fread(file$datapath, sep = input$customSeparator, header = !input$excludeHeaders, check.names = FALSE)
+        } else {
+          data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
+        }
+        # Display file preview using DT
+        output$filePreviewQ <- renderDT({
+          datatable(data, editable = TRUE)
+        })
+      } else {
+        # Clear the preview if no file is selected
+        output$filePreviewQ <- renderDT(NULL)
+      }
+    })
+
     ui_components$nb_server("nextButton", "/")
   })
 }
