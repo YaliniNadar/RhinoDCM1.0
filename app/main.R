@@ -16,8 +16,8 @@ ui <- function(id) {
     ),
 
     router_ui(
-      route("/", home$home_ui(ns("home"))),
-      route("param_specs", param_specs$param_specs_ui(ns("param_specs")))
+      route("/", home$ui(ns("home"))),
+      route("param_specs", param_specs$ui(ns("param_specs")))
     )
   )
 }
@@ -26,7 +26,7 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     router_server("/")
-    home$home_server("home")
-    param_specs$param_specs_server("param_specs")
+    home$server("home")
+    param_specs$server("param_specs")
   })
 }

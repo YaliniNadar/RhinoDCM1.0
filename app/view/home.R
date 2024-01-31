@@ -15,7 +15,7 @@ box::use(
 )
 
 #' @export
-home_ui <- function(id) {
+ui <- function(id) {
   ns <- NS(id)
   fluidPage(
     mainPanel(
@@ -50,7 +50,7 @@ home_ui <- function(id) {
 }
 
 #' @export
-home_server <- function(id, input, output, session) {
+server <- function(id, input, output, session) {
   moduleServer(id, function(input, output, session) {
     observeEvent(input$go_to_param_specs, {
       change_page("param_specs")

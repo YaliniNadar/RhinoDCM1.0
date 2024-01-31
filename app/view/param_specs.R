@@ -17,7 +17,7 @@ box::use(
 )
 
 #' @export
-param_specs_ui <- function(id) {
+ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
@@ -56,7 +56,7 @@ param_specs_ui <- function(id) {
 }
 
 #' @export
-param_specs_server <- function(id) {
+server <- function(id) {
   moduleServer(id, function(input, output, session) {
     # Render UI conditionally based on q_matrix_choice
     output$conditional_num_items <- renderUI({
