@@ -26,14 +26,14 @@ ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
-    h2("Upload Q-Matrix File"),
+    h2("Upload IR-Matrix File"),
     br(),
 
-    # Input: Upload Q-Matrix file
-    fileInput(ns("fileQ"), "Choose Q-Matrix File"),
+    # Input: Upload IR-Matrix file
+    fileInput(ns("fileIR"), "Choose IR-Matrix File"),
 
     # File preview using DTOutput
-    DTOutput(ns("filePreviewQ")),
+    DTOutput(ns("filePreviewIR")),
 
     # Input: Separator type
     radioButtons(ns("separatorType"), "Separator Type:",
@@ -44,7 +44,7 @@ ui <- function(id) {
     uiOutput(ns("custom_separator_input")),
 
     # Input: Additional options
-    checkboxInput(ns("excludeHeaders"), "Exclude Header Rows", value = FALSE),
+    checkboxInput(ns("excludeHeaders"), "Exclude Header Row", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
 
     ui_components$next_button(ns("nextButton")),
@@ -65,7 +65,7 @@ server <- function(id) {
 
     observe({
       # Read the uploaded file
-      file <- input$fileQ
+      file <- input$fileIR
       if (!is.null(file$datapath)) {
         separator <- input$separatorType
         if (separator == "") {
@@ -74,15 +74,15 @@ server <- function(id) {
           data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
         }
         # Display file preview using DT
-        output$filePreviewQ <- renderDT({
+        output$filePreviewIR <- renderDT({
           datatable(data, editable = TRUE)
         })
       } else {
         # Clear the preview if no file is selected
-        output$filePreviewQ <- renderDT(NULL)
+        output$filePreviewIR <- renderDT(NULL)
       }
     })
 
-    ui_components$nb_server("nextButton", "ir_matrix")
+    ui_components$nb_server("nextButton", "/")
   })
 }

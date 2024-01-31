@@ -7,4 +7,5 @@ box::use(
   app/view/ui_components,
   app/view/param_specs,
   app/view/q_matrix,
+  app/view/ir_matrix,
 )
