@@ -27,8 +27,10 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     router_server("/")
-    ui_components$server("navbar", "/")
+    ui_components$server("nextButton1", "/")
+    ui_components$server("nextButton2", "/")
     home$server("home")
     param_specs$server("param_specs")
+    q_matrix$server("q_matrix")
   })
 }

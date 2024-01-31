@@ -17,7 +17,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, ],
+  app/view[ui_components],
 )
 
 #' @export
@@ -56,7 +56,7 @@ ui <- function(id) {
 
     uiOutput(ns("conditional_num_items")),
 
-    ui_components$next_button(ns("nextButton")),
+    ui_components$next_button(ns("nextButton1")),
   )
 }
 
@@ -76,7 +76,7 @@ server <- function(id) {
       }
     })
 
-    ui_components$server("nextButton", "q_matrix")
+    ui_components$server("nextButton1", "q_matrix")
 
   })
 }

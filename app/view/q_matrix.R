@@ -41,12 +41,13 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "Exclude Header Rows", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
 
-    ui_components$next_button(ns("nextButton")),
+    ui_components$next_button(ns("nextButton2")),
   )
 }
 
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
+    ui_components$server("nextButton2", "/")
   })
 }
