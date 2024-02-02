@@ -4,7 +4,7 @@ box::use(
 )
 
 box::use(
-  app/view[home, ui_components, param_specs, q_matrix, ir_matrix],
+  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs],
 )
 
 #' @export
@@ -20,6 +20,7 @@ ui <- function(id) {
       route("param_specs", param_specs$ui(ns("param_specs"))),
       route("q_matrix", q_matrix$ui(ns("q_matrix"))),
       route("ir_matrix", ir_matrix$ui(ns("ir_matrix"))),
+      route("model_specs", model_specs$ui(ns("model_specs"))),
     )
   )
 }
@@ -32,5 +33,6 @@ server <- function(id) {
     param_specs$server("param_specs")
     q_matrix$server("q_matrix")
     ir_matrix$server("ir_matrix")
+    model_specs$server("model_specs")
   })
 }

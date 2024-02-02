@@ -8,7 +8,6 @@ box::use(
         radioButtons,
         textInput,
         checkboxInput,
-        conditionalPanel,
         moduleServer,
         observe,
         renderUI,

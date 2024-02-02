@@ -20,12 +20,17 @@ ui <- function(id) {
   fluidPage(
     mainPanel(
       h1("TDCM", align = "left"),
-      p("TDCM provides a user-friendly interface to help you gain valuable insights from your test data"), # nolint: line_length_linter.
+      p("TDCM provides a user-friendly 
+        interface to help you gain valuable 
+        insights from your test data"),
       br(),
       fluidRow(
         column(
           6,
-          p("Choose this option if you have only one group of students who took the test. Ideal for assessing the overall performance of a general student population."), # nolint: line_length_linter.
+          p("Choose this option if you have only
+            one group of students who took the test.
+            Ideal for assessing the overall performance
+            of a general student population."),
           br(),
           br(),
           actionButton(
