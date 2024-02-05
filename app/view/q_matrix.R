@@ -68,7 +68,10 @@ server <- function(id) {
       if (!is.null(file$datapath)) {
         separator <- input$separatorType
         if (separator == "") {
-          data <- fread(file$datapath, sep = input$customSeparator, header = !input$excludeHeaders, check.names = FALSE)
+          data <- fread(file$datapath,
+                        sep = input$customSeparator,
+                        header = !input$excludeHeaders,
+                        check.names = FALSE)
         } else {
           data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
         }

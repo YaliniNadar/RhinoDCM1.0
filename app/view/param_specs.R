@@ -5,15 +5,17 @@ box::use(
         h2,
         p,
         br,
+        tags,
+        HTML,
         numericInput,
         textInput,
         radioButtons,
         actionButton,
         observeEvent,
-        conditionalPanel,
         uiOutput,
         renderUI,
         observe],
+  shinyjs[useShinyjs, runjs],
 )
 
 box::use(
@@ -25,6 +27,7 @@ ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
+    useShinyjs(),
     h2("Parameter Specifications"),
     br(),
 
@@ -40,19 +43,6 @@ ui <- function(id) {
     # Input 4: Q-Matrix for each time point
     radioButtons(ns("q_matrix_choice"), "Is there a different Q-Matrix for each time point?",
                  choices = c("Yes", "No"), selected = "No"),
-
-    conditionalPanel(
-      condition = "input.q_matrix_choice == 'No'",
-      numericInput(ns("num_items_single_time_point"),
-                   "Enter number of items at a single time point: ",
-                   value = 1, min = 1)
-    ),
-
-    conditionalPanel(
-      condition = "input.q_matrix_choice == 'Yes'",
-      textInput(ns("num_items_each_time_point"),
-                "Enter number of items for each time point separated by commas (no spaces): ")
-    ),
 
     uiOutput(ns("conditional_num_items")),
 
@@ -75,6 +65,19 @@ server <- function(id) {
         textInput(session$ns("num_items_each_time_point"),
                   "Enter number of items for each time point separated by commas (no spaces): ")
       }
+    })
+
+    # Save data to local storage
+    observe({
+      values_to_save <- list(
+        num_time_points = input$num_time_points,
+        num_attributes = input$num_attributes,
+        attribute_names = input$attribute_names,
+        q_matrix_choice = input$q_matrix_choice
+      )
+      values_json <- jsonlite::toJSON(values_to_save, auto_unbox = TRUE)
+      runjs(paste("App.saveToLocalStorage(", values_json, ");"))
+
     })
 
     ui_components$nb_server("nextButton", "q_matrix")

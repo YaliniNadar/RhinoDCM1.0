@@ -41,6 +41,9 @@ ui <- function(id) {
                             "Different on each item"),
                 selected = "full LCDM"),
 
+    # Dynamic rendering of dropdown menus
+    uiOutput(ns("dynamicDropdowns")),
+
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
@@ -51,7 +54,19 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
 
-    # Conditional Rendering for Custom Separator
+    # Reactively render dropdowns
+    # output$dynamicDropdowns <- renderUI({
+    #   if (input$dcmEstimate == "Different on each item"){
+    #     num_items <- 3
+    #     dropdowns <- lapply(1:num_items, function(i) {
+    #       selectInput(paste0("item", i),
+    #                   label = paste("Item", i),
+    #                   choices = c("LDCM1", "LDCM2", "DINA"),
+    #                   selected = NULL)  # Set the default selected value if needed
+    #     })
+    #     do.call(tagList, dropdowns)
+    #   }
+    # })
 
     ui_components$nb_server("nextButton", "/")
   })
