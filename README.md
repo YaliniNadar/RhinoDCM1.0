@@ -8,8 +8,7 @@
 
 ### To Run an existing Project 
 1. Clone Repo (make sure you have `renv.lock` file)
-2. Initialize renv: ```renv::init()```
-3. Restore Dependencies: ```renv::restore()```
+3. Restore Dependencies (installs all required libraries): ```renv::restore()```
 4. Run app: ```shiny::runApp()```
 
 ### Other Commands
