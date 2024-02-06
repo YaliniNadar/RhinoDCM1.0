@@ -10,4 +10,8 @@ export function saveToLocalStorage(data) {
     }
 }
 
+export function getDefaultValue(key) {
+    var storedValue = localStorage.getItem(key);
+    console.log(storedValue);
+}
   
