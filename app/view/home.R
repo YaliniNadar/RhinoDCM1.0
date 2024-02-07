@@ -1,16 +1,18 @@
 box::use(
-  shiny[moduleServer,
-        NS,
-        fluidPage,
-        titlePanel,
-        mainPanel,
-        h1,
-        p,
-        fluidRow,
-        column,
-        br,
-        actionButton,
-        observeEvent],
+  shiny[
+    moduleServer,
+    NS,
+    fluidPage,
+    titlePanel,
+    mainPanel,
+    h1,
+    p,
+    fluidRow,
+    column,
+    br,
+    actionButton,
+    observeEvent
+  ],
   shiny.router[change_page],
 )
 
@@ -20,8 +22,8 @@ ui <- function(id) {
   fluidPage(
     mainPanel(
       h1("TDCM", align = "left"),
-      p("TDCM provides a user-friendly 
-        interface to help you gain valuable 
+      p("TDCM provides a user-friendly
+        interface to help you gain valuable
         insights from your test data"),
       br(),
       fluidRow(
@@ -61,5 +63,4 @@ server <- function(id, input, output, session) {
       change_page("param_specs")
     })
   })
-
 }
