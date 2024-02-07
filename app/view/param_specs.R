@@ -97,6 +97,8 @@ ui <- function(id) {
       '
     ),
 
+    # tags$script(src = "app/js/app.js"),
+
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )

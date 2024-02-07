@@ -86,6 +86,6 @@ server <- function(id) {
     })
 
 
-    ui_components$nb_server("nextButton", "/")
+    ui_components$nb_server("nextButton", "review")
   })
 }

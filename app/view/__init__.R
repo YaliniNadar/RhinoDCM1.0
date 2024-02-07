@@ -9,4 +9,5 @@ box::use(
   app/view/q_matrix,
   app/view/ir_matrix,
   app/view/model_specs,
+  app/view/review,
 )
