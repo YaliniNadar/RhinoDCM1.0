@@ -20,6 +20,7 @@ box::use(
 
 box::use(
   app/view[ui_components],
+  app/logic/storage,
 )
 
 #' @export
@@ -68,9 +69,11 @@ server <- function(id) {
       }
     })
 
-    # Read from Indexed DB and Save Input Values
     observe({
-      runjs("App.readIndexedDBAndSave(Sys.getenv('DB_NAME'),['num_time_points', 'num_attributes', 'attribute_names', 'q_matrix_choice'], 'app-param_specs-')")
+      db_name <- Sys.getenv("DB_NAME")
+      prefix <- 'app-param_specs-'
+      fields <- c('num_time_points', 'num_attributes', 'attribute_names', 'q_matrix_choice')
+      storage$performIndexedDBRead(db_name, prefix, fields)
     })
 
     # insert at the bottom  !!!IMPORTANT
