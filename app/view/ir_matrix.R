@@ -32,9 +32,6 @@ ui <- function(id) {
     # Input: Upload IR-Matrix file
     fileInput(ns("fileIR"), "Choose IR-Matrix File"),
 
-    # File preview using DTOutput
-    DTOutput(ns("filePreviewIR")),
-
     # Input: Separator type
     radioButtons(ns("separatorType"), "Separator Type:",
                  choices = c("Tab" = "\t", "Comma" = ",", "Custom" = ""),
@@ -46,6 +43,9 @@ ui <- function(id) {
     # Input: Additional options
     checkboxInput(ns("excludeHeaders"), "Exclude Header Row", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
+
+    # File preview using DTOutput
+    DTOutput(ns("filePreviewIR")),
 
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),

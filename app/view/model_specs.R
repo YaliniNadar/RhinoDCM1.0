@@ -31,7 +31,7 @@ ui <- function(id) {
 
     p("The default setting is Invariance = True and full DCM.",
       style = "font-size: 14px; font-weight: bold;"),
-    radioButtons("itemParameter",
+    radioButtons(ns("itemParameter"),
                  "Item parameter assumed:",
                  choices = c("Yes", "No"),
                  selected = "Yes"),
@@ -44,17 +44,20 @@ ui <- function(id) {
       tags$li("GDINA2: estimate the LCDM with up to two-way interaction effects")
     ),
 
-    selectInput("dcmEstimate",
+    selectInput(ns("dcmEstimate"),
                 "DCM to estimate:",
                 choices = c("full LCDM",
                             "LDCM1",
                             "LDCM2",
                             "DINA",
+                            "ACDM",
+                            "GDINA1",
+                            "GDINA2",
                             "Different on each item"),
                 selected = "full LCDM"),
 
     # Dynamic rendering of dropdown menus
-    uiOutput("itemDropdowns"),
+    uiOutput(ns("itemDropdowns")),
 
 
     ui_components$next_button(ns("nextButton")),
@@ -67,17 +70,30 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
 
+    num_dropdowns <- 3
     observe({
       # Check if input$dcmEstimate is not NULL and not empty
       if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
-        console.log("checking")
         if (input$dcmEstimate == "Different on each item") {
-          console.log("hit condition")
-          output$itemDropdowns <- renderUI({
-            selectInput("itemDropdown",
-                        "Select an item:",
-                        choices = c("Item 1", "Item 2", "Item 3"),
+
+          # Generate a list of dropdowns
+          dropdown_list <- lapply(1:num_dropdowns, function(i) {
+            selectInput(paste0("itemDropdown_", i),
+                        label = paste("Select item", i, ":"),
+                        choices = c(
+                                    "full LCDM",
+                                    "LDCM1",
+                                    "LDCM2",
+                                    "DINA",
+                                    "ACDM",
+                                    "GDINA1",
+                                    "GDINA2" ),
                         selected = NULL)
+          })
+
+          # Render the list of dropdowns
+          output$itemDropdowns <- renderUI({
+            dropdown_list
           })
         } else {
           output$itemDropdowns <- renderUI(NULL)
