@@ -1,5 +1,18 @@
 box::use(
-  shiny[NS, fluidPage, br, h2, h4, moduleServer, fluidRow, column, wellPanel, actionButton, textOutput, renderText]
+  shiny[
+    NS,
+    fluidPage,
+    br,
+    h2,
+    h4,
+    moduleServer,
+    fluidRow,
+    column,
+    wellPanel,
+    actionButton,
+    textOutput,
+    renderText
+    ]
 )
 
 box::use(
