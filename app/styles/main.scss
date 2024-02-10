@@ -1,18 +1,119 @@
-/* Get a fancy font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
+@import url('https: //fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 body {
-    background-color: black;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 10px;
+    background-color: #202020;
     color: white;
-    /* text color */
+    font-size: 20px;
+    font-family: 'Inter', sans-serif;
+    
 }
 
-/* Change header text to imported font */
+p {
+    margin: 0 0 35px;
+}
+
+.h1,
+h1 {
+    font-size: 50px;
+    font-weight: 500;
+}
+
+.h2,
 h2 {
-    font-family: 'Yusei Magic', sans-serif;
+    font-size: 40px;
 }
 
-/* Make text visible on inputs */
+.navbar-default {
+    background-color: #202020;
+    border-color: #e7e7e7;
+    font-size: 20px;
+}
+
+.navbar-default .navbar-brand {
+    color: #ffc400;
+    font-size: 30px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.navbar-nav {
+    float: right;
+    margin: 0;
+}
+
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>.active>a:hover {
+    color: #000000;
+    background-color: #ffc403;
+    transition: 0.3s;
+    // stroke-color: #ffffff;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: #ffffff;
+}
+
 .shiny-input-container {
     color: #474747;
+}
+
+.btn-primary {
+    color: #000000;
+    background-color: #ffc400;
+    border-color: #ffc400;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.6s;
+    border-radius: 40px;
+    padding-left: 22px;
+    padding-right: 22px;
+}
+.btn-primary:hover{
+    color: #ffc400;
+    background-color: #4444446b;
+    border-color: #ffc400;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.4s;
+    border-radius: 40px;
+    padding-left: 22px;
+    padding-right: 22px;
+}
+    // .h1 {
+    //     font-family: 'Yusei Magic', sans-serif;
+    //     color: #FFC93C;
+    //     font-size: 100%;
+    //     }
+
+.col-sm-8 {
+    width: 100%;
+    background-color: #444444;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 17px;
+}
+
+// .form-control {
+//     border-radius: 20px;
+// }
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    font-size: 20px;
+    width: 140%;
 }

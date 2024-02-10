@@ -5,21 +5,27 @@ box::use(
     fluidPage,
     titlePanel,
     mainPanel,
-    h1,
+    div,
     p,
     fluidRow,
     column,
     br,
     actionButton,
-    observeEvent
+    observeEvent,
+    h1
   ],
   shiny.router[change_page],
 )
+
+# h1 <- function(...) div(class = "h1", ...)
 
 #' @export
 ui <- function(id) {
   ns <- NS(id)
   fluidPage(
+    # includeCSS("main.scss"),
+    # sass(sass_file("main.scss")),
+    # theme = bslib::bs_theme(version = 4, primary = "#FC6736"),
     mainPanel(
       h1("TDCM", align = "left"),
       p("TDCM provides a user-friendly

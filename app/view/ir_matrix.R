@@ -1,24 +1,25 @@
 box::use(
   shiny[
-        NS,
-        fluidPage,
-        br,
-        h2,
-        fileInput,
-        radioButtons,
-        textInput,
-        checkboxInput,
-        conditionalPanel,
-        moduleServer,
-        observe,
-        renderUI,
-        uiOutput],
+    NS,
+    fluidPage,
+    br,
+    h2,
+    fileInput,
+    radioButtons,
+    textInput,
+    checkboxInput,
+    conditionalPanel,
+    moduleServer,
+    observe,
+    renderUI,
+    uiOutput
+  ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
 )
 
 box::use(
-  app/view[ui_components, ],
+  app / view[ui_components, ],
 )
 
 #' @export
@@ -27,6 +28,8 @@ ui <- function(id) {
 
   fluidPage(
     h2("Upload IR-Matrix File"),
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
     br(),
 
     # Input: Upload IR-Matrix file
@@ -37,8 +40,9 @@ ui <- function(id) {
 
     # Input: Separator type
     radioButtons(ns("separatorType"), "Separator Type:",
-                 choices = c("Tab" = "\t", "Comma" = ",", "Custom" = ""),
-                 selected = ","),
+      choices = c("Tab" = "\t", "Comma" = ",", "Custom" = ""),
+      selected = ","
+    ),
 
     # Conditional Separator
     uiOutput(ns("custom_separator_input")),
@@ -47,15 +51,14 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "Exclude Header Row", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    # ui_components$next_button(ns("nextButton")),
+    # ui_components$back_button(ns("backButton")),
   )
 }
 
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
-
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
@@ -70,9 +73,10 @@ server <- function(id) {
         separator <- input$separatorType
         if (separator == "") {
           data <- fread(file$datapath,
-                        sep = input$customSeparator,
-                        header = !input$excludeHeaders,
-                        check.names = FALSE)
+            sep = input$customSeparator,
+            header = !input$excludeHeaders,
+            check.names = FALSE
+          )
         } else {
           data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
         }

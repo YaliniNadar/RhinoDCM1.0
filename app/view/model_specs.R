@@ -1,21 +1,22 @@
 box::use(
   shiny[
-        NS,
-        fluidPage,
-        br,
-        h2,
-        p,
-        selectInput,
-        radioButtons,
-        textInput,
-        moduleServer,
-        observe,
-        renderUI,
-        uiOutput],
+    NS,
+    fluidPage,
+    br,
+    h2,
+    p,
+    selectInput,
+    radioButtons,
+    textInput,
+    moduleServer,
+    observe,
+    renderUI,
+    uiOutput
+  ],
 )
 
 box::use(
-  app/view[ui_components, ],
+  app / view[ui_components, ],
 )
 
 #' @export
@@ -24,36 +25,40 @@ ui <- function(id) {
 
   fluidPage(
     h2("Model Specifications"),
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
     br(),
-
     p("The default setting is Invariance = True and full DCM.",
-      style = "font-size: 14px; font-weight: bold;"),
+      style = "font-size: 14px; font-weight: bold;"
+    ),
     radioButtons("itemParameter",
-                 "Item parameter assumed:",
-                 choices = c("Yes", "No"),
-                 selected = "Yes"),
+      "Item parameter assumed:",
+      choices = c("Yes", "No"),
+      selected = "Yes"
+    ),
     selectInput("dcmEstimate",
-                "DCM to estimate:",
-                choices = c("full LCDM",
-                            "LDCM1",
-                            "LDCM2",
-                            "DINA",
-                            "Different on each item"),
-                selected = "full LCDM"),
+      "DCM to estimate:",
+      choices = c(
+        "full LCDM",
+        "LDCM1",
+        "LDCM2",
+        "DINA",
+        "Different on each item"
+      ),
+      selected = "full LCDM"
+    ),
 
     # Dynamic rendering of dropdown menus
     uiOutput(ns("dynamicDropdowns")),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    # ui_components$next_button(ns("nextButton")),
+    # ui_components$back_button(ns("backButton")),
   )
-
 }
 
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
-
     # Reactively render dropdowns
     # output$dynamicDropdowns <- renderUI({
     #   if (input$dcmEstimate == "Different on each item"){
