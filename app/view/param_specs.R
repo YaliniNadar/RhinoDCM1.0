@@ -31,6 +31,8 @@ ui <- function(id) {
     initStore(),
     useShinyjs(),
     h2("Parameter Specifications"),
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
     br(),
 
     # Input 1: Number of time points
@@ -44,8 +46,8 @@ ui <- function(id) {
 
     # Input 4: Q-Matrix for each time point
     radioButtons(ns("q_matrix_choice"), "Is there a different Q-Matrix for each time point?",
-                 choices = c("Yes", "No"), selected = NULL),
-
+      choices = c("Yes", "No"), selected = NULL
+    ),
     uiOutput(ns("conditional_num_items")),
 
     ui_components$next_button(ns("nextButton")),
@@ -56,16 +58,18 @@ ui <- function(id) {
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
-
     # Render UI conditionally based on q_matrix_choice
     output$conditional_num_items <- renderUI({
       if (input$q_matrix_choice == "No") {
         numericInput(session$ns("num_items_single_time_point"),
-                     "Enter number of items at a single time point: ",
-                     value = 1, min = 1)
+          "Enter number of items at a single time point: ",
+          value = 1, min = 1
+        )
       } else {
-        textInput(session$ns("num_items_each_time_point"),
-                  "Enter number of items for each time point separated by commas (no spaces): ")
+        textInput(
+          session$ns("num_items_each_time_point"),
+          "Enter number of items for each time point separated by commas (no spaces): "
+        )
       }
     })
 
@@ -81,6 +85,5 @@ server <- function(id) {
     setupStorage(appId = appid, inputs = TRUE)
 
     ui_components$nb_server("nextButton", "q_matrix")
-
   })
 }
