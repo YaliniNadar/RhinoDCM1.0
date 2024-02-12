@@ -18,7 +18,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components, ],
+  app/view[ui_components, ],
+  app/logic/storage,
 )
 
 #' @export
@@ -35,9 +36,6 @@ ui <- function(id) {
     # Input: Upload Q-Matrix file
     fileInput(ns("fileQ"), "Choose Q-Matrix File"),
 
-    # File preview using DTOutput
-    DTOutput(ns("filePreviewQ")),
-
     # Input: Separator type
     radioButtons(ns("separatorType"), "Separator Type:",
       choices = c("Tab" = "\t", "Comma" = ",", "Custom" = ""),
@@ -51,8 +49,11 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "Exclude Header Rows", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
 
-    # ui_components$next_button(ns("nextButton")),
-    # ui_components$back_button(ns("backButton")),
+    # File preview using DTOutput
+    DTOutput(ns("filePreviewQ")),
+
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
   )
 }
 
@@ -80,6 +81,15 @@ server <- function(id) {
         } else {
           data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
         }
+
+        # Exclude ID columns if specified
+        if (input$excludeIdColumns) {
+          # Define which columns to exclude (e.g., first column)
+          id_columns <- 1
+          # Remove ID columns from the DataTable
+          data <- data[, -id_columns, with = FALSE]
+        }
+
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
           datatable(data, editable = TRUE)
@@ -88,6 +98,13 @@ server <- function(id) {
         # Clear the preview if no file is selected
         output$filePreviewQ <- renderDT(NULL)
       }
+    })
+
+     observe({
+      db_name <- Sys.getenv("DB_NAME")
+      prefix <- 'app-param_specs-'
+      fields <- c('num_time_points', 'num_attributes', 'attribute_names', 'q_matrix_choice')
+      storage$performIndexedDBRead(db_name, prefix, fields)
     })
 
     ui_components$nb_server("nextButton", "ir_matrix")
