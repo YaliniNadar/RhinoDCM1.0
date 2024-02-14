@@ -75,8 +75,8 @@ server <- function(id) {
 
     observe({
       db_name <- Sys.getenv("DB_NAME")
-      prefix <- 'app-param_specs-'
-      fields <- c('num_time_points', 'num_attributes', 'attribute_names', 'q_matrix_choice')
+      prefix <- "app-param_specs-"
+      fields <- c("num_time_points", "num_attributes", "attribute_names", "q_matrix_choice")
       storage$performIndexedDBRead(db_name, prefix, fields)
     })
 

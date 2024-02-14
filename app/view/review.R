@@ -5,11 +5,13 @@ box::use(
     br,
     h2,
     moduleServer,
+    observe,
   ]
 )
 
 box::use(
   app/view[ui_components, ],
+  app/logic/tdcm,
 )
 
 #' @export
@@ -29,6 +31,10 @@ ui <- function(id) {
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
+
+    observe({
+      tdcm$tdcm_test()
+    })
 
     ui_components$nb_server("nextButton", "/")
   })

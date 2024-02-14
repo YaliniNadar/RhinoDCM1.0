@@ -87,7 +87,7 @@ server <- function(id) {
                                     "DINA",
                                     "ACDM",
                                     "GDINA1",
-                                    "GDINA2" ),
+                                    "GDINA2"),
                         selected = NULL)
           })
 
