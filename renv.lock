@@ -16,6 +16,25 @@
       "Repository": "RSPM",
       "Hash": "a8235afbcd6316e6e91433ea47661013"
     },
+    "CDM": {
+      "Package": "CDM",
+      "Version": "8.2-6",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "RcppArmadillo",
+        "grDevices",
+        "graphics",
+        "methods",
+        "mvtnorm",
+        "polycor",
+        "stats",
+        "utils"
+      ],
+      "Hash": "439f9750b26791ca6e9d23f3334b042e"
+    },
     "DT": {
       "Package": "DT",
       "Version": "0.31",
@@ -32,6 +51,23 @@
         "promises"
       ],
       "Hash": "77b5189f5272ae2b21e3ac2175ad107c"
+    },
+    "Matrix": {
+      "Package": "Matrix",
+      "Version": "1.6-1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "grid",
+        "lattice",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "1a00d4828f33a9d690806e98bd17150c"
     },
     "R.cache": {
       "Package": "R.cache",
@@ -107,6 +143,21 @@
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
     },
+    "ROI": {
+      "Package": "ROI",
+      "Version": "1.0-1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "checkmate",
+        "methods",
+        "registry",
+        "slam",
+        "utils"
+      ],
+      "Hash": "42ce9ee4c1cf168869f4386d2cdeadd2"
+    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.11",
@@ -117,6 +168,45 @@
         "utils"
       ],
       "Hash": "ae6cbbe1492f4de79c45fce06f967ce8"
+    },
+    "RcppArmadillo": {
+      "Package": "RcppArmadillo",
+      "Version": "0.12.8.0.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "847fc78bd9f83f55696b4b016482f7ed"
+    },
+    "TDCM": {
+      "Package": "TDCM",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "CDM",
+        "R",
+        "gtools",
+        "polycor",
+        "stringr"
+      ],
+      "Hash": "73dfdca9dd657ce13ac7817d62610385"
+    },
+    "admisc": {
+      "Package": "admisc",
+      "Version": "0.34",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "50cde02a35bca22b7b315e8e09af97ee"
     },
     "anytime": {
       "Package": "anytime",
@@ -233,6 +323,18 @@
         "utils"
       ],
       "Hash": "9b2191ede20fa29828139b9900922e51"
+    },
+    "checkmate": {
+      "Package": "checkmate",
+      "Version": "2.3.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "backports",
+        "utils"
+      ],
+      "Hash": "c01cab1cb0f9125211a6fc99d540e315"
     },
     "cli": {
       "Package": "cli",
@@ -540,6 +642,18 @@
       ],
       "Hash": "4f2596dfb05dac67b9dc558e5c6fba2e"
     },
+    "gtools": {
+      "Package": "gtools",
+      "Version": "3.9.5",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "588d091c35389f1f4a9d533c8d709b35"
+    },
     "highr": {
       "Package": "highr",
       "Version": "0.10",
@@ -656,6 +770,21 @@
       ],
       "Hash": "40401c9cf2bc2259dfe83311c9384710"
     },
+    "lattice": {
+      "Package": "lattice",
+      "Version": "0.21-9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "grid",
+        "stats",
+        "utils"
+      ],
+      "Hash": "5558c61e0136e247252f5f952cdaad6a"
+    },
     "lazyeval": {
       "Package": "lazyeval",
       "Version": "0.2.2",
@@ -752,6 +881,17 @@
       ],
       "Hash": "6dfe8bf774944bd5595785e3229d8771"
     },
+    "mvtnorm": {
+      "Package": "mvtnorm",
+      "Version": "1.2-4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "17e96668f44a28aef0981d9e17c49b59"
+    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.9.0",
@@ -817,6 +957,21 @@
         "withr"
       ],
       "Hash": "903d68319ae9923fb2e2ee7fa8230b91"
+    },
+    "polycor": {
+      "Package": "polycor",
+      "Version": "0.8-1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "Matrix",
+        "R",
+        "admisc",
+        "mvtnorm",
+        "parallel",
+        "stats"
+      ],
+      "Hash": "450633138730dbb436ccfcc48e322a9a"
     },
     "praise": {
       "Package": "praise",
@@ -924,6 +1079,17 @@
         "reactR"
       ],
       "Hash": "6069eb2a6597963eae0605c1875ff14c"
+    },
+    "registry": {
+      "Package": "registry",
+      "Version": "0.5-1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "utils"
+      ],
+      "Hash": "1c9935f4f14c6c096c9c9072ddee59f1"
     },
     "rematch2": {
       "Package": "rematch2",
@@ -1174,6 +1340,17 @@
         "shiny"
       ],
       "Hash": "802e4786b353a4bb27116957558548d5"
+    },
+    "slam": {
+      "Package": "slam",
+      "Version": "0.1-50",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "e25793551cbdb843154152e5ee88cbd6"
     },
     "sourcetools": {
       "Package": "sourcetools",
