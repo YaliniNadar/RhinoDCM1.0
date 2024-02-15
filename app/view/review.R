@@ -12,7 +12,7 @@ box::use(
     actionButton,
     textOutput,
     renderText
-    ]
+  ]
 )
 
 box::use(
