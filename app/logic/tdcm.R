@@ -5,7 +5,8 @@ box::use(
     tdcm.summary
   ],
   utils[
-    data
+    data,
+    str,
   ]
 )
 
@@ -19,16 +20,23 @@ tdcm_test <- function(q_matrix, ir_matrix) {
   # data(data.tdcm01, package = "TDCM")
   # data <- data.tdcm01$data
   # q_matrix <- data.tdcm01$q.matrix
-  # if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-  #   model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-  #   results1 <- tdcm.summary(model1, num.time.points = 2)
-  #   item_parameters <- results1$item.parameters
-  #   # print(data)
-  #   # print(q_matrix)
-  #   print(item_parameters)
-  # }
+  if (!is.null(q_matrix) && !is.null(ir_matrix)) {
+    model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
+    results1 <- tdcm.summary(model1, num.time.points = 2)
+    item_parameters <- results1$item.parameters
+    # print(data)
+    # print(q_matrix)
+
+    # Debugging output
+    print("Dimensions of item_parameters:")
+    print(dim(item_parameters))
+    print("Structure of item_parameters:")
+    print(str(item_parameters))
+
+    print(item_parameters)
+  }
 
 
-  print(q_matrix)
-  print(ir_matrix)
+  # print(q_matrix)
+  # print(ir_matrix)
 }

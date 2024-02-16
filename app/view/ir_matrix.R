@@ -74,31 +74,31 @@ server <- function(id, data) {
       if (!is.null(file$datapath)) {
         separator <- input$separatorType
         if (separator == "") {
-          data$ir_matrix <- fread(file$datapath,
+          data_temp <- fread(file$datapath,
             sep = input$customSeparator,
             header = !input$excludeHeaders,
             check.names = FALSE
           )
         } else {
-          data <- fread(file$datapath,
-                        sep = input$separatorType,
-                        header = !input$excludeHeaders)
+          data_temp <- fread(file$datapath,
+                             sep = input$separatorType,
+                             header = !input$excludeHeaders)
         }
         # Exclude ID columns if specified
         if (input$excludeIdColumns) {
           # Define which columns to exclude (e.g., first column)
           id_columns <- 1
           # Remove ID columns from the DataTable
-          data <- data[, -id_columns, with = FALSE]
+          data_temp <- data_temp[, -id_columns, with = FALSE]
         }
 
         # Display file preview using DT
         output$filePreviewIR <- renderDT({
-          datatable(data$ir_matrix, editable = TRUE)
+          datatable(data_temp, editable = TRUE)
         })
 
-        # Save the modified data to q_matrix
-        data$ir_matrix <<- data
+        # Save the modified data to ir_matrix
+        data$ir_matrix <<- data_temp
       } else {
         # Clear the preview if no file is selected
         output$filePreviewIR <- renderDT(NULL)

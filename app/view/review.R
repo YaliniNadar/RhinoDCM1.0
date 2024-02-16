@@ -4,6 +4,8 @@ box::use(
     fluidPage,
     br,
     h2,
+    actionButton,
+    observeEvent,
     moduleServer,
     observe,
   ]
@@ -22,6 +24,8 @@ ui <- function(id) {
     h2("Review"),
     br(),
 
+    actionButton(ns("testButton"), "Click Me"),
+
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
@@ -32,7 +36,7 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
 
-    observe({
+    observeEvent(input$testButton, {
       tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
     })
 
