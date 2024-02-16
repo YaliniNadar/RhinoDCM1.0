@@ -18,7 +18,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, ],
+  app / view[ui_components, ],
 )
 
 #' @export
@@ -27,8 +27,9 @@ ui <- function(id) {
 
   fluidPage(
     h2("Model Specifications"),
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
     br(),
-
     p("The default setting is Invariance = True and full DCM.",
       style = "font-size: 14px; font-weight: bold;"),
     radioButtons(ns("itemParameter"),
@@ -63,7 +64,6 @@ ui <- function(id) {
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
-
 }
 
 #' @export
@@ -87,7 +87,7 @@ server <- function(id) {
                                     "DINA",
                                     "ACDM",
                                     "GDINA1",
-                                    "GDINA2" ),
+                                    "GDINA2"),
                         selected = NULL)
           })
 

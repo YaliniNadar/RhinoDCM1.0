@@ -12,11 +12,13 @@ box::use(
     actionButton,
     textOutput,
     renderText
+    observe,
   ]
 )
 
 box::use(
-  app/view[ui_components]
+  app/view[ui_components, ],
+  app/logic/tdcm,
 )
 
 #' @export
@@ -71,6 +73,7 @@ server <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+
     # Define the text to be displayed in each section
     output$param_specs <- renderText({
       paste("Number of time points: 3",
@@ -91,5 +94,11 @@ server <- function(id) {
             "Item 3: TDCM1",
             sep = "\n")
     })
+
+    observe({
+      tdcm$tdcm_test()
+    })
+
+    ui_components$nb_server("nextButton", "/")
   })
 }

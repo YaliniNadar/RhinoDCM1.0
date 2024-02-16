@@ -12,4 +12,3 @@ performIndexedDBRead <- function(db_name, prefix, fields) {
   # Execute the JavaScript function in the Shiny application
   runjs(js_function_call)
 }
-
