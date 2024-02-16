@@ -8,6 +8,8 @@ box::use(
     observeEvent,
     moduleServer,
     observe,
+    renderText,
+    textOutput,
   ]
 )
 
@@ -26,6 +28,8 @@ ui <- function(id) {
 
     actionButton(ns("testButton"), "Click Me"),
 
+    textOutput(ns("resultOutput")),
+
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
@@ -37,7 +41,8 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
 
     observeEvent(input$testButton, {
-      tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
+      result <- tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
+      output$resultOutput <- renderText(result)
     })
 
     ui_components$nb_server("nextButton", "/")

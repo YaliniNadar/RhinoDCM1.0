@@ -32,8 +32,9 @@ tdcm_test <- function(q_matrix, ir_matrix) {
     print(dim(item_parameters))
     print("Structure of item_parameters:")
     print(str(item_parameters))
-
     print(item_parameters)
+
+    return(item_parameters)
   }
 
 
