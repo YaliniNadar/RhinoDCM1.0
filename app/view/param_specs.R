@@ -56,7 +56,7 @@ ui <- function(id) {
 }
 
 #' @export
-server <- function(id) {
+server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     # Render UI conditionally based on q_matrix_choice
     output$conditional_num_items <- renderUI({

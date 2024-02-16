@@ -29,11 +29,11 @@ ui <- function(id) {
 }
 
 #' @export
-server <- function(id) {
+server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
 
     observe({
-      tdcm$tdcm_test()
+      tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
     })
 
     ui_components$nb_server("nextButton", "/")

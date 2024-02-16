@@ -11,6 +11,7 @@ box::use(
     conditionalPanel,
     moduleServer,
     observe,
+    observeEvent,
     renderUI,
     uiOutput
   ],
@@ -20,6 +21,7 @@ box::use(
 
 box::use(
   app / view[ui_components, ],
+  app/logic/storage,
 )
 
 #' @export
@@ -57,7 +59,7 @@ ui <- function(id) {
 }
 
 #' @export
-server <- function(id) {
+server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
@@ -72,18 +74,31 @@ server <- function(id) {
       if (!is.null(file$datapath)) {
         separator <- input$separatorType
         if (separator == "") {
-          data <- fread(file$datapath,
+          data$ir_matrix <- fread(file$datapath,
             sep = input$customSeparator,
             header = !input$excludeHeaders,
             check.names = FALSE
           )
         } else {
-          data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
+          data <- fread(file$datapath,
+                        sep = input$separatorType,
+                        header = !input$excludeHeaders)
         }
+        # Exclude ID columns if specified
+        if (input$excludeIdColumns) {
+          # Define which columns to exclude (e.g., first column)
+          id_columns <- 1
+          # Remove ID columns from the DataTable
+          data <- data[, -id_columns, with = FALSE]
+        }
+
         # Display file preview using DT
         output$filePreviewIR <- renderDT({
-          datatable(data, editable = TRUE)
+          datatable(data$ir_matrix, editable = TRUE)
         })
+
+        # Save the modified data to q_matrix
+        data$ir_matrix <<- data
       } else {
         # Clear the preview if no file is selected
         output$filePreviewIR <- renderDT(NULL)
