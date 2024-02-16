@@ -16,6 +16,8 @@ box::use(
         observe],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],
+  shinyvalidate[InputValidator, sv_required],
+  stringr[str_detect, str_trim, str_replace_all],
 )
 
 box::use(
@@ -79,6 +81,21 @@ server <- function(id) {
       fields <- c("num_time_points", "num_attributes", "attribute_names", "q_matrix_choice")
       storage$performIndexedDBRead(db_name, prefix, fields)
     })
+
+    iv <- InputValidator$new()
+    iv$add_rule("num_time_points", sv_required())
+    iv$add_rule("num_time_points", ~if (!is.numeric(.)) "Input must be a number")
+    iv$add_rule("num_time_points", ~if (. != round(.)) "Input must be an integer")
+    iv$add_rule("num_time_points", ~if (. <= 0) "Input must be positive")
+    iv$add_rule("num_attributes", sv_required())
+    iv$add_rule("num_attributes", ~if (!is.numeric(.)) "Input must be a number")
+    iv$add_rule("num_attributes", ~if (. != round(.)) "Input must be an integer")
+    iv$add_rule("num_attributes", ~if (. <= 0) "Input must be positive")
+    iv$add_rule("attribute_names", sv_required()) #check this
+    iv$add_rule("attribute_names", ~if (any(grepl(" ", trimws(strsplit(., ",")[[1]]))))
+                  "Every space must be preceded by a comma")
+    iv$add_rule("q_matrix_choice", sv_required())
+    iv$enable()
 
     # insert at the bottom  !!!IMPORTANT
     appid <- Sys.getenv("APP_ID")
