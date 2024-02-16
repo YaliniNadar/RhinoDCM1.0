@@ -1,24 +1,9 @@
 box::use(
-  shiny[
-    NS,
-    fluidPage,
-    br,
-    h2,
-    h4,
-    moduleServer,
-    fluidRow,
-    column,
-    wellPanel,
-    actionButton,
-    textOutput,
-    renderText
-    observe,
-  ]
+  shiny[NS, fluidPage, br, h2, h4, moduleServer, fluidRow, column, wellPanel, actionButton, textOutput, renderText]
 )
 
 box::use(
-  app/view[ui_components, ],
-  app/logic/tdcm,
+  app/view[ui_components]
 )
 
 #' @export
@@ -73,7 +58,6 @@ server <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-
     # Define the text to be displayed in each section
     output$param_specs <- renderText({
       paste("Number of time points: 3",
@@ -94,11 +78,5 @@ server <- function(id) {
             "Item 3: TDCM1",
             sep = "\n")
     })
-
-    observe({
-      tdcm$tdcm_test()
-    })
-
-    ui_components$nb_server("nextButton", "/")
   })
 }
