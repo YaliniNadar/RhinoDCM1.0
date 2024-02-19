@@ -4,6 +4,10 @@ box::use(
     fluidPage,
     br,
     h2,
+    h4,
+    fluidRow,
+    column,
+    wellPanel,
     actionButton,
     observeEvent,
     moduleServer,
@@ -11,11 +15,11 @@ box::use(
     renderText,
     textOutput,
   ]
-  shiny[NS, fluidPage, br, h2, h4, moduleServer, fluidRow, column, wellPanel, actionButton, textOutput, renderText]
 )
 
 box::use(
-  app/view[ui_components]
+  app/view[ui_components],
+  app/logic/tdcm
 )
 
 #' @export
@@ -32,8 +36,6 @@ ui <- function(id) {
 
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
-  )
-
 
     # Main content blocks
     fluidRow(
@@ -76,6 +78,7 @@ ui <- function(id) {
 }
 
 #' @export
+#' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -88,10 +91,6 @@ server <- function(id, data) {
             "Is there a different Q-Matrix for each time point: No",
             "Number of items at a single time point: 3",
             sep = "\n")
-
-    observeEvent(input$testButton, {
-      result <- tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
-      output$resultOutput <- renderText(result)
     })
 
     output$q_matrix <- renderText("Q-Matrix content will be displayed here.")
@@ -103,6 +102,11 @@ server <- function(id, data) {
             "Item 2: TDCM2",
             "Item 3: TDCM1",
             sep = "\n")
+    })
+
+    observeEvent(input$testButton, {
+      result <- tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
+      output$resultOutput <- renderText(result)
     })
   })
 }
