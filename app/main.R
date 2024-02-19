@@ -1,5 +1,5 @@
 box::use(
-  shiny[bootstrapPage, div, moduleServer, NS, renderUI, tags, uiOutput],
+  shiny[bootstrapPage, div, moduleServer, NS, renderUI, tags, uiOutput, reactiveValues],
   shiny.router[router_ui, router_server, route]
 )
 
@@ -30,11 +30,17 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     router_server("/")
+
+    data <- reactiveValues(
+      ir_matrix = NULL,
+      q_matrix = NULL,
+    )
+
     home$server("home")
     param_specs$server("param_specs")
-    q_matrix$server("q_matrix")
-    ir_matrix$server("ir_matrix")
+    q_matrix$server("q_matrix", data)
+    ir_matrix$server("ir_matrix", data)
     model_specs$server("model_specs")
-    review$server("review")
+    review$server("review", data)
   })
 }

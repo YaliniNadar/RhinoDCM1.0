@@ -10,6 +10,7 @@ box::use(
     checkboxInput,
     moduleServer,
     observe,
+    observeEvent,
     renderUI,
     uiOutput
   ],
@@ -58,7 +59,7 @@ ui <- function(id) {
 }
 
 #' @export
-server <- function(id) {
+server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
@@ -73,13 +74,15 @@ server <- function(id) {
       if (!is.null(file$datapath)) {
         separator <- input$separatorType
         if (separator == "") {
-          data <- fread(file$datapath,
+          data_temp <- fread(file$datapath,
             sep = input$customSeparator,
             header = !input$excludeHeaders,
             check.names = FALSE
           )
         } else {
-          data <- fread(file$datapath, sep = input$separatorType, header = !input$excludeHeaders)
+          data_temp <- fread(file$datapath,
+                             sep = input$separatorType,
+                             header = !input$excludeHeaders)
         }
 
         # Exclude ID columns if specified
@@ -87,23 +90,25 @@ server <- function(id) {
           # Define which columns to exclude (e.g., first column)
           id_columns <- 1
           # Remove ID columns from the DataTable
-          data <- data[, -id_columns, with = FALSE]
+          data_temp <- data_temp[, -id_columns, with = FALSE]
         }
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
-          datatable(data, editable = TRUE)
+          datatable(data_temp, editable = TRUE)
         })
+
+        # Save the modified data to q_matrix
+        data$q_matrix <<- data_temp
       } else {
         # Clear the preview if no file is selected
         output$filePreviewQ <- renderDT(NULL)
       }
     })
-
     observe({
       db_name <- Sys.getenv("DB_NAME")
-      prefix <- "app-param_specs-"
-      fields <- c("num_time_points", "num_attributes", "attribute_names", "q_matrix_choice")
+      prefix <- "app-q_matrix-"
+      fields <- c("separatorType", "excludeHeaders", "excludeIdColumns", "fileQ")
       storage$performIndexedDBRead(db_name, prefix, fields)
     })
 
