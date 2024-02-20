@@ -10,6 +10,6 @@ if (file.exists("renv")) {
 options(box.path = getwd())
 
 build_and_run_app <- function() {
-  rhino::build_sass(watch = TRUE)
+  rhino::build_sass()
   shiny::runApp()
 }
