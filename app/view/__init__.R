@@ -10,4 +10,5 @@ box::use(
   app/view/ir_matrix,
   app/view/model_specs,
   app/view/review,
+  app/view/tdcm_test,
 )
