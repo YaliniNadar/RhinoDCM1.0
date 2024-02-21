@@ -8,7 +8,6 @@ box::use(
     fluidRow,
     column,
     wellPanel,
-    actionButton,
     observeEvent,
     moduleServer,
     observe,
@@ -19,7 +18,6 @@ box::use(
 
 box::use(
   app/view[ui_components],
-  app/logic/tdcm
 )
 
 #' @export
@@ -29,10 +27,6 @@ ui <- function(id) {
   fluidPage(
     h2("Review"),
     br(),
-
-    actionButton(ns("testButton"), "Click Me"),
-
-    textOutput(ns("resultOutput")),
 
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
@@ -78,7 +72,6 @@ ui <- function(id) {
 }
 
 #' @export
-#' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -104,9 +97,6 @@ server <- function(id, data) {
             sep = "\n")
     })
 
-    observeEvent(input$testButton, {
-      result <- tdcm$tdcm_test(data$q_matrix, data$ir_matrix)
-      output$resultOutput <- renderText(result)
-    })
+    ui_components$nb_server("nextButton", "tdcm_test")
   })
 }
