@@ -39,7 +39,7 @@ ui <- function(id) {
 
     # Input: Separator type
     radioButtons(ns("separatorType"), "Separator Type:",
-      choices = c("Tab" = "\t", "Comma" = ",", "Custom" = ""),
+      choices = c("Tab" = "\t", "Comma" = ",", "Space" = " ", "Custom" = ""),
       selected = ","
     ),
 

@@ -13,7 +13,7 @@ box::use(
     observe,
     renderText,
     textOutput,
-  ]
+  ],
 )
 
 box::use(
@@ -76,14 +76,31 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Function to generate the text for parameter specifications
+    generate_param_specs <- function() {
+      num_time_points <- data$param_specs_data$num_time_points
+      num_attributes <- data$param_specs_data$num_attributes
+      attribute_names <- data$param_specs_data$attribute_names
+      q_matrix_choice <- data$param_specs_data$q_matrix_choice
+      num_items_single_time_point <- data$param_specs_data$num_items
+
+      param_specs <- paste(
+        "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
+        "Number of attributes measured:", ifelse(is.null(num_attributes), "N/A", num_attributes),
+        "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
+        "Is there a different Q-Matrix for each time point:",
+        ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
+        "Number of items at a single time point:",
+        ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point),
+        sep = "\n"
+      )
+
+      return(param_specs)
+    }
+
     # Define the text to be displayed in each section
     output$param_specs <- renderText({
-      paste("Number of time points: 3",
-            "Number of attributes measured: 10",
-            "Attribute Names: a, b, c, d, e",
-            "Is there a different Q-Matrix for each time point: No",
-            "Number of items at a single time point: 3",
-            sep = "\n")
+      generate_param_specs()
     })
 
     output$q_matrix <- renderText("Q-Matrix content will be displayed here.")
