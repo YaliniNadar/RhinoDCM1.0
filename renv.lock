@@ -1328,6 +1328,19 @@
       ],
       "Hash": "96bb249d21b7473dbeb0311702ef5288"
     },
+    "shinybusy": {
+      "Package": "shinybusy",
+      "Version": "0.3.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "htmltools",
+        "htmlwidgets",
+        "jsonlite",
+        "shiny"
+      ],
+      "Hash": "cfb1edf0a7b334747556da1598ef67b1"
+    },
     "shinyjs": {
       "Package": "shinyjs",
       "Version": "2.1.0",
