@@ -98,6 +98,29 @@ server <- function(id, data) {
       return(param_specs)
     }
 
+    generate_model_specs <- function() {
+      item_param <- data$model_specs_data$itemParameter
+      dcm_estimate <- data$model_specs_data$dcmEstimate
+
+      # Initialize model_specs as an empty string
+      model_specs <- ""
+
+      # Append item parameter to model_specs
+      model_specs <- paste(model_specs, paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
+
+      if (!is.null(dcm_estimate)) {
+        if (is.character(dcm_estimate)) {
+          # Append DCM to estimate if it's character
+          model_specs <- paste(model_specs, paste("DCM to estimate:", dcm_estimate))
+        }
+      }
+
+      # Collapse model_specs into a single string with newline characters
+      print(model_specs)
+      return(model_specs)
+    }
+
+
     # Define the text to be displayed in each section
     output$param_specs <- renderText({
       generate_param_specs()
@@ -105,13 +128,16 @@ server <- function(id, data) {
 
     output$q_matrix <- renderText("Q-Matrix content will be displayed here.")
     output$ir_matrix <- renderText("IR Matrix content will be displayed here.")
+    # output$model_specs <- renderText({
+    #   paste("Invariance: Yes",
+    #         "DCM to estimate: Different on each item",
+    #         "Item 1: full DCM",
+    #         "Item 2: TDCM2",
+    #         "Item 3: TDCM1",
+    #         sep = "\n")
+    # })
     output$model_specs <- renderText({
-      paste("Invariance: Yes",
-            "DCM to estimate: Different on each item",
-            "Item 1: full DCM",
-            "Item 2: TDCM2",
-            "Item 3: TDCM1",
-            sep = "\n")
+      generate_model_specs()
     })
 
     ui_components$nb_server("nextButton", "tdcm_test")

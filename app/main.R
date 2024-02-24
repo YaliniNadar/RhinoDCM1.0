@@ -43,7 +43,7 @@ server <- function(id) {
     param_specs$server("param_specs", data)
     q_matrix$server("q_matrix", data)
     ir_matrix$server("ir_matrix", data)
-    model_specs$server("model_specs")
+    model_specs$server("model_specs", data)
     review$server("review", data)
     tdcm_test$server("tdcm_test", data)
   })
