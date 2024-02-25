@@ -83,7 +83,6 @@ server <- function(id, data) {
       data$param_specs_data$q_matrix_choice <- input$q_matrix_choice
 
       # Save other input values based on conditions
-      # Save other input values based on conditions
       if (input$q_matrix_choice == "No") {
         data$param_specs_data$num_items <- input$num_items_single_time_point
       } else {
@@ -91,8 +90,9 @@ server <- function(id, data) {
         if (!is.null(input$num_items_each_time_point)
             && nchar(input$num_items_each_time_point) > 0) {
           # Split the comma-separated values for each time point
-          num_items_each_time_point <- as.numeric(unlist(strsplit(input$num_items_each_time_point, ","))) # nolint: line_length_linter.
-          data$param_specs_data$num_items <- num_items_each_time_point
+          data$param_specs_data$num_items_each_time_point <- input$num_items_each_time_point
+          # num_items_each_time_point <- as.numeric(unlist(strsplit(input$num_items_each_time_point, ","))) # nolint: line_length_linter.
+          # data$param_specs_data$num_items_each_time_point <- num_items_each_time_point
         } else {
           # Handle case when input$num_items_each_time_point is empty
           data$param_specs_data$num_items <- NULL  # Or any default value you want to set

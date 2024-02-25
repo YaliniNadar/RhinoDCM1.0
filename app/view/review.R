@@ -83,6 +83,7 @@ server <- function(id, data) {
       attribute_names <- data$param_specs_data$attribute_names
       q_matrix_choice <- data$param_specs_data$q_matrix_choice
       num_items_single_time_point <- data$param_specs_data$num_items
+      num_items_each_time_point <- data$param_specs_data$num_items_each_time_point
 
       param_specs <- paste(
         "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
@@ -90,8 +91,14 @@ server <- function(id, data) {
         "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
         "Is there a different Q-Matrix for each time point:",
         ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
-        "Number of items at a single time point:",
-        ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point),
+        if (q_matrix_choice == "No") {
+          paste("Number of items at a single time point:",
+                ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
+        },
+        if (q_matrix_choice == "Yes") {
+          paste("Number of items at each time point:",
+                ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
+        },
         sep = "\n"
       )
 
