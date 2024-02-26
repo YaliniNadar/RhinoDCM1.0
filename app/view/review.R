@@ -11,9 +11,18 @@ box::use(
     observeEvent,
     moduleServer,
     observe,
+    renderUI,
     renderText,
     textOutput,
+    tagList,
+    uiOutput,
   ],
+  DT[
+    datatable,
+  ],
+  utils[
+    head,
+  ]
 )
 
 box::use(
@@ -39,11 +48,11 @@ ui <- function(id) {
       )),
       column(3, wellPanel(
         h4("Q-Matrix"),
-        textOutput(ns("q_matrix"))
+        # uiOutput(ns("q_matrix"))
       )),
       column(3, wellPanel(
         h4("IR Matrix"),
-        textOutput(ns("ir_matrix"))
+        # textOutput(ns("ir_matrix"))
       )),
       column(3, wellPanel(
         h4("Model Specs"),
@@ -55,11 +64,15 @@ ui <- function(id) {
     fluidRow(
       column(6, wellPanel(
         h4("Q-Matrix Preview"),
+        uiOutput(ns("q_matrix")),
+        style = "max-width: 100%; overflow-x: auto;"
         # Placeholder for Q-Matrix preview
       )),
       column(6, wellPanel(
         h4("IR Matrix Preview"),
         # Placeholder for IR Matrix preview
+        uiOutput(ns("ir_matrix")),
+        style = "max-width: 100%; overflow-x: auto;"
       ))
     ),
 
@@ -133,16 +146,42 @@ server <- function(id, data) {
       generate_param_specs()
     })
 
-    output$q_matrix <- renderText("Q-Matrix content will be displayed here.")
-    output$ir_matrix <- renderText("IR Matrix content will be displayed here.")
-    # output$model_specs <- renderText({
-    #   paste("Invariance: Yes",
-    #         "DCM to estimate: Different on each item",
-    #         "Item 1: full DCM",
-    #         "Item 2: TDCM2",
-    #         "Item 3: TDCM1",
-    #         sep = "\n")
-    # })
+    output$q_matrix <- renderUI({
+      if (!is.null(data$q_matrix)) {
+        # Extract the first 5 rows of the Q-Matrix data frame
+        q_matrix_head <- head(data$q_matrix, 5)
+
+        # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
+        q_matrix_html <- datatable(q_matrix_head, options = list(dom = 't', paging = FALSE, searching = FALSE, ordering = FALSE))
+
+        tagList(
+          h4("Q-Matrix Content (First 5 Rows)"),
+          q_matrix_html
+        )
+      } else {
+        h4("Q-Matrix Content is not available.")
+      }
+    })
+
+    output$ir_matrix <- renderUI({
+      if (!is.null(data$ir_matrix)) {
+        # Extract the first 5 rows of the Q-Matrix data frame
+        ir_matrix_head <- head(data$ir_matrix, 5)
+
+        # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
+        ir_matrix_html <- datatable(ir_matrix_head, options = list(dom = 't', paging = FALSE, searching = FALSE, ordering = FALSE))
+
+        tagList(
+          h4("IR-Matrix Content (First 5 Rows)"),
+          ir_matrix_html
+        )
+      } else {
+        h4("IR-Matrix Content is not available.")
+      }
+    }
+
+    )
+
     output$model_specs <- renderText({
       generate_model_specs()
     })
