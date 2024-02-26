@@ -56,7 +56,6 @@ server <- function(id, data) {
 
     observeEvent(input$item_params, {
       show_modal_spinner(spin = "fading-circle")
-      # print(data$param_specs_data$num_time_points)
       result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix)
       output$resultOutput <- renderTable(result)
       remove_modal_spinner()

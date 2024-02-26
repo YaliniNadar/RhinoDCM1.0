@@ -42,19 +42,11 @@ ui <- function(id) {
 
     # Main content blocks
     fluidRow(
-      column(3, wellPanel(
+      column(6, wellPanel(
         h4("Parameter Specs"),
         textOutput(ns("param_specs"))
       )),
-      column(3, wellPanel(
-        h4("Q-Matrix"),
-        # uiOutput(ns("q_matrix"))
-      )),
-      column(3, wellPanel(
-        h4("IR Matrix"),
-        # textOutput(ns("ir_matrix"))
-      )),
-      column(3, wellPanel(
+      column(6, wellPanel(
         h4("Model Specs"),
         textOutput(ns("model_specs"))
       ))
@@ -126,7 +118,9 @@ server <- function(id, data) {
       model_specs <- ""
 
       # Append item parameter to model_specs
-      model_specs <- paste(model_specs, paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
+      model_specs <-
+        paste(model_specs,
+              paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
 
       if (!is.null(dcm_estimate)) {
         if (is.character(dcm_estimate)) {
@@ -152,7 +146,9 @@ server <- function(id, data) {
         q_matrix_head <- head(data$q_matrix, 5)
 
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
-        q_matrix_html <- datatable(q_matrix_head, options = list(dom = 't', paging = FALSE, searching = FALSE, ordering = FALSE))
+        q_matrix_html <-
+          datatable(q_matrix_head,
+                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
 
         tagList(
           h4("Q-Matrix Content (First 5 Rows)"),
@@ -169,7 +165,9 @@ server <- function(id, data) {
         ir_matrix_head <- head(data$ir_matrix, 5)
 
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
-        ir_matrix_html <- datatable(ir_matrix_head, options = list(dom = 't', paging = FALSE, searching = FALSE, ordering = FALSE))
+        ir_matrix_html <-
+          datatable(ir_matrix_head,
+                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
 
         tagList(
           h4("IR-Matrix Content (First 5 Rows)"),
