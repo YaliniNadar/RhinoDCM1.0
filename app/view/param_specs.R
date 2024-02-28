@@ -1,19 +1,21 @@
 box::use(
-  shiny[moduleServer,
-        NS,
-        fluidPage,
-        h2,
-        p,
-        br,
-        HTML,
-        numericInput,
-        textInput,
-        radioButtons,
-        actionButton,
-        observeEvent,
-        uiOutput,
-        renderUI,
-        observe],
+  shiny[
+    moduleServer,
+    NS,
+    fluidPage,
+    h2,
+    p,
+    br,
+    HTML,
+    numericInput,
+    textInput,
+    radioButtons,
+    actionButton,
+    observeEvent,
+    uiOutput,
+    renderUI,
+    observe
+  ],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],
   shinyvalidate[InputValidator, sv_required],
@@ -21,8 +23,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/storage,
+  app / view[ui_components],
+  app / logic / storage,
 )
 
 #' @export
@@ -52,8 +54,8 @@ ui <- function(id) {
     ),
     uiOutput(ns("conditional_num_items")),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    # ui_components$next_button(ns("nextButton")),
+    # ui_components$back_button(ns("backButton")),
   )
 }
 
@@ -87,18 +89,17 @@ server <- function(id, data) {
         data$param_specs_data$num_items <- input$num_items_single_time_point
       } else {
         # Check if input$num_items_each_time_point is not empty
-        if (!is.null(input$num_items_each_time_point)
-            && nchar(input$num_items_each_time_point) > 0) {
+        if (!is.null(input$num_items_each_time_point) &&
+          nchar(input$num_items_each_time_point) > 0) {
           # Split the comma-separated values for each time point
           data$param_specs_data$num_items_each_time_point <- input$num_items_each_time_point
           # num_items_each_time_point <- as.numeric(unlist(strsplit(input$num_items_each_time_point, ","))) # nolint: line_length_linter.
           # data$param_specs_data$num_items_each_time_point <- num_items_each_time_point
         } else {
           # Handle case when input$num_items_each_time_point is empty
-          data$param_specs_data$num_items <- NULL  # Or any default value you want to set
+          data$param_specs_data$num_items <- NULL # Or any default value you want to set
         }
       }
-
     })
 
     # Observing Storage
@@ -111,16 +112,17 @@ server <- function(id, data) {
 
     iv <- InputValidator$new()
     iv$add_rule("num_time_points", sv_required())
-    iv$add_rule("num_time_points", ~if (!is.numeric(.)) "Input must be a number")
-    iv$add_rule("num_time_points", ~if (. != round(.)) "Input must be an integer")
-    iv$add_rule("num_time_points", ~if (. <= 0) "Input must be positive")
+    iv$add_rule("num_time_points", ~ if (!is.numeric(.)) "Input must be a number")
+    iv$add_rule("num_time_points", ~ if (. != round(.)) "Input must be an integer")
+    iv$add_rule("num_time_points", ~ if (. <= 0) "Input must be positive")
     iv$add_rule("num_attributes", sv_required())
-    iv$add_rule("num_attributes", ~if (!is.numeric(.)) "Input must be a number")
-    iv$add_rule("num_attributes", ~if (. != round(.)) "Input must be an integer")
-    iv$add_rule("num_attributes", ~if (. <= 0) "Input must be positive")
-    iv$add_rule("attribute_names", sv_required()) #check this
-    iv$add_rule("attribute_names", ~if (any(grepl(" ", trimws(strsplit(., ",")[[1]]))))
-                  "Every space must be preceded by a comma")
+    iv$add_rule("num_attributes", ~ if (!is.numeric(.)) "Input must be a number")
+    iv$add_rule("num_attributes", ~ if (. != round(.)) "Input must be an integer")
+    iv$add_rule("num_attributes", ~ if (. <= 0) "Input must be positive")
+    iv$add_rule("attribute_names", sv_required()) # check this
+    iv$add_rule("attribute_names", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
+      "Every space must be preceded by a comma"
+    })
     iv$add_rule("q_matrix_choice", sv_required())
     iv$enable()
 

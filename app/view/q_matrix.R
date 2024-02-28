@@ -19,8 +19,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, ],
-  app/logic/storage,
+  app / view[ui_components, ],
+  app / logic / storage,
 )
 
 #' @export
@@ -53,8 +53,8 @@ ui <- function(id) {
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    # ui_components$next_button(ns("nextButton")),
+    # ui_components$back_button(ns("backButton")),
   )
 }
 
@@ -81,8 +81,9 @@ server <- function(id, data) {
           )
         } else {
           data_temp <- fread(file$datapath,
-                             sep = input$separatorType,
-                             header = !input$excludeHeaders)
+            sep = input$separatorType,
+            header = !input$excludeHeaders
+          )
         }
 
         # Exclude ID columns if specified
