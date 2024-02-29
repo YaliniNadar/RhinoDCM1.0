@@ -16,7 +16,6 @@ box::use(
     uiOutput,
     div,
     actionButton,
-    observeEvent
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],

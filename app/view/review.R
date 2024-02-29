@@ -5,24 +5,16 @@ box::use(
     br,
     h2,
     h4,
-<<<<<<< HEAD
     moduleServer,
-    fluidRow,
     column,
     wellPanel,
     actionButton,
     textOutput,
-    renderText
-=======
+    renderText,
     fluidRow,
-    column,
-    wellPanel,
     observeEvent,
-    moduleServer,
     observe,
     renderUI,
-    renderText,
-    textOutput,
     tagList,
     uiOutput,
   ],
@@ -31,7 +23,6 @@ box::use(
   ],
   utils[
     head,
->>>>>>> c6960b2616ffec0e89dfeb7886bc777dfa471c35
   ]
 )
 

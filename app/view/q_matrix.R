@@ -15,7 +15,6 @@ box::use(
     uiOutput,
     actionButton,
     div,
-    observeEvent
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
@@ -55,16 +54,11 @@ ui <- function(id) {
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
 
-<<<<<<< HEAD
     div(
       style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
       uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
     )
-=======
-    # ui_components$next_button(ns("nextButton")),
-    # ui_components$back_button(ns("backButton")),
->>>>>>> c6960b2616ffec0e89dfeb7886bc777dfa471c35
   )
 }
 
