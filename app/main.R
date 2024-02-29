@@ -1,10 +1,10 @@
 box::use(
-  shiny[bootstrapPage, div, moduleServer, NS, renderUI, tags, uiOutput],
+  shiny[bootstrapPage, div, moduleServer, NS, renderUI, tags, uiOutput, reactiveValues],
   shiny.router[router_ui, router_server, route]
 )
 
 box::use(
-  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
+  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review, tdcm_test],
 )
 
 #' @export
@@ -22,6 +22,7 @@ ui <- function(id) {
       route("ir_matrix", ir_matrix$ui(ns("ir_matrix"))),
       route("model_specs", model_specs$ui(ns("model_specs"))),
       route("review", review$ui(ns("review"))),
+      route("tdcm_test", tdcm_test$ui(ns("tdcm_test"))),
     )
   )
 }
@@ -30,11 +31,20 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     router_server("/")
+
+    data <- reactiveValues(
+      ir_matrix = NULL,
+      q_matrix = NULL,
+      param_specs_data = reactiveValues(),
+      model_specs_data = reactiveValues(),
+    )
+
     home$server("home")
-    param_specs$server("param_specs")
-    q_matrix$server("q_matrix")
-    ir_matrix$server("ir_matrix")
-    model_specs$server("model_specs")
-    review$server("review")
+    param_specs$server("param_specs", data)
+    q_matrix$server("q_matrix", data)
+    ir_matrix$server("ir_matrix", data)
+    model_specs$server("model_specs", data)
+    review$server("review", data)
+    tdcm_test$server("tdcm_test", data)
   })
 }

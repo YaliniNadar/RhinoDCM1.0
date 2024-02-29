@@ -12,9 +12,14 @@ box::use(
     br,
     actionButton,
     observeEvent,
-    h1
+    h1,
+    reactiveValues
   ],
   shiny.router[change_page],
+)
+
+box::use(
+  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
 )
 
 #' @export
