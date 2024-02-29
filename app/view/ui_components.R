@@ -15,16 +15,27 @@ navbar_ui <- function(id) {
 }
 
 #' @export
-next_button <- function(id) {
+next_button <- function(id, enabled = TRUE) {
   ns <- NS(id)
 
-  actionButton(
-    ns("nextButton"),
-    "Next",
-    class = "btn-primary",
-    style = "float: right; margin-right: 10px;"
-  )
+  if (enabled) {
+    actionButton(
+      ns("nextButton"),
+      "Next",
+      class = "btn-primary",
+      style = "float: right; margin-right: 10px;"
+    )
+  } else {
+    tags$button(
+      "Next",
+      id = ns("nextButton"),
+      class = "btn btn-primary disabled",
+      style = "float: right; margin-right: 10px;",
+      disabled = "disabled"
+    )
+  }
 }
+
 
 #' @export
 back_button <- function(id) {
