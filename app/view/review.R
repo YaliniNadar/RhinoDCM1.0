@@ -43,19 +43,11 @@ ui <- function(id) {
 
     # Main content blocks
     fluidRow(
-      column(3, wellPanel(
+      column(6, wellPanel(
         h4("Parameter Specs"),
         textOutput(ns("param_specs"))
       )),
-      column(3, wellPanel(
-        h4("Q-Matrix"),
-        # uiOutput(ns("q_matrix"))
-      )),
-      column(3, wellPanel(
-        h4("IR Matrix"),
-        # textOutput(ns("ir_matrix"))
-      )),
-      column(3, wellPanel(
+      column(6, wellPanel(
         h4("Model Specs"),
         textOutput(ns("model_specs"))
       ))
@@ -99,17 +91,23 @@ server <- function(id, data) {
       num_items_single_time_point <- data$param_specs_data$num_items
       num_items_each_time_point <- data$param_specs_data$num_items_each_time_point
 
+      if (is.null(q_matrix_choice) || length(q_matrix_choice) == 0) {
+        q_matrix_choice_message <- "N/A"
+      } else {
+        q_matrix_choice_message <- q_matrix_choice
+      }
+
       param_specs <- paste(
         "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
         "Number of attributes measured:", ifelse(is.null(num_attributes), "N/A", num_attributes),
         "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
         "Is there a different Q-Matrix for each time point:",
         ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
-        if (q_matrix_choice == "No") {
+        q_matrix_choice_message,
+        if (q_matrix_choice_message == "No") {
           paste("Number of items at a single time point:",
                 ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
-        },
-        if (q_matrix_choice == "Yes") {
+        } else if (q_matrix_choice_message == "Yes") {
           paste("Number of items at each time point:",
                 ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
         },
@@ -127,7 +125,9 @@ server <- function(id, data) {
       model_specs <- ""
 
       # Append item parameter to model_specs
-      model_specs <- paste(model_specs, paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
+      model_specs <-
+        paste(model_specs,
+              paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
 
       if (!is.null(dcm_estimate)) {
         if (is.character(dcm_estimate)) {
@@ -153,7 +153,9 @@ server <- function(id, data) {
         q_matrix_head <- head(data$q_matrix, 5)
 
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
-        q_matrix_html <- datatable(q_matrix_head, options = list(dom = 't', paging = FALSE, searching = FALSE, ordering = FALSE))
+        q_matrix_html <-
+          datatable(q_matrix_head,
+                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
 
         tagList(
           h4("Q-Matrix Content (First 5 Rows)"),
@@ -170,7 +172,9 @@ server <- function(id, data) {
         ir_matrix_head <- head(data$ir_matrix, 5)
 
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
-        ir_matrix_html <- datatable(ir_matrix_head, options = list(dom = 't', paging = FALSE, searching = FALSE, ordering = FALSE))
+        ir_matrix_html <-
+          datatable(ir_matrix_head,
+                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
 
         tagList(
           h4("IR-Matrix Content (First 5 Rows)"),

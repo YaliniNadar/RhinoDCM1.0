@@ -18,7 +18,7 @@ box::use(
         div],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],
-  shinyvalidate[InputValidator, sv_required],
+  shinyvalidate[InputValidator, sv_required, sv_optional],
   stringr[str_detect, str_trim, str_replace_all],
 )
 
@@ -69,7 +69,7 @@ server <- function(id, data) {
     iv <- InputValidator$new()
     iv$add_rule(ns("num_time_points"), sv_required())
     iv$add_rule(ns("num_attributes"), sv_required())
-    iv$add_rule(ns("attribute_names"), sv_required())
+    iv$add_rule(ns("attribute_names"), sv_optional())
     iv$add_rule(ns("q_matrix_choice"), sv_required())
     iv$enable()
 
@@ -107,6 +107,17 @@ server <- function(id, data) {
       shiny.router::change_page("q_matrix")
     })
 
+    num_of_att_validation <- function(value) {
+      # Extract individual attribute names
+      attribute_names <- strsplit(value, ",")[[1]]
+      num_attributes <- length(attribute_names)
+
+      # Check if the number of attribute names matches the expected number
+      if (num_attributes != input$num_attributes) {
+        return(paste("The number of attribute names must match the expected number of", input$num_attributes))
+      }
+    }
+
     iv <- InputValidator$new()
     iv$add_rule("num_time_points", sv_required())
     iv$add_rule("num_time_points", ~ if (!is.numeric(.)) "Input must be a number")
@@ -116,10 +127,11 @@ server <- function(id, data) {
     iv$add_rule("num_attributes", ~ if (!is.numeric(.)) "Input must be a number")
     iv$add_rule("num_attributes", ~ if (. != round(.)) "Input must be an integer")
     iv$add_rule("num_attributes", ~ if (. <= 0) "Input must be positive")
-    iv$add_rule("attribute_names", sv_required()) # check this
+    iv$add_rule("attribute_names", sv_optional()) # check this
     iv$add_rule("attribute_names", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
       "Every space must be preceded by a comma"
     })
+    iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
     iv$enable()
 
