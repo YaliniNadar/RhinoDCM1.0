@@ -91,17 +91,23 @@ server <- function(id, data) {
       num_items_single_time_point <- data$param_specs_data$num_items
       num_items_each_time_point <- data$param_specs_data$num_items_each_time_point
 
+      if (is.null(q_matrix_choice) || length(q_matrix_choice) == 0) {
+        q_matrix_choice_message <- "N/A"
+      } else {
+        q_matrix_choice_message <- q_matrix_choice
+      }
+
       param_specs <- paste(
         "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
         "Number of attributes measured:", ifelse(is.null(num_attributes), "N/A", num_attributes),
         "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
         "Is there a different Q-Matrix for each time point:",
         ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
-        if (q_matrix_choice == "No") {
+        q_matrix_choice_message,
+        if (q_matrix_choice_message == "No") {
           paste("Number of items at a single time point:",
                 ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
-        },
-        if (q_matrix_choice == "Yes") {
+        } else if (q_matrix_choice_message == "Yes") {
           paste("Number of items at each time point:",
                 ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
         },

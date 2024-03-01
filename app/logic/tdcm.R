@@ -74,10 +74,6 @@ process_text_to_df <- function(text) {
 }
 
 
-
-
-
-
 fit_model <- function(data, q_matrix, num_time_points) {
   model <- tdcm(data, q_matrix, num.time.points = 2)
   return(model)
@@ -113,18 +109,6 @@ item_parameters <- function(q_matrix, ir_matrix) {
 
   # print(q_matrix)
   # print(ir_matrix)
-}
-
-#' @export
-growth <- function(q_matrix, ir_matrix) {
-  if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-    results1 <- tdcm.summary(model1, num.time.points = 2)
-    growth <- results1$growth
-
-    print(growth)
-    return(growth)
-  }
 }
 
 #' @export
