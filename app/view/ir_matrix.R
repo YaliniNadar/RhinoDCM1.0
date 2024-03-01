@@ -97,12 +97,14 @@ server <- function(id, data) {
           data_temp <- fread(file$datapath,
             sep = input$customSeparator,
             header = !input$excludeHeaders,
-            check.names = FALSE
+            check.names = FALSE,
+            quote = "",
           )
         } else {
           data_temp <- fread(file$datapath,
                              sep = input$separatorType,
-                             header = !input$excludeHeaders)
+                             header = !input$excludeHeaders,
+                             quote = "")
         }
         # Exclude ID columns if specified
         if (input$excludeIdColumns) {
