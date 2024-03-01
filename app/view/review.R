@@ -56,14 +56,10 @@ ui <- function(id) {
     # Matrix previews
     fluidRow(
       column(6, wellPanel(
-        h4("Q-Matrix Preview"),
         uiOutput(ns("q_matrix")),
         style = "max-width: 100%; overflow-x: auto;"
-        # Placeholder for Q-Matrix preview
       )),
       column(6, wellPanel(
-        h4("IR Matrix Preview"),
-        # Placeholder for IR Matrix preview
         uiOutput(ns("ir_matrix")),
         style = "max-width: 100%; overflow-x: auto;"
       ))
@@ -149,20 +145,33 @@ server <- function(id, data) {
 
     output$q_matrix <- renderUI({
       if (!is.null(data$q_matrix)) {
-        # Extract the first 5 rows of the Q-Matrix data frame
-        q_matrix_head <- head(data$q_matrix, 5)
+        q_matrix_data <- data$q_matrix
+        num_rows <- nrow(q_matrix_data)
+
+        if (num_rows >= 5) {
+          q_matrix_head <- head(q_matrix_data, 5)
+        } else {
+          q_matrix_head <- q_matrix_data
+        }
 
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
         q_matrix_html <-
           datatable(q_matrix_head,
                     options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
 
-        tagList(
-          h4("Q-Matrix Content (First 5 Rows)"),
-          q_matrix_html
-        )
-      } else {
-        h4("Q-Matrix Content is not available.")
+        if (num_rows >= 5) {
+          tagList(
+            h4("Q-Matrix Preview (First 5 Rows)"),
+            q_matrix_html
+          )
+        } else if (num_rows == 0) {
+          tagList(
+            h4("Q-Matrix Preview"),
+            q_matrix_html
+          )
+        } else {
+          h4("Q-Matrix Preview is not available.")
+        }
       }
     })
 

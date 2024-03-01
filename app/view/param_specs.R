@@ -92,6 +92,32 @@ server <- function(id, data) {
       }
     })
 
+    # Save all input values to the data reactiveValues object
+    observe({
+      data$param_specs_data$num_time_points <- input$num_time_points
+      data$param_specs_data$num_attributes <- input$num_attributes
+      data$param_specs_data$attribute_names <- input$attribute_names
+      data$param_specs_data$q_matrix_choice <- input$q_matrix_choice
+
+      # Save other input values based on conditions
+      # Save other input values based on conditions
+      if (input$q_matrix_choice == "No") {
+        data$param_specs_data$num_items <- input$num_items_single_time_point
+      } else {
+        # Check if input$num_items_each_time_point is not empty
+        if (!is.null(input$num_items_each_time_point)
+            && nchar(input$num_items_each_time_point) > 0) {
+          # Split the comma-separated values for each time point
+          num_items_each_time_point <- as.numeric(unlist(strsplit(input$num_items_each_time_point, ","))) # nolint: line_length_linter.
+          data$param_specs_data$num_items <- num_items_each_time_point
+        } else {
+          # Handle case when input$num_items_each_time_point is empty
+          data$param_specs_data$num_items <- NULL  # Or any default value you want to set
+        }
+      }
+
+    })
+
     # Observe changes in inputs and update storage or perform other actions
     observe({
       db_name <- Sys.getenv("DB_NAME")
