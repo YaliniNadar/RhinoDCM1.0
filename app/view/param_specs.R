@@ -76,9 +76,11 @@ server <- function(id, data) {
     # Dynamic UI for conditional input based on Q-Matrix choice
     output$conditional_num_items <- renderUI({
       if (input$q_matrix_choice == "Yes") {
-        textInput(ns("num_items_each_time_point"), "Enter number of items for each time point separated by commas (no spaces): ")
+        textInput(ns("num_items_each_time_point"),
+                  "Enter number of items for each time point separated by commas (no spaces): ")
       } else {
-        numericInput(ns("num_items_single_time_point"), "Enter number of items at a single time point: ", value = 1, min = 1)
+        numericInput(ns("num_items_single_time_point"),
+                     "Enter number of items at a single time point: ", value = 1, min = 1)
       }
     })
 
@@ -121,8 +123,8 @@ server <- function(id, data) {
     # Observe changes in inputs and update storage or perform other actions
     observe({
       db_name <- Sys.getenv("DB_NAME")
-      prefix <- 'app-param_specs-'
-      fields <- c('num_time_points', 'num_attributes', 'attribute_names', 'q_matrix_choice')
+      prefix <- "app-param_specs-"
+      fields <- c("num_time_points", "num_attributes", "attribute_names", "q_matrix_choice")
       # Assume storage$performIndexedDBRead is a function that reads data from IndexedDB
       storage$performIndexedDBRead(db_name, prefix, fields)
     })
@@ -140,7 +142,8 @@ server <- function(id, data) {
 
       # Check if the number of attribute names matches the expected number
       if (num_attributes != input$num_attributes) {
-        return(paste("The number of attribute names must match the expected number of", input$num_attributes))
+        return(paste("The number of attribute names must match the expected number of",
+                     input$num_attributes))
       }
     }
 

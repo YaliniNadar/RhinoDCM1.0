@@ -20,7 +20,7 @@ process_text_to_df <- function(text) {
 
   # Split the text into rows
   rows <- strsplit(text, "\n")[[1]]
-  
+
   # Check if rows is empty
   if (length(rows) == 0) {
     print("Length of rows is 0")
@@ -29,7 +29,7 @@ process_text_to_df <- function(text) {
 
   # Extract column names
   col_names <- unlist(strsplit(rows[1], "\\s+"))
-  
+
   # Check if column names were extracted
   if (length(col_names) == 0) {
     print("No column names extracted")
