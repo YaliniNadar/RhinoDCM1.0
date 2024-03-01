@@ -13,7 +13,9 @@ box::use(
     observe,
     observeEvent,
     renderUI,
-    uiOutput
+    uiOutput,
+    div,
+    actionButton,
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
@@ -30,8 +32,6 @@ ui <- function(id) {
 
   fluidPage(
     h2("Upload IR-Matrix File"),
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
     br(),
 
     # Input: Upload IR-Matrix file
@@ -53,8 +53,11 @@ ui <- function(id) {
     # File preview using DTOutput
     DTOutput(ns("filePreviewIR")),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    div(
+      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      ui_components$back_button(ns("backButton")),
+      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+    )
   )
 }
 
@@ -66,6 +69,23 @@ server <- function(id, data) {
       if (input$separatorType == "") {
         textInput(session$ns("customSeparator"), "Enter Custom Separator:")
       }
+    })
+
+    # Dynamic rendering for the Next button based on file input
+    output$nextButtonUI <- renderUI({
+      ns <- session$ns  # Ensure we have the namespace function available
+
+      if (!is.null(input$fileIR) && input$fileIR$size > 0) {
+        actionButton(ns("nextButton"), "Next", class = "btn-primary")
+      } else {
+        actionButton(ns("nextButton"), "Next", class = "btn-primary disabled", disabled = TRUE)
+      }
+    })
+
+    # Observe the Next button click event
+    observeEvent(input$nextButton, {
+      # Navigate to the q_matrix page
+      shiny.router::change_page("model_specs")
     })
 
     observe({

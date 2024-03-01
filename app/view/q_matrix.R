@@ -12,15 +12,17 @@ box::use(
     observe,
     observeEvent,
     renderUI,
-    uiOutput
+    uiOutput,
+    actionButton,
+    div,
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
 )
 
 box::use(
-  app/view[ui_components, ],
-  app/logic/storage,
+  app / view[ui_components, ],
+  app / logic / storage,
 )
 
 #' @export
@@ -28,9 +30,8 @@ ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
+    shinyjs::useShinyjs(),
     h2("Upload Q-Matrix File"),
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
     br(),
 
 
@@ -53,19 +54,41 @@ ui <- function(id) {
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    div(
+      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      ui_components$back_button(ns("backButton")),
+      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+    )
   )
 }
 
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
+    shinyjs::useShinyjs()
+
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
         textInput(session$ns("customSeparator"), "Enter Custom Separator:")
       }
+    })
+
+    # Dynamic rendering for the Next button based on file input
+    output$nextButtonUI <- renderUI({
+      ns <- session$ns  # Ensure we have the namespace function available
+
+      if (!is.null(input$fileQ) && input$fileQ$size > 0) {
+        actionButton(ns("nextButton"), "Next", class = "btn-primary")
+      } else {
+        actionButton(ns("nextButton"), "Next", class = "btn-primary disabled", disabled = TRUE)
+      }
+    })
+
+    # Observe the Next button click event
+    observeEvent(input$nextButton, {
+      # Navigate to the q_matrix page
+      shiny.router::change_page("ir_matrix")
     })
 
     observe({
@@ -81,8 +104,9 @@ server <- function(id, data) {
           )
         } else {
           data_temp <- fread(file$datapath,
-                             sep = input$separatorType,
-                             header = !input$excludeHeaders)
+            sep = input$separatorType,
+            header = !input$excludeHeaders
+          )
         }
 
         # Exclude ID columns if specified
