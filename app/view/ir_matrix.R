@@ -47,7 +47,7 @@ ui <- function(id) {
     uiOutput(ns("custom_separator_input")),
 
     # Input: Additional options
-    checkboxInput(ns("excludeHeaders"), "Exclude Header Row", value = FALSE),
+    checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
 
     # File preview using DTOutput
@@ -96,14 +96,14 @@ server <- function(id, data) {
         if (separator == "") {
           data_temp <- fread(file$datapath,
             sep = input$customSeparator,
-            header = !input$excludeHeaders,
+            header = input$excludeHeaders,
             check.names = FALSE,
             quote = "",
           )
         } else {
           data_temp <- fread(file$datapath,
                              sep = input$separatorType,
-                             header = !input$excludeHeaders,
+                             header = input$excludeHeaders,
                              quote = "")
         }
         # Exclude ID columns if specified

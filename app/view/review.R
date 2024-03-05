@@ -38,9 +38,6 @@ ui <- function(id) {
     h2("Review"),
     br(),
 
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
-
     # Main content blocks
     fluidRow(
       column(6, wellPanel(
@@ -66,10 +63,8 @@ ui <- function(id) {
     ),
 
     # Navigation buttons
-    fluidRow(
-      column(6, ui_components$back_button(ns("backButton"))),
-      column(6, ui_components$next_button(ns("nextButton")))
-    )
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton"))
   )
 }
 

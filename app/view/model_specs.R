@@ -28,8 +28,6 @@ ui <- function(id) {
 
   fluidPage(
     h2("Model Specifications"),
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
     br(),
     p("The default setting is Invariance = True and full DCM.",
       style = "font-size: 14px; font-weight: bold;"),
