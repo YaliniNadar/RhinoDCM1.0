@@ -16,6 +16,8 @@ box::use(
     tableOutput,
     textOutput,
     plotOutput,
+    dataTableOutput,
+    renderDataTable,
   ],
   shinybusy[
     show_modal_spinner,
@@ -40,7 +42,7 @@ ui <- function(id) {
     actionButton(ns("growth_table"), "Growth Table"),
     actionButton(ns("plot"), "Proficiency Proportion Plots"),
 
-    tableOutput(ns("resultOutput")),
+    dataTableOutput(ns("resultOutput")),
 
     plotOutput(ns("tdcmPlot")),
 
@@ -57,7 +59,9 @@ server <- function(id, data) {
     observeEvent(input$item_params, {
       show_modal_spinner(spin = "fading-circle")
       result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix)
-      output$resultOutput <- renderTable(result)
+      print("inside test page")
+      print(result)
+      output$resultOutput <- renderDataTable(result, options = list(footer = FALSE))
       remove_modal_spinner()
     })
 

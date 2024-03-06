@@ -5,6 +5,8 @@ box::use(
     br,
     h2,
     fileInput,
+    renderText,
+    textOutput,
     radioButtons,
     textInput,
     checkboxInput,
@@ -47,8 +49,11 @@ ui <- function(id) {
     uiOutput(ns("custom_separator_input")),
 
     # Input: Additional options
-    checkboxInput(ns("excludeHeaders"), "Exclude Header Row", value = FALSE),
-    checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
+    checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
+    checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
+
+    # Text output for displaying dimensions
+    textOutput(ns("dataDimensions")),
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewIR")),
@@ -96,13 +101,15 @@ server <- function(id, data) {
         if (separator == "") {
           data_temp <- fread(file$datapath,
             sep = input$customSeparator,
-            header = !input$excludeHeaders,
-            check.names = FALSE
+            header = input$excludeHeaders,
+            check.names = FALSE,
+            quote = "",
           )
         } else {
           data_temp <- fread(file$datapath,
                              sep = input$separatorType,
-                             header = !input$excludeHeaders)
+                             header = input$excludeHeaders,
+                             quote = "")
         }
         # Exclude ID columns if specified
         if (input$excludeIdColumns) {
@@ -124,6 +131,12 @@ server <- function(id, data) {
 
         # Save the modified data to ir_matrix
         data$ir_matrix <<- data_temp
+
+        # Update text output to display dimensions
+        output$dataDimensions <- renderText({
+          paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
+        })
+
       } else {
         # Clear the preview if no file is selected
         output$filePreviewIR <- renderDT(NULL)
