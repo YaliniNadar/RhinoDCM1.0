@@ -16,6 +16,8 @@ box::use(
     uiOutput,
     actionButton,
     div,
+    textOutput,
+    renderText,
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
@@ -50,10 +52,13 @@ ui <- function(id) {
 
     # Input: Additional options
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
-    checkboxInput(ns("excludeIdColumns"), "Exclude ID Columns", value = FALSE),
+    checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
     # Input: Range of numbers for headers exclusion
     textInput(ns("headerColsRange"), "Enter the column(s) to consider as exclude from the dataset. (e.g., 1, 1-3):", value = NULL),
+
+    # Text output for displaying dimensions
+    textOutput(ns("dataDimensions")),
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
@@ -148,11 +153,16 @@ server <- function(id, data) {
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
-          datatable(data_temp, editable = TRUE)
+          datatable(data_temp)
         })
 
         # Save the modified data to q_matrix
         data$q_matrix <<- data_temp
+
+        # Update text output to display dimensions
+        output$dataDimensions <- renderText({
+          paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
+        })
       } else {
         # Clear the preview if no file is selected
         output$filePreviewQ <- renderDT(NULL)
