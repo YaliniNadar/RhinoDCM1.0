@@ -122,7 +122,6 @@ server <- function(id, data) {
         # Display file preview using DT
         output$filePreviewIR <- renderDT({
           datatable(data_temp,
-                    editable = TRUE,
                     options = list(
                       autoWidth = TRUE,
                       scrollX = TRUE

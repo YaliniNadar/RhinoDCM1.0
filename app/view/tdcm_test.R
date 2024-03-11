@@ -22,7 +22,8 @@ box::use(
   shinybusy[
     show_modal_spinner,
     remove_modal_spinner,
-  ]
+  ],
+  DT[DTOutput, renderDT, datatable],
 )
 
 box::use(
@@ -42,7 +43,8 @@ ui <- function(id) {
     actionButton(ns("growth_table"), "Growth Table"),
     actionButton(ns("plot"), "Proficiency Proportion Plots"),
 
-    dataTableOutput(ns("resultOutput")),
+    DTOutput(ns("item_params_output")),
+    DTOutput(ns("growth_output")),
 
     plotOutput(ns("tdcmPlot")),
 
@@ -55,26 +57,32 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
     observeEvent(input$item_params, {
       show_modal_spinner(spin = "fading-circle")
+      attribute_names_vector <- unlist(strsplit(data$param_specs_data$attribute_names, ","))
+
       result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix)
-      print("inside test page")
-      print(result)
-      output$resultOutput <- renderDataTable(result, options = list(footer = FALSE))
+      output$item_params_output <- renderDT({
+        datatable(result,
+                  rownames = rownames(result),
+                  colnames = colnames(result), )
+      }, server = FALSE)
       remove_modal_spinner()
     })
 
     observeEvent(input$growth_table, {
       show_modal_spinner(spin = "fading-circle")
-      result <- tdcm$growth(data$q_matrix, data$ir_matrix)
-      output$resultOutput <- renderTable(result)
+      result <- tdcm$growth(data$q_matrix,
+                            data$ir_matrix)
+      output$growth_output <- renderDT({datatable(result)})
       remove_modal_spinner()
     })
 
     observeEvent(input$plot, {
       show_modal_spinner(spin = "fading-circle")
-      result <- tdcm$visualize(data$q_matrix, data$ir_matrix)
+      result <- tdcm$visualize(data$q_matrix,
+                               data$ir_matrix,
+                              )
       print(result)
       output$tdcmPlot <- renderPlot(result)
       remove_modal_spinner()

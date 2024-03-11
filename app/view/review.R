@@ -142,6 +142,7 @@ server <- function(id, data) {
       if (!is.null(data$q_matrix)) {
         q_matrix_data <- data$q_matrix
         num_rows <- nrow(q_matrix_data)
+        num_cols <- ncol(q_matrix_data)
 
         if (num_rows >= 5) {
           q_matrix_head <- head(q_matrix_data, 5)
@@ -157,11 +158,13 @@ server <- function(id, data) {
         if (num_rows >= 5) {
           tagList(
             h4("Q-Matrix Preview (First 5 Rows)"),
+            h4(paste("Dimensions of Entire Matrix:", num_rows, "x", num_cols)),
             q_matrix_html
           )
-        } else if (num_rows == 0) {
+        } else if (num_rows < 5) {
           tagList(
             h4("Q-Matrix Preview"),
+            h4(paste("Dimensions of Entire Matrix:", num_rows, "x", num_cols)),
             q_matrix_html
           )
         } else {
@@ -172,20 +175,36 @@ server <- function(id, data) {
 
     output$ir_matrix <- renderUI({
       if (!is.null(data$ir_matrix)) {
-        # Extract the first 5 rows of the Q-Matrix data frame
-        ir_matrix_head <- head(data$ir_matrix, 5)
+        ir_matrix_data <- data$ir_matrix
+        num_rows <- nrow(ir_matrix_data)
+        num_cols <- ncol(ir_matrix_data)
+
+        if (num_rows >= 5) {
+          ir_matrix_head <- head(ir_matrix_data, 5)
+        } else {
+          ir_matrix_head <- ir_matrix_data
+        }
 
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
         ir_matrix_html <-
           datatable(ir_matrix_head,
                     options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
 
-        tagList(
-          h4("IR-Matrix Content (First 5 Rows)"),
-          ir_matrix_html
-        )
-      } else {
-        h4("IR-Matrix Content is not available.")
+        if (num_rows >= 5) {
+          tagList(
+            h4("IR-Matrix Preview (First 5 Rows)"),
+            h4(paste("Dimensions of Entire Matrix:", num_rows, "x", num_cols)),
+            ir_matrix_html
+          )
+        } else if (num_rows < 5) {
+          tagList(
+            h4("IR-Matrix Preview"),
+            h4(paste("Dimensions of Entire Matrix:", num_rows, "x", num_cols)),
+            ir_matrix_html
+          )
+        } else {
+          h4("IR-Matrix Preview is not available.")
+        }
       }
     }
 
