@@ -52,6 +52,21 @@
       ],
       "Hash": "77b5189f5272ae2b21e3ac2175ad107c"
     },
+    "MASS": {
+      "Package": "MASS",
+      "Version": "7.3-60",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "grDevices",
+        "graphics",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "a56a6365b3fa73293ea8d084be0d9bb0"
+    },
     "Matrix": {
       "Package": "Matrix",
       "Version": "1.6-1.1",
@@ -219,6 +234,16 @@
         "Rcpp"
       ],
       "Hash": "74a64813f17b492da9c6afda6b128e3d"
+    },
+    "askpass": {
+      "Package": "askpass",
+      "Version": "1.2.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "sys"
+      ],
+      "Hash": "cad6cf7f1d5f6e906700b9d3e718c796"
     },
     "backports": {
       "Package": "backports",
@@ -440,6 +465,16 @@
       ],
       "Hash": "ab12c7b080a57475248a30f4db6298c0"
     },
+    "curl": {
+      "Package": "curl",
+      "Version": "5.2.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R"
+      ],
+      "Hash": "411ca2c03b1ce5f548345d2fc2685f7a"
+    },
     "cyclocomp": {
       "Package": "cyclocomp",
       "Version": "1.1.1",
@@ -631,6 +666,31 @@
       ],
       "Hash": "15e9634c0fcd294799e9b2e929ed1b86"
     },
+    "ggplot2": {
+      "Package": "ggplot2",
+      "Version": "3.5.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "MASS",
+        "R",
+        "cli",
+        "glue",
+        "grDevices",
+        "grid",
+        "gtable",
+        "isoband",
+        "lifecycle",
+        "mgcv",
+        "rlang",
+        "scales",
+        "stats",
+        "tibble",
+        "vctrs",
+        "withr"
+      ],
+      "Hash": "52ef83f93f74833007f193b2d4c159a2"
+    },
     "glue": {
       "Package": "glue",
       "Version": "1.6.2",
@@ -641,6 +701,21 @@
         "methods"
       ],
       "Hash": "4f2596dfb05dac67b9dc558e5c6fba2e"
+    },
+    "gtable": {
+      "Package": "gtable",
+      "Version": "0.3.4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "cli",
+        "glue",
+        "grid",
+        "lifecycle",
+        "rlang"
+      ],
+      "Hash": "b29cf3031f49b04ab9c852c912547eef"
     },
     "gtools": {
       "Package": "gtools",
@@ -711,6 +786,32 @@
         "utils"
       ],
       "Hash": "c992f75861325961c29a188b45e549f7"
+    },
+    "httr": {
+      "Package": "httr",
+      "Version": "1.4.7",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "R6",
+        "curl",
+        "jsonlite",
+        "mime",
+        "openssl"
+      ],
+      "Hash": "ac107251d9d9fd72f0ca8049988f1d7f"
+    },
+    "isoband": {
+      "Package": "isoband",
+      "Version": "0.2.7",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "grid",
+        "utils"
+      ],
+      "Hash": "0080607b4a1a7b28979aecef976d8bc2"
     },
     "jquerylib": {
       "Package": "jquerylib",
@@ -860,6 +961,23 @@
       ],
       "Hash": "e2817ccf4a065c5d9d7f2cfbe7c1d78c"
     },
+    "mgcv": {
+      "Package": "mgcv",
+      "Version": "1.9-0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "Matrix",
+        "R",
+        "graphics",
+        "methods",
+        "nlme",
+        "splines",
+        "stats",
+        "utils"
+      ],
+      "Hash": "086028ca0460d0c368028d3bda58f31b"
+    },
     "mime": {
       "Package": "mime",
       "Version": "0.12",
@@ -891,6 +1009,30 @@
         "stats"
       ],
       "Hash": "17e96668f44a28aef0981d9e17c49b59"
+    },
+    "nlme": {
+      "Package": "nlme",
+      "Version": "3.1-163",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "graphics",
+        "lattice",
+        "stats",
+        "utils"
+      ],
+      "Hash": "8d1938040a05566f4f7a14af4feadd6b"
+    },
+    "openssl": {
+      "Package": "openssl",
+      "Version": "2.1.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "askpass"
+      ],
+      "Hash": "2a0dc8c6adfb6f032e4d4af82d258ab5"
     },
     "pillar": {
       "Package": "pillar",
@@ -957,6 +1099,38 @@
         "withr"
       ],
       "Hash": "903d68319ae9923fb2e2ee7fa8230b91"
+    },
+    "plotly": {
+      "Package": "plotly",
+      "Version": "4.10.4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "RColorBrewer",
+        "base64enc",
+        "crosstalk",
+        "data.table",
+        "digest",
+        "dplyr",
+        "ggplot2",
+        "htmltools",
+        "htmlwidgets",
+        "httr",
+        "jsonlite",
+        "lazyeval",
+        "magrittr",
+        "promises",
+        "purrr",
+        "rlang",
+        "scales",
+        "tibble",
+        "tidyr",
+        "tools",
+        "vctrs",
+        "viridisLite"
+      ],
+      "Hash": "a1ac5c03ad5ad12b9d1597e00e23c3dd"
     },
     "polycor": {
       "Package": "polycor",
@@ -1436,6 +1610,13 @@
         "withr"
       ],
       "Hash": "d61238fd44fc63c8adf4565efe8eb682"
+    },
+    "sys": {
+      "Package": "sys",
+      "Version": "3.4.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "3a1be13d68d47a8cd0bfd74739ca1555"
     },
     "testthat": {
       "Package": "testthat",
