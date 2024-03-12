@@ -14,23 +14,18 @@ box::use(
   ]
 )
 
-fit_model <- function(data, q_matrix, num_time_points) {
-  model <- tdcm(data, q_matrix, num.time.points = 2)
-  return(model)
-}
-
-fit_and_summarize <- memoise(function(q_matrix, ir_matrix) {
+fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-    results <- tdcm.summary(model, num.time.points = 2)
+    model <- tdcm(ir_matrix, q_matrix, num.time.points = time_pts)
+    results <- tdcm.summary(model, num.time.points = time_pts)
     return(results)
   }
 })
 
 #' @export
-item_parameters <- function(q_matrix, ir_matrix) {
+item_parameters <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
     item_parameters <- results$item.parameters
 
     # Debugging output
@@ -46,9 +41,9 @@ item_parameters <- function(q_matrix, ir_matrix) {
 }
 
 #' @export
-growth <- function(q_matrix, ir_matrix) {
+growth <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix = 2)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
     growth <- results$growth
     print(growth)
     return(growth)
@@ -56,10 +51,17 @@ growth <- function(q_matrix, ir_matrix) {
 }
 
 #' @export
-visualize <- function(q_matrix, ir_matrix) {
+visualize <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
     plot <- tdcm.plot(results)
     return(plot)
   }
+}
+
+#' @export
+trans_prob <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  probs <- results$transition.probabilities
+  return(probs)
 }
