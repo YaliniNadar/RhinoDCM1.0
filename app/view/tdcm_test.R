@@ -18,6 +18,8 @@ box::use(
     plotOutput,
     dataTableOutput,
     renderDataTable,
+    renderUI,
+    uiOutput
   ],
   shinybusy[
     show_modal_spinner,
@@ -42,9 +44,12 @@ ui <- function(id) {
     actionButton(ns("item_params"), "Item Parameters Table"),
     actionButton(ns("growth_table"), "Growth Table"),
     actionButton(ns("plot"), "Proficiency Proportion Plots"),
+    actionButton(ns("trans_prob"), "Transition Probabilities"),
 
     DTOutput(ns("item_params_output")),
+    # dataTableOutput(ns("item_params_output")),
     DTOutput(ns("growth_output")),
+    uiOutput(ns("trans_prob_output")),
 
     plotOutput(ns("tdcmPlot")),
 
@@ -67,6 +72,7 @@ server <- function(id, data) {
                   rownames = rownames(result),
                   colnames = colnames(result), )
       }, server = FALSE)
+      # output$item_params_output <- renderDataTable(result)
       remove_modal_spinner()
     })
 
@@ -74,7 +80,13 @@ server <- function(id, data) {
       show_modal_spinner(spin = "fading-circle")
       result <- tdcm$growth(data$q_matrix,
                             data$ir_matrix)
-      output$growth_output <- renderDT({datatable(result)})
+      output$growth_output <- renderDT({
+        datatable(
+          result,
+          caption = "Growth Table",
+          options = list(scrollX = TRUE)
+        )
+      })
       remove_modal_spinner()
     })
 
@@ -87,6 +99,32 @@ server <- function(id, data) {
       output$tdcmPlot <- renderPlot(result)
       remove_modal_spinner()
     })
+
+    observeEvent(input$trans_prob, {
+      show_modal_spinner(spin = "fading-circle")
+      result <- tdcm$trans_prob(data$q_matrix,
+                                data$ir_matrix)
+
+      output$trans_prob_output <- renderUI({
+        # Create an empty list to store DT::renderDataTable objects
+        table_list <- vector("list", dim(result)[3])
+
+        # Iterate through each matrix and create a renderDataTable object
+        for (i in 1:dim(result)[3]) {
+          table_list[[i]] <- renderDT({
+            datatable(result[,,i],
+                      options = list(scrollX = TRUE),
+                      caption = paste("Matrix", i, ": Time 1 to Time 2"))
+          })
+        }
+
+        # Return the list of renderDataTable objects
+        table_list
+      })
+
+      remove_modal_spinner()
+    })
+
 
     ui_components$nb_server("nextButton", "/")
   })

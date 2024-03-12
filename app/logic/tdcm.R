@@ -14,14 +14,9 @@ box::use(
   ]
 )
 
-fit_model <- function(data, q_matrix, num_time_points) {
-  model <- tdcm(data, q_matrix, num.time.points = 2)
-  return(model)
-}
-
 fit_and_summarize <- memoise(function(q_matrix, ir_matrix) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
+    model <- tdcm(ir_matrix, q_matrix, num.time.points = 2)
     results <- tdcm.summary(model, num.time.points = 2)
     return(results)
   }
@@ -48,7 +43,7 @@ item_parameters <- function(q_matrix, ir_matrix) {
 #' @export
 growth <- function(q_matrix, ir_matrix) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix = 2)
+    results <- fit_and_summarize(q_matrix, ir_matrix)
     growth <- results$growth
     print(growth)
     return(growth)
@@ -62,4 +57,11 @@ visualize <- function(q_matrix, ir_matrix) {
     plot <- tdcm.plot(results)
     return(plot)
   }
+}
+
+#' @export
+trans_prob <- function(q_matrix, ir_matrix) {
+  results <- fit_and_summarize(q_matrix, ir_matrix)
+  probs <- results$transition.probabilities
+  return(probs)
 }
