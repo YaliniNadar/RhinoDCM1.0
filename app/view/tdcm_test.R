@@ -19,7 +19,8 @@ box::use(
     dataTableOutput,
     renderDataTable,
     renderUI,
-    uiOutput
+    uiOutput,
+    tagList,
   ],
   shinybusy[
     show_modal_spinner,
@@ -65,8 +66,9 @@ server <- function(id, data) {
     observeEvent(input$item_params, {
       show_modal_spinner(spin = "fading-circle")
       attribute_names_vector <- unlist(strsplit(data$param_specs_data$attribute_names, ","))
+      time_pts <- data$param_specs_data$num_time_points
 
-      result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix)
+      result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix, time_pts)
       output$item_params_output <- renderDT({
         datatable(result,
                   rownames = rownames(result),
@@ -78,8 +80,10 @@ server <- function(id, data) {
 
     observeEvent(input$growth_table, {
       show_modal_spinner(spin = "fading-circle")
+      time_pts <- data$param_specs_data$num_time_points
       result <- tdcm$growth(data$q_matrix,
-                            data$ir_matrix)
+                            data$ir_matrix,
+                            time_pts)
       output$growth_output <- renderDT({
         datatable(
           result,
@@ -92,9 +96,8 @@ server <- function(id, data) {
 
     observeEvent(input$plot, {
       show_modal_spinner(spin = "fading-circle")
-      result <- tdcm$visualize(data$q_matrix,
-                               data$ir_matrix,
-                              )
+      time_pts <- data$param_specs_data$num_time_points
+      result <- tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts)
       print(result)
       output$tdcmPlot <- renderPlot(result)
       remove_modal_spinner()
@@ -102,24 +105,20 @@ server <- function(id, data) {
 
     observeEvent(input$trans_prob, {
       show_modal_spinner(spin = "fading-circle")
-      result <- tdcm$trans_prob(data$q_matrix,
-                                data$ir_matrix)
+      time_pts <- data$param_specs_data$num_time_points
+      result <- tdcm$trans_prob(data$q_matrix, data$ir_matrix, time_pts)
+      print(result)
 
       output$trans_prob_output <- renderUI({
-        # Create an empty list to store DT::renderDataTable objects
-        table_list <- vector("list", dim(result)[3])
-
-        # Iterate through each matrix and create a renderDataTable object
-        for (i in 1:dim(result)[3]) {
-          table_list[[i]] <- renderDT({
+        table_list <- lapply(1:dim(result)[3], function(i) {
+          attribute_title <- dimnames(result)[[3]][i] 
+          renderDT({
             datatable(result[,,i],
                       options = list(scrollX = TRUE),
-                      caption = paste("Matrix", i, ": Time 1 to Time 2"))
+                      caption = attribute_title)
           })
-        }
-
-        # Return the list of renderDataTable objects
-        table_list
+        })
+        tagList(table_list)
       })
 
       remove_modal_spinner()
