@@ -65,6 +65,10 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    observeEvent(input$num_attributes, {
+      data$numAttributes <- input$num_attributes
+    })
+
     # Initialize the input validator
     iv <- InputValidator$new()
     iv$add_rule(ns("num_time_points"), sv_required())

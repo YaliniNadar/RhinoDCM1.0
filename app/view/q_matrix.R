@@ -151,6 +151,25 @@ server <- function(id, data) {
           }
         }
 
+        observeEvent(input$fileQ, {
+          # Code to read and process the Q matrix file...
+          num_cols_in_q_matrix <- ncol(data_temp)
+
+          # Use data$numAttributes, which should be set by param_specs.R
+          num_attributes <- data$numAttributes
+
+          # Implementing the check
+          if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
+            # Providing feedback to the user
+            shiny::showNotification("The number of attributes does not match the number of columns in the Q matrix. Please ensure they are equal.", type = "error")
+            #disable button
+            actionButton(session$ns("nextButton"), "Next", class = "btn-primary disabled", disabled = TRUE)
+          } else {
+            # Proceed with saving the Q matrix data to the application's state if the numbers match
+            data$q_matrix <<- data_temp
+          }
+        })
+
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
           datatable(data_temp)
