@@ -16,7 +16,8 @@ box::use(
     str_squish
   ],
   data.table[
-    as.data.table
+    as.data.table,
+    data.table
   ]
 )
 
@@ -27,6 +28,24 @@ fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts) {
     return(results)
   }
 })
+
+#' @export
+convert_to_datatable <- function(data) {
+  return(as.data.table(data, keep.rownames = TRUE))
+}
+
+#' @export
+get_misc_datatable <- function(result) {
+  # Create a data.table containing specific elements
+  misc_data <- data.table(
+    Name = c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"),
+    Value =  sapply(c("Mean.Item.RMSEA",
+                      "loglike", "deviance",
+                      "AIC", "BIC", "CAIC",
+                      "Npars"), function(name) result[[name]])
+  )
+  return(misc_data)
+}
 
 item_parameters_as_data_table <- function(item_parameters) {
 
@@ -77,7 +96,6 @@ growth <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
     results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
     growth <- results$growth
-    print(growth)
     return(growth)
   }
 }
@@ -146,4 +164,18 @@ model_fit <- function(q_matrix, ir_matrix, time_pts) {
   results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
   model_fit <- results$model.fit
   return(model_fit)
+}
+
+#' @export
+att_corr <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  att_corr <- results$att.corr
+  return(att_corr)
+}
+
+#' @export
+reliability <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  rel <- convert_to_datatable(results$reliability)
+  return(rel)
 }
