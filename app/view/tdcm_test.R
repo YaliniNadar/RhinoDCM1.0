@@ -28,6 +28,9 @@ box::use(
     remove_modal_spinner,
   ],
   DT[DTOutput, renderDT, datatable],
+  datasets[
+    mtcars
+  ]
 )
 
 box::use(
@@ -52,11 +55,12 @@ ui <- function(id) {
     actionButton(ns("trans_pos"), "Transition Position"),
     actionButton(ns("model_fit"), "Model Fit"),
     actionButton(ns("att_corr"), "Attribute Correlation Matrix"),
-    actionButton(ns("rel"), "Reliability*"),
+    actionButton(ns("rel"), "Reliability"),
 
     DTOutput(ns("item_params_output")),
     DTOutput(ns("growth_output")),
-    plotOutput(ns("tdcmPlot")),
+    # plotOutput(ns("tdcmPlot")),
+    plotOutput(ns("plot_output"), click = "plot_click"),
 
     uiOutput(ns("trans_prob_output")),
 
@@ -107,6 +111,14 @@ server <- function(id, data) {
           options = list(scrollX = TRUE)
         )
       })
+      remove_modal_spinner()
+    })
+
+    observeEvent(input$plot, {
+      show_modal_spinner(spin = "fading-circle")
+      output$plot_output <- renderPlot({
+        plot(mtcars$wt, mtcars$mpg)
+      }, res = 96)
       remove_modal_spinner()
     })
 
