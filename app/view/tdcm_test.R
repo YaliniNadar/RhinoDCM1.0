@@ -2,6 +2,8 @@ box::use(
   shiny[
     NS,
     fluidPage,
+    tabsetPanel,
+    tabPanel,
     br,
     h2,
     h4,
@@ -26,6 +28,11 @@ box::use(
     remove_modal_spinner,
   ],
   DT[DTOutput, renderDT, datatable],
+  data.table[
+    data.table,
+    as.data.table
+  ]
+
 )
 
 box::use(
@@ -46,7 +53,7 @@ ui <- function(id) {
     actionButton(ns("plot"), "Proficiency Proportion Plots *"),
     actionButton(ns("trans_prob"), "Transition Probabilities"),
     actionButton(ns("attr_class"), "Attribute Classification"),
-    actionButton(ns("most_likely_trans"), "Most Likely Transitions *"),
+    actionButton(ns("most_likely_trans"), "Most Likely Transitions"),
     actionButton(ns("trans_pos"), "Transition Position"),
     actionButton(ns("model_fit"), "Model Fit"),
 
@@ -186,23 +193,66 @@ server <- function(id, data) {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
       result <- tdcm$model_fit(data$q_matrix, data$ir_matrix, time_pts)
-      print(result)
 
-      # output$model_fit_output <- renderUI({
-      #   table_list <- lapply(1:dim(result)[12], function(i) {
-      #     attribute_title <- dimnames(result)[[12]][i]
-      #     renderDT({
-      #       datatable(result[, , i],
-      #                 options = list(scrollX = TRUE),
-      #                 caption = attribute_title)
-      #     })
-      #   })
-      #   tagList(table_list)
-      # })
+      # Create a data.table containing specific elements
+      misc_data <- data.table(
+        Name = c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"),
+        Value =  sapply(c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"), function(name) result[[name]])
+      )
+
+      output$model_fit_output <- renderUI({
+        tagList(
+          tabsetPanel(
+            tabPanel("Global Fit Stats", DTOutput(ns("global_fit_stats"))),
+            tabPanel("Item Pairs", DTOutput(ns("item_pairs"))),
+            tabPanel("Global Fit Tests", DTOutput(ns("global_fit_tests"))),
+            tabPanel("Global Fit Stats 2", DTOutput(ns("global_fit_stats2"))),
+            tabPanel("Item RMSEA", DTOutput(ns("item_rmsea"))),
+            tabPanel("Misc", DTOutput(ns("misc_table"))),
+            # Add more tabPanels for other elements as needed
+          )
+        )
+      })
+
+      # Render Global Fit Stats data frame
+      output$global_fit_stats <- renderDT({
+        datatable(result$Global.Fit.Stats,
+                  options = list(scrollX = TRUE))
+      })
+
+      # Render Item Pairs data frame
+      output$item_pairs <- renderDT({
+        datatable(result$Item.Pairs,
+                  options = list(scrollX = TRUE))
+      })
+
+      # Render Gloabl Fit Tests data frame
+      output$global_fit_tests <- renderDT({
+        datatable(result$Global.Fit.Tests,
+                  options = list(scrollX = TRUE))
+      })
+
+      # Render Global Fit Stats data frame
+      output$global_fit_stats2 <- renderDT({
+        datatable(result$Global.Fit.Stats2,
+                  options = list(scrollX = TRUE))
+      })
+
+      # Render Item RMSEA table
+      output$item_rmsea <- renderDT({
+        item_rmsea_dt <- as.data.table(result$Item.RMSEA, keep.rownames = TRUE)
+        datatable(item_rmsea_dt,
+                  options = list(scrollX = TRUE))
+      })
+
+      # Render Misc data table
+      output$misc_table <- renderDT({
+        datatable(misc_data,
+                  options = list(scrollX = TRUE))
+      })
 
       remove_modal_spinner()
     })
-
 
 
     ui_components$nb_server("nextButton", "/")
