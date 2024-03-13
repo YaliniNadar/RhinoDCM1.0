@@ -105,10 +105,32 @@ att_class <- function(q_matrix, ir_matrix, time_pts) {
   return(classifications)
 }
 
+convert_to_char_data_table <- function(new_data_frame) {
+  new_data_frame_nrow <- nrow(new_data_frame)
+  new_data_frame_ncol <- ncol(new_data_frame)
+
+  new_data_frame_rownames <- rownames(new_data_frame)
+  new_data_frame_colnames <- colnames(new_data_frame)
+
+  new_data_frame_matrix <- matrix(
+    data = as.matrix(new_data_frame),
+    nrow = new_data_frame_nrow,
+    ncol = new_data_frame_ncol,
+    dimnames = list(new_data_frame_rownames, new_data_frame_colnames)
+  )
+
+  new_data_frame_data_table <- as.data.table(
+    new_data_frame_matrix,
+    keep.rownames = TRUE
+  )
+
+  return(new_data_frame_data_table)
+}
+
 #' @export
 most_likely_trans <- function(q_matrix, ir_matrix, time_pts) {
   results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
-  most_likely_trans <- results$most.likely.transitions
+  most_likely_trans <- convert_to_char_data_table(results$most.likely.transitions)
   return(most_likely_trans)
 }
 

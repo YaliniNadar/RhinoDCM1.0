@@ -94,7 +94,6 @@ server <- function(id, data) {
         "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
         "Is there a different Q-Matrix for each time point:",
         ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
-        q_matrix_choice_message,
         if (q_matrix_choice_message == "No") {
           paste("Number of items at a single time point:",
                 ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
