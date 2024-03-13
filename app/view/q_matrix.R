@@ -54,9 +54,6 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
-    # Input: Range of numbers for headers exclusion
-    textInput(ns("headerColsRange"), "Enter the column(s) to consider as exclude from the dataset. (e.g., 1, 1-3):", value = NULL),
-
     # Text output for displaying dimensions
     textOutput(ns("dataDimensions")),
 
@@ -126,29 +123,6 @@ server <- function(id, data) {
           id_columns <- 1
           # Remove ID columns from the DataTable
           data_temp <- data_temp[, -id_columns, with = FALSE]
-        }
-
-        # Exclude header rows if specified
-        if (!is.null(input$headerColsRange) && input$headerColsRange != "") {
-          # Check if the input is a single number or a range
-          if (grepl("^\\d+$", input$headerColsRange)) {
-            # If it's a single number
-            col_to_exclude <- as.numeric(input$headerColsRange)
-            print(col_to_exclude)
-            data_temp <- data_temp[, -col_to_exclude, with = FALSE]
-          } else if (grepl("^\\d+-\\d+$", input$headerColsRange)) {
-            # If it's a range
-            cols_to_exclude <- as.numeric(unlist(strsplit(input$headerColsRange, "-")))
-            print(cols_to_exclude[1])
-            print(cols_to_exclude[2])
-            cols_to_exclude <- cols_to_exclude[1]:cols_to_exclude[2]
-            print(cols_to_exclude)
-            data_temp <- data_temp[, -cols_to_exclude, drop = FALSE]
-          } else {
-            # If it's neither a single number nor a range, handle the invalid input accordingly
-            # For example, display a message to the user or take appropriate action
-            # You may also choose to ignore the input in this case
-          }
         }
 
         # Display file preview using DT
