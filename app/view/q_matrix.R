@@ -54,9 +54,6 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
-    # Input: Range of numbers for headers exclusion
-    textInput(ns("headerColsRange"), "Enter the column(s) to consider as exclude from the dataset. (e.g., 1, 1-3):", value = NULL),
-
     # Text output for displaying dimensions
     textOutput(ns("dataDimensions")),
 

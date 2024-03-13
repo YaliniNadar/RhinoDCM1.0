@@ -28,11 +28,6 @@ box::use(
     remove_modal_spinner,
   ],
   DT[DTOutput, renderDT, datatable],
-  data.table[
-    data.table,
-    as.data.table
-  ]
-
 )
 
 box::use(
@@ -56,6 +51,8 @@ ui <- function(id) {
     actionButton(ns("most_likely_trans"), "Most Likely Transitions"),
     actionButton(ns("trans_pos"), "Transition Position"),
     actionButton(ns("model_fit"), "Model Fit"),
+    actionButton(ns("att_corr"), "Attribute Correlation Matrix"),
+    actionButton(ns("rel"), "Reliability*"),
 
     DTOutput(ns("item_params_output")),
     DTOutput(ns("growth_output")),
@@ -68,6 +65,8 @@ ui <- function(id) {
     DTOutput(ns("trans_pos_output")),
 
     uiOutput(ns("model_fit_output")),
+    DTOutput(ns("att_corr_output")),
+    DTOutput(ns("rel_output")),
 
 
 
@@ -124,7 +123,6 @@ server <- function(id, data) {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
       result <- tdcm$trans_prob(data$q_matrix, data$ir_matrix, time_pts)
-      print(result)
 
       output$trans_prob_output <- renderUI({
         table_list <- lapply(1:dim(result)[3], function(i) {
@@ -195,10 +193,7 @@ server <- function(id, data) {
       result <- tdcm$model_fit(data$q_matrix, data$ir_matrix, time_pts)
 
       # Create a data.table containing specific elements
-      misc_data <- data.table(
-        Name = c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"),
-        Value =  sapply(c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"), function(name) result[[name]])
-      )
+      misc_data <- tdcm$get_misc_datatable(result)
 
       output$model_fit_output <- renderUI({
         tagList(
@@ -240,7 +235,7 @@ server <- function(id, data) {
 
       # Render Item RMSEA table
       output$item_rmsea <- renderDT({
-        item_rmsea_dt <- as.data.table(result$Item.RMSEA, keep.rownames = TRUE)
+        item_rmsea_dt <- tdcm$convert_to_datatable(result$Item.RMSEA)
         datatable(item_rmsea_dt,
                   options = list(scrollX = TRUE))
       })
@@ -251,6 +246,38 @@ server <- function(id, data) {
                   options = list(scrollX = TRUE))
       })
 
+      remove_modal_spinner()
+    })
+
+    observeEvent(input$att_corr, {
+      show_modal_spinner(spin = "fading-circle")
+      time_pts <- data$param_specs_data$num_time_points
+      result <- tdcm$att_corr(data$q_matrix,
+                              data$ir_matrix,
+                              time_pts)
+      output$att_corr_output <- renderDT({
+        datatable(
+          result,
+          caption = "Attribute Correlation",
+          options = list(scrollX = TRUE)
+        )
+      })
+      remove_modal_spinner()
+    })
+
+    observeEvent(input$rel, {
+      show_modal_spinner(spin = "fading-circle")
+      time_pts <- data$param_specs_data$num_time_points
+      result <- tdcm$reliability(data$q_matrix,
+                                 data$ir_matrix,
+                                 time_pts)
+      output$rel_output <- renderDT({
+        datatable(
+          result,
+          caption = "Reliability",
+          options = list(scrollX = TRUE)
+        )
+      })
       remove_modal_spinner()
     })
 
