@@ -17,7 +17,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
+  app / view[ui_components],
 )
 
 #' @export
@@ -27,7 +27,6 @@ ui <- function(id) {
   fluidPage(
     h2("Review"),
     br(),
-
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
 
@@ -107,11 +106,12 @@ server <- function(id, data) {
     output$ir_matrix <- renderText("IR Matrix content will be displayed here.")
     output$model_specs <- renderText({
       paste("Invariance: Yes",
-            "DCM to estimate: Different on each item",
-            "Item 1: full DCM",
-            "Item 2: TDCM2",
-            "Item 3: TDCM1",
-            sep = "\n")
+        "DCM to estimate: Different on each item",
+        "Item 1: full DCM",
+        "Item 2: TDCM2",
+        "Item 3: TDCM1",
+        sep = "\n"
+      )
     })
 
     ui_components$nb_server("nextButton", "tdcm_test")
