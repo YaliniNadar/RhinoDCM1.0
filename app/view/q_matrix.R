@@ -55,7 +55,8 @@ ui <- function(id) {
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
     # Input: Range of numbers for headers exclusion
-    textInput(ns("headerColsRange"), "Enter the column(s) to consider as exclude from the dataset. (e.g., 1, 1-3):", value = NULL),
+    textInput(ns("headerColsRange"), "Enter the column(s) to consider as exclude from the dataset. 
+    (e.g., 1, 1-3):", value = NULL),
 
     # Text output for displaying dimensions
     textOutput(ns("dataDimensions")),
@@ -159,14 +160,16 @@ server <- function(id, data) {
           # Implementing the check
           if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
             # Providing feedback to the user
-            shiny::showNotification("The number of attributes does not match the number of columns in the Q matrix. Please ensure they are equal.", type = "error")
+            shiny::showNotification("The number of attributes does not match the number of columns 
+            in the Q matrix. Please ensure they are equal.", type = "error")
             # Disable button
             output$nextButtonUI <- renderUI({
-            actionButton(session$ns("nextButton"), "Next", class = "btn-primary disabled", disabled = TRUE)
+              actionButton(session$ns("nextButton"), "Next", class = "btn-primary disabled", 
+                           disabled = TRUE)
             })
           } else {
             output$nextButtonUI <- renderUI({
-            actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
+              actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
             })
             # Proceed with saving the Q matrix data to the application's state if the numbers match
             data$q_matrix <<- data_temp
