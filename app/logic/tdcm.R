@@ -83,6 +83,20 @@ item_parameters_as_data_table <- function(item_parameters) {
 }
 
 #' @export
+get_attribute_names <- function(q_matrix) {
+  # Check if the data frame has column names
+  has_headers <- !all(names(q_matrix) == "")
+
+  if (has_headers) {
+    print("The DataTable has headers.")
+    headers <- names(q_matrix)
+    return(headers)
+  } else {
+    print("The DataTable does not have headers.")
+  }
+}
+
+#' @export
 item_parameters <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
     results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
