@@ -28,7 +28,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
+  app / view[ui_components],
 )
 
 #' @export
@@ -38,7 +38,7 @@ ui <- function(id) {
   fluidPage(
     h2("Review"),
     br(),
-
+    br(),
     # Main content blocks
     fluidRow(
       column(6, wellPanel(
@@ -157,7 +157,8 @@ server <- function(id, data) {
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
         q_matrix_html <-
           datatable(q_matrix_head,
-                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
+            options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE)
+          )
 
         if (num_rows >= 5) {
           tagList(
@@ -192,7 +193,8 @@ server <- function(id, data) {
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
         ir_matrix_html <-
           datatable(ir_matrix_head,
-                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
+            options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE)
+          )
 
         if (num_rows >= 5) {
           tagList(
