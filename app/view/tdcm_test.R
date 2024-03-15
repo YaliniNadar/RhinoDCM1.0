@@ -22,14 +22,23 @@ box::use(
     renderUI,
     uiOutput,
     tagList,
+    downloadButton,
+    downloadHandler
   ],
   shinybusy[
     show_modal_spinner,
     remove_modal_spinner,
   ],
-  DT[DTOutput, renderDT, datatable],
+  DT[
+    DTOutput,
+    renderDT,
+    datatable
+  ],
   datasets[
     mtcars
+  ],
+  utils[
+    write.csv
   ]
 )
 
@@ -58,6 +67,8 @@ ui <- function(id) {
     actionButton(ns("rel"), "Reliability"),
 
     DTOutput(ns("item_params_output")),
+    uiOutput(ns("item_params_down_wrapper")),
+
     DTOutput(ns("growth_output")),
     # plotOutput(ns("tdcmPlot")),
     plotOutput(ns("plot_output"), click = "plot_click"),
@@ -71,8 +82,6 @@ ui <- function(id) {
     uiOutput(ns("model_fit_output")),
     DTOutput(ns("att_corr_output")),
     DTOutput(ns("rel_output")),
-
-
 
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
@@ -95,6 +104,23 @@ server <- function(id, data) {
                   rownames = rownames(result),
                   colnames = colnames(result), )
       }, server = FALSE)
+
+      output$item_params_down_wrapper <- renderUI({
+        downloadButton(ns("item_params_download"), "Download")
+      })
+
+
+      # Add download button
+      output$item_params_download <- downloadHandler(
+        filename = function() {
+          paste("item_parameters.csv", sep = "")
+        },
+        content = function(file) {
+          write.csv(result, file)
+        }
+      )
+
+
       remove_modal_spinner()
     })
 
@@ -137,7 +163,7 @@ server <- function(id, data) {
       result <- tdcm$trans_prob(data$q_matrix, data$ir_matrix, time_pts)
 
       output$trans_prob_output <- renderUI({
-        table_list <- lapply(1:dim(result)[3], function(i) {
+        table_list <- lapply(1:dim(result)[3], function(i) { # nolint: seq_linter.
           attribute_title <- dimnames(result)[[3]][i]
           renderDT({
             datatable(result[, , i],
