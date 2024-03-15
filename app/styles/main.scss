@@ -18,7 +18,7 @@ p {
 
 .h1,
 h1 {
-    font-size: 50px;
+    font-size: 60px;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
 }
@@ -239,4 +239,34 @@ table.dataTable {
     background-color: rgb(80, 80, 80);
     color: #ffc400;
     padding: 4px;
+}
+
+.btn-default {
+    color: #333;
+    background-color: #ffc400;
+    border-color: #9f7a00;
+}
+
+.form-control {
+    font-size: 15px;
+}
+
+.progress-bar {
+    float: left;
+    width: 0%;
+    height: 100%;
+    font-size: 12px;
+    line-height: 20px;
+    color: #fff;
+    text-align: center;
+    background-color: #9f7a00;
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
+    transition: width .6s ease;
+}
+
+.dataTables_paginate {
+    background-color: #ffffff;
 }

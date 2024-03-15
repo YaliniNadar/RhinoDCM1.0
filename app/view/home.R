@@ -19,42 +19,41 @@ box::use(
 )
 
 box::use(
-  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
+  app / view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
 )
 
 #' @export
 ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    mainPanel(
-      h1("TDCM", align = "left"),
-      p("TDCM provides a user-friendly
+    h1("TDCM", align = "center"),
+    br(),
+    p("TDCM provides a user-friendly
         interface to help you gain valuable
-        insights from your test data"),
-      br(),
+        insights from your test data", align = "center"),
+    br(),
+    mainPanel(
       fluidRow(
         column(
           6,
-          p("Choose this option if you have only
+          p("Choose Single Group if you have only
             one group of students who took the test.
             Ideal for assessing the overall performance
             of a general student population."),
           br(),
-          br(),
           actionButton(
             inputId = ns("go_to_param_specs"),
             label = "Single Group",
-            class = "btn-primary btn-md"
+            class = "btn-primary btn-md",
           )
         ),
         column(
           6,
-          p("Choose this option when evaluating multiple groups of students who took the test. Especially useful for scenarios like educational interventions, where you may have distinct control and treatment groups."), # nolint: line_length_linter.
-          br(),
+          p("Choose Multi Group when evaluating multiple groups of students who took the test. Especially useful for scenarios like educational interventions, where you may have distinct control and treatment groups."), # nolint: line_length_linter.
           actionButton(
             inputId = ns("button2"),
             label = "Multi Group",
-            class = "btn-primary btn-md"
+            class = "btn-primary btn-md",
           )
         )
       ),

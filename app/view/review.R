@@ -26,10 +26,11 @@ ui <- function(id) {
 
   fluidPage(
     h2("Review"),
-    br(),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
-
+    br(),
+    br(),
+    br(),
     # Main content blocks
     fluidRow(
       column(3, wellPanel(
