@@ -37,6 +37,7 @@ server <- function(id) {
       q_matrix = NULL,
       param_specs_data = reactiveValues(),
       model_specs_data = reactiveValues(),
+      numAttributes = NULL,
     )
 
     home$server("home")

@@ -59,11 +59,10 @@ ui <- function(id) {
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
-
     div(
-      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
-      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+      uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
     )
   )
 }
@@ -82,11 +81,9 @@ server <- function(id, data) {
 
     # Dynamic rendering for the Next button based on file input
     output$nextButtonUI <- renderUI({
-      ns <- session$ns  # Ensure we have the namespace function available
+      ns <- session$ns # Ensure we have the namespace function available
 
-      if (!is.null(input$fileQ) && input$fileQ$size > 0) {
-        actionButton(ns("nextButton"), "Next", class = "btn-primary")
-      } else {
+      if (is.null(input$fileQ)) {
         actionButton(ns("nextButton"), "Next", class = "btn-primary disabled", disabled = TRUE)
       }
     })
@@ -124,6 +121,34 @@ server <- function(id, data) {
           # Remove ID columns from the DataTable
           data_temp <- data_temp[, -id_columns, with = FALSE]
         }
+
+        observeEvent(input$fileQ, {
+          # Code to read and process the Q matrix file
+          num_cols_in_q_matrix <- ncol(data_temp)
+
+          # Use data$numAttributes, which should be set by param_specs.R
+          num_attributes <- data$numAttributes
+
+          # Implementing the check
+          if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
+            # Providing feedback to the user
+            shiny::showNotification("The number of attributes does not match the number of columns
+            in the Q matrix. Please ensure they are equal.", type = "error")
+            # Disable button
+            output$nextButtonUI <- renderUI({
+              actionButton(session$ns("nextButton"), "Next",
+                class = "btn-primary disabled",
+                disabled = TRUE
+              )
+            })
+          } else {
+            output$nextButtonUI <- renderUI({
+              actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
+            })
+            # Proceed with saving the Q matrix data to the application's state if the numbers match
+            data$q_matrix <<- data_temp
+          }
+        })
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({

@@ -65,6 +65,10 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    observeEvent(input$num_attributes, {
+      data$numAttributes <- input$num_attributes
+    })
+
     # Initialize the input validator
     iv <- InputValidator$new()
     iv$add_rule(ns("num_time_points"), sv_required())
@@ -117,7 +121,6 @@ server <- function(id, data) {
           data$param_specs_data$num_items <- NULL  # Or any default value you want to set
         }
       }
-
     })
 
     # Observe changes in inputs and update storage or perform other actions
@@ -163,8 +166,6 @@ server <- function(id, data) {
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
     iv$enable()
-
     ui_components$nb_server("nextButton", "q_matrix")
-
   })
 }
