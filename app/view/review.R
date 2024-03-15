@@ -27,7 +27,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
+  app / view[ui_components],
 )
 
 #' @export
@@ -37,7 +37,7 @@ ui <- function(id) {
   fluidPage(
     h2("Review"),
     br(),
-
+    br(),
     # Main content blocks
     fluidRow(
       column(6, wellPanel(
@@ -95,11 +95,15 @@ server <- function(id, data) {
         "Is there a different Q-Matrix for each time point:",
         ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
         if (q_matrix_choice_message == "No") {
-          paste("Number of items at a single time point:",
-                ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
+          paste(
+            "Number of items at a single time point:",
+            ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point)
+          )
         } else if (q_matrix_choice_message == "Yes") {
-          paste("Number of items at each time point:",
-                ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
+          paste(
+            "Number of items at each time point:",
+            ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point)
+          )
         },
         sep = "\n"
       )
@@ -116,8 +120,10 @@ server <- function(id, data) {
 
       # Append item parameter to model_specs
       model_specs <-
-        paste(model_specs,
-              paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
+        paste(
+          model_specs,
+          paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param))
+        )
 
       if (!is.null(dcm_estimate)) {
         if (is.character(dcm_estimate)) {
@@ -152,7 +158,8 @@ server <- function(id, data) {
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
         q_matrix_html <-
           datatable(q_matrix_head,
-                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
+            options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE)
+          )
 
         if (num_rows >= 5) {
           tagList(
@@ -187,7 +194,8 @@ server <- function(id, data) {
         # Convert the first 5 rows of the Q-Matrix data frame to an HTML table
         ir_matrix_html <-
           datatable(ir_matrix_head,
-                    options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE))
+            options = list(dom = "t", paging = FALSE, searching = FALSE, ordering = FALSE)
+          )
 
         if (num_rows >= 5) {
           tagList(
@@ -205,9 +213,7 @@ server <- function(id, data) {
           h4("IR-Matrix Preview is not available.")
         }
       }
-    }
-
-    )
+    })
 
     output$model_specs <- renderText({
       generate_model_specs()

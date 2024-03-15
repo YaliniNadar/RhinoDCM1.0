@@ -54,20 +54,15 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
-    # Input: Range of numbers for headers exclusion
-    textInput(ns("headerColsRange"), "Enter the column(s) to consider as exclude from the dataset. 
-    (e.g., 1, 1-3):", value = NULL),
-
     # Text output for displaying dimensions
     textOutput(ns("dataDimensions")),
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
-
     div(
-      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
-      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+      uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
     )
   )
 }
@@ -86,7 +81,7 @@ server <- function(id, data) {
 
     # Dynamic rendering for the Next button based on file input
     output$nextButtonUI <- renderUI({
-      ns <- session$ns  # Ensure we have the namespace function available
+      ns <- session$ns # Ensure we have the namespace function available
 
       if (is.null(input$fileQ)) {
         actionButton(ns("nextButton"), "Next", class = "btn-primary disabled", disabled = TRUE)
@@ -127,29 +122,6 @@ server <- function(id, data) {
           data_temp <- data_temp[, -id_columns, with = FALSE]
         }
 
-        # Exclude header rows if specified
-        if (!is.null(input$headerColsRange) && input$headerColsRange != "") {
-          # Check if the input is a single number or a range
-          if (grepl("^\\d+$", input$headerColsRange)) {
-            # If it's a single number
-            col_to_exclude <- as.numeric(input$headerColsRange)
-            print(col_to_exclude)
-            data_temp <- data_temp[, -col_to_exclude, with = FALSE]
-          } else if (grepl("^\\d+-\\d+$", input$headerColsRange)) {
-            # If it's a range
-            cols_to_exclude <- as.numeric(unlist(strsplit(input$headerColsRange, "-")))
-            print(cols_to_exclude[1])
-            print(cols_to_exclude[2])
-            cols_to_exclude <- cols_to_exclude[1]:cols_to_exclude[2]
-            print(cols_to_exclude)
-            data_temp <- data_temp[, -cols_to_exclude, drop = FALSE]
-          } else {
-            # If it's neither a single number nor a range, handle the invalid input accordingly
-            # For example, display a message to the user or take appropriate action
-            # You may also choose to ignore the input in this case
-          }
-        }
-
         observeEvent(input$fileQ, {
           # Code to read and process the Q matrix file
           num_cols_in_q_matrix <- ncol(data_temp)
@@ -160,12 +132,14 @@ server <- function(id, data) {
           # Implementing the check
           if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
             # Providing feedback to the user
-            shiny::showNotification("The number of attributes does not match the number of columns 
+            shiny::showNotification("The number of attributes does not match the number of columns
             in the Q matrix. Please ensure they are equal.", type = "error")
             # Disable button
             output$nextButtonUI <- renderUI({
-              actionButton(session$ns("nextButton"), "Next", class = "btn-primary disabled", 
-                           disabled = TRUE)
+              actionButton(session$ns("nextButton"), "Next",
+                class = "btn-primary disabled",
+                disabled = TRUE
+              )
             })
           } else {
             output$nextButtonUI <- renderUI({
