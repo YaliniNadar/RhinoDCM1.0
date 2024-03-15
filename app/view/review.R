@@ -17,6 +17,7 @@ box::use(
     renderUI,
     tagList,
     uiOutput,
+    HTML,
   ],
   DT[
     datatable,
@@ -42,7 +43,7 @@ ui <- function(id) {
     fluidRow(
       column(6, wellPanel(
         h4("Parameter Specs"),
-        textOutput(ns("param_specs"))
+        uiOutput(ns("param_specs_ui"))
       )),
       column(6, wellPanel(
         h4("Model Specs"),
@@ -73,40 +74,6 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    # Function to generate the text for parameter specifications
-    generate_param_specs <- function() {
-      num_time_points <- data$param_specs_data$num_time_points
-      num_attributes <- data$param_specs_data$num_attributes
-      attribute_names <- data$param_specs_data$attribute_names
-      q_matrix_choice <- data$param_specs_data$q_matrix_choice
-      num_items_single_time_point <- data$param_specs_data$num_items
-      num_items_each_time_point <- data$param_specs_data$num_items_each_time_point
-
-      if (is.null(q_matrix_choice) || length(q_matrix_choice) == 0) {
-        q_matrix_choice_message <- "N/A"
-      } else {
-        q_matrix_choice_message <- q_matrix_choice
-      }
-
-      param_specs <- paste(
-        "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
-        "Number of attributes measured:", ifelse(is.null(num_attributes), "N/A", num_attributes),
-        "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
-        "Is there a different Q-Matrix for each time point:",
-        ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
-        if (q_matrix_choice_message == "No") {
-          paste("Number of items at a single time point:",
-                ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
-        } else if (q_matrix_choice_message == "Yes") {
-          paste("Number of items at each time point:",
-                ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
-        },
-        sep = "\n"
-      )
-
-      return(param_specs)
-    }
-
     generate_model_specs <- function() {
       item_param <- data$model_specs_data$itemParameter
       dcm_estimate <- data$model_specs_data$dcmEstimate
@@ -133,8 +100,46 @@ server <- function(id, data) {
 
 
     # Define the text to be displayed in each section
-    output$param_specs <- renderText({
-      generate_param_specs()
+    output$param_specs_ui <- renderUI({
+      # Function to generate the text for parameter specifications
+      generate_param_specs <- function() {
+        num_time_points <- data$param_specs_data$num_time_points
+        num_attributes <- data$param_specs_data$num_attributes
+        attribute_names <- data$param_specs_data$attribute_names
+        q_matrix_choice <- data$param_specs_data$q_matrix_choice
+        num_items_single_time_point <- data$param_specs_data$num_items
+        num_items_each_time_point <- data$param_specs_data$num_items_each_time_point
+
+        if (is.null(q_matrix_choice) || length(q_matrix_choice) == 0) {
+          q_matrix_choice_message <- "N/A"
+        } else {
+          q_matrix_choice_message <- q_matrix_choice
+        }
+
+        param_specs <- paste(
+          "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
+          "Number of attributes measured:", ifelse(is.null(num_attributes), "N/A", num_attributes),
+          "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
+          "Is there a different Q-Matrix for each time point:",
+          ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
+          if (q_matrix_choice_message == "No") {
+            paste("Number of items at a single time point:",
+                  ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
+          } else if (q_matrix_choice_message == "Yes") {
+            paste("Number of items at each time point:",
+                  ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
+          },
+          sep = "<br>"
+        )
+
+        return(param_specs)
+      }
+
+      # Call the function to generate 'param_specs'
+      param_specs_text <- generate_param_specs()
+
+      # Use the generated 'param_specs_text' with HTML()
+      HTML(param_specs_text)
     })
 
     output$q_matrix <- renderUI({
@@ -205,9 +210,7 @@ server <- function(id, data) {
           h4("IR-Matrix Preview is not available.")
         }
       }
-    }
-
-    )
+    })
 
     output$model_specs <- renderText({
       generate_model_specs()

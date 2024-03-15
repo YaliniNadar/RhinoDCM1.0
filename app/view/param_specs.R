@@ -121,7 +121,6 @@ server <- function(id, data) {
           data$param_specs_data$num_items <- NULL  # Or any default value you want to set
         }
       }
-
     })
 
     # Observe changes in inputs and update storage or perform other actions
@@ -167,8 +166,6 @@ server <- function(id, data) {
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
     iv$enable()
-
     ui_components$nb_server("nextButton", "q_matrix")
-
   })
 }
