@@ -10,6 +10,7 @@ box::use(
     radioButtons,
     textInput,
     observeEvent,
+    reactiveValues,
     moduleServer,
     conditionalPanel,
     observe,
@@ -28,8 +29,6 @@ ui <- function(id) {
 
   fluidPage(
     h2("Model Specifications"),
-    ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
     br(),
     p("The default setting is Invariance = True and full DCM.",
       style = "font-size: 14px; font-weight: bold;"
@@ -69,9 +68,10 @@ ui <- function(id) {
 }
 
 #' @export
-server <- function(id) {
+server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     num_dropdowns <- 3
+
     observe({
       # Check if input$dcmEstimate is not NULL and not empty
       if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
@@ -89,7 +89,7 @@ server <- function(id) {
                 "GDINA1",
                 "GDINA2"
               ),
-              selected = NULL
+              selected = "full LCDM"
             )
           })
 
@@ -103,6 +103,20 @@ server <- function(id) {
       }
     })
 
+
+    # Saving the itemParameter, dcmEstimate, and item dropdown values
+    observe({
+      # Save the value of itemParameter
+      data$model_specs_data$itemParameter <- input$itemParameter
+
+      # Check if dcmEstimate is not NULL and not an empty string
+      if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
+        print(input$dcmEstimate)
+
+        # If dcmEstimate is not "Different on each item", store it directly
+        data$model_specs_data$dcmEstimate <- input$dcmEstimate
+      }
+    })
 
     ui_components$nb_server("nextButton", "review")
   })

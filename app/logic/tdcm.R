@@ -8,143 +8,174 @@ box::use(
   utils[
     data,
     str,
+  ],
+  memoise[
+    memoise
+  ],
+  stringr[
+    str_squish
+  ],
+  data.table[
+    as.data.table,
+    data.table
   ]
 )
 
-process_text_to_df <- function(text) {
-  # Check if text is NULL or empty
-  if (is.null(text) || length(text) == 0) {
-    print("Input is null or empty")
-    return(NULL)
+fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts) {
+  if (!is.null(q_matrix) && !is.null(ir_matrix)) {
+    model <- tdcm(ir_matrix, q_matrix, num.time.points = time_pts)
+    results <- tdcm.summary(model, num.time.points = time_pts)
+    return(results)
   }
+})
 
-  # Split the text into rows
-  rows <- strsplit(text, "\n")[[1]]
-  
-  # Check if rows is empty
-  if (length(rows) == 0) {
-    print("Length of rows is 0")
-    return(NULL)
-  }
+#' @export
+convert_to_datatable <- function(data) {
+  return(as.data.table(data, keep.rownames = TRUE))
+}
 
-  # Extract column names
-  col_names <- unlist(strsplit(rows[1], "\\s+"))
-  
-  # Check if column names were extracted
-  if (length(col_names) == 0) {
-    print("No column names extracted")
-    return(NULL)
-  }
-  # Remove leading and trailing whitespace from column names
-  col_names <- trimws(col_names)
-  print("Column names:")
-  print(col_names)
+#' @export
+get_misc_datatable <- function(result) {
+  # Create a data.table containing specific elements
+  misc_data <- data.table(
+    Name = c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"),
+    Value =  sapply(c("Mean.Item.RMSEA",
+                      "loglike", "deviance",
+                      "AIC", "BIC", "CAIC",
+                      "Npars"), function(name) result[[name]])
+  )
+  return(misc_data)
+}
 
-  # Remove first row (column names)
-  rows <- rows[-1]
+item_parameters_as_data_table <- function(item_parameters) {
 
-  # Check if rows is empty after removing column names
-  if (length(rows) == 0) {
-    print("No data rows after removing column names")
-    return(NULL)
-  }
+  item_parameters_nrow <- nrow(item_parameters)
+  item_parameters_ncol <- ncol(item_parameters)
 
-  # Split each row into elements
-  data <- lapply(rows, function(row) {
-    unlist(strsplit(row, "\\s+"))
+  item_parameters_rownames <- rownames(item_parameters)
+  item_parameters_colnames <- colnames(item_parameters)
+
+  item_parameters_double <- sapply(as.matrix(item_parameters), function(value) {
+    value <- str_squish(value)
+    if (identical(value, "--")) {
+      value <- NA_real_
+    } else {
+      value <- as.double(value)
+    } # if
+    return(value)
   })
 
-  # Convert to data frame
-  df <- as.data.frame(do.call(rbind, data), stringsAsFactors = FALSE)
+  names(item_parameters_double) <- NULL
 
-  # Set column names
-  colnames(df) <- col_names
-  print("Data frame after setting column names:")
-  print(df)
+  item_parameters_matrix <- matrix(
+    data = item_parameters_double,
+    nrow = item_parameters_nrow,
+    ncol = item_parameters_ncol,
+    dimnames = list(item_parameters_rownames, item_parameters_colnames)
+  )
 
-  # Set row names
-  row.names(df) <- paste("Item", 1:nrow(df), sep = "")
+  item_parameters_data_table <- as.data.table(
+    item_parameters_matrix,
+    keep.rownames = TRUE
+  )
 
-  # Replace '--' with NA
-  df[df == "--"] <- NA
-  print("Final data frame:")
-  print(df)
-
-  return(df)
-}
-
-
-
-
-
-
-fit_model <- function(data, q_matrix, num_time_points) {
-  model <- tdcm(data, q_matrix, num.time.points = 2)
-  return(model)
+  return(item_parameters_data_table)
 }
 
 #' @export
-item_parameters <- function(q_matrix, ir_matrix) {
-  # data(data.tdcm01, package = "TDCM")
-  # data <- data.tdcm01$data
-  # q_matrix <- data.tdcm01$q.matrix
+item_parameters <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-    results1 <- tdcm.summary(model1, num.time.points = 2)
-    item_parameters <- results1$item.parameters
-    # print(data)
-    # print(q_matrix)
-
-    # Debugging output
-    print("Dimensions of item_parameters:")
-    print(dim(item_parameters))
-    print("Structure of item_parameters:")
-    print(str(item_parameters))
-    print("-------")
-    print(item_parameters)
-
-    processed_df <- process_text_to_df(item_parameters)
-    print("Structure of processed_df:")
-    print(str(processed_df))
-
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+    item_parameters <- item_parameters_as_data_table(results$item.parameters)
     return(item_parameters)
   }
-
-
-  # print(q_matrix)
-  # print(ir_matrix)
 }
 
 #' @export
-growth <- function(q_matrix, ir_matrix) {
+growth <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-    results1 <- tdcm.summary(model1, num.time.points = 2)
-    growth <- results1$growth
-
-    print(growth)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+    growth <- results$growth
     return(growth)
   }
 }
 
 #' @export
-growth <- function(q_matrix, ir_matrix) {
+visualize <- function(q_matrix, ir_matrix, time_pts) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-    results1 <- tdcm.summary(model1, num.time.points = 2)
-    growth <- results1$growth
-
-    print(growth)
-    return(growth)
-  }
-}
-
-#' @export
-visualize <- function(q_matrix, ir_matrix) {
-  if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model1 <- fit_model(ir_matrix, q_matrix, num_time_points = 2)
-    results1 <- tdcm.summary(model1, num.time.points = 2)
-    plot <- tdcm.plot(results1)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+    plot <- tdcm.plot(results)
     return(plot)
   }
+}
+
+#' @export
+trans_prob <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  probs <- results$transition.probabilities
+  return(probs)
+}
+
+#' @export
+att_class <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  classifications <- results$classifications
+  return(classifications)
+}
+
+convert_to_char_data_table <- function(new_data_frame) {
+  new_data_frame_nrow <- nrow(new_data_frame)
+  new_data_frame_ncol <- ncol(new_data_frame)
+
+  new_data_frame_rownames <- rownames(new_data_frame)
+  new_data_frame_colnames <- colnames(new_data_frame)
+
+  new_data_frame_matrix <- matrix(
+    data = as.matrix(new_data_frame),
+    nrow = new_data_frame_nrow,
+    ncol = new_data_frame_ncol,
+    dimnames = list(new_data_frame_rownames, new_data_frame_colnames)
+  )
+
+  new_data_frame_data_table <- as.data.table(
+    new_data_frame_matrix,
+    keep.rownames = TRUE
+  )
+
+  return(new_data_frame_data_table)
+}
+
+#' @export
+most_likely_trans <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  most_likely_trans <- convert_to_char_data_table(results$most.likely.transitions)
+  return(most_likely_trans)
+}
+
+#' @export
+trans_pos <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  trans_pos <- results$posterior.probabilities
+  return(trans_pos)
+}
+
+#' @export
+model_fit <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  model_fit <- results$model.fit
+  return(model_fit)
+}
+
+#' @export
+att_corr <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  att_corr <- results$att.corr
+  return(att_corr)
+}
+
+#' @export
+reliability <- function(q_matrix, ir_matrix, time_pts) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+  rel <- convert_to_datatable(results$reliability)
+  return(rel)
 }
