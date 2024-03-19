@@ -24,7 +24,12 @@ box::use(
 fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts, attribute_names) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
     model <- tdcm(ir_matrix, q_matrix, num.time.points = time_pts)
-    results <- tdcm.summary(model, num.time.points = time_pts, attribute.names = attribute_names)
+    # Check if attribute_names is not NULL
+    if (!is.null(attribute_names)) {
+      results <- tdcm.summary(model, num.time.points = time_pts, attribute.names = attribute_names)
+    } else {
+      results <- tdcm.summary(model, num.time.points = time_pts)
+    }
     return(results)
   }
 })
