@@ -162,7 +162,7 @@ server <- function(id, data) {
 
       # Check if the number of attribute names matches the expected number
       if (any(trimws(attribute_names) == "")) {
-        return("Attribute names cannot be whitespace")
+        return("Attribute names cannot be just whitespace")
       } else if (num_attributes != input$num_attributes) {
         if (num_attributes < input$num_attributes) {
           return(paste("Expected",

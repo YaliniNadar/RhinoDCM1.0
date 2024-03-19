@@ -74,6 +74,22 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
+    # Save all input values to the data reactiveValues object
+    observe({
+      file_header_list <- colnames(data$q_matrix)
+      file_header_list <- gsub("\\\"", "", file_header_list)
+
+      # Check if header_list is not null
+      if (!is.null(file_header_list)) {
+        data$review$col_names <- file_header_list
+      } else {
+        # Use data$param_specs$attribute_names if header_list is not available
+        data$review$col_names <- data$param_specs$attribute_names
+      }
+
+    })
+
+
     generate_model_specs <- function() {
       item_param <- data$model_specs_data$itemParameter
       dcm_estimate <- data$model_specs_data$dcmEstimate
@@ -94,7 +110,6 @@ server <- function(id, data) {
       }
 
       # Collapse model_specs into a single string with newline characters
-      print(model_specs)
       return(model_specs)
     }
 
