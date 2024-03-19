@@ -21,10 +21,10 @@ box::use(
   ]
 )
 
-fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts) {
+fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts, attribute_names) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
     model <- tdcm(ir_matrix, q_matrix, num.time.points = time_pts)
-    results <- tdcm.summary(model, num.time.points = time_pts)
+    results <- tdcm.summary(model, num.time.points = time_pts, attribute.names = attribute_names)
     return(results)
   }
 })
@@ -45,6 +45,29 @@ get_misc_datatable <- function(result) {
                       "Npars"), function(name) result[[name]])
   )
   return(misc_data)
+}
+
+
+convert_to_char_data_table <- function(new_data_frame) {
+  new_data_frame_nrow <- nrow(new_data_frame)
+  new_data_frame_ncol <- ncol(new_data_frame)
+
+  new_data_frame_rownames <- rownames(new_data_frame)
+  new_data_frame_colnames <- colnames(new_data_frame)
+
+  new_data_frame_matrix <- matrix(
+    data = as.matrix(new_data_frame),
+    nrow = new_data_frame_nrow,
+    ncol = new_data_frame_ncol,
+    dimnames = list(new_data_frame_rownames, new_data_frame_colnames)
+  )
+
+  new_data_frame_data_table <- as.data.table(
+    new_data_frame_matrix,
+    keep.rownames = TRUE
+  )
+
+  return(new_data_frame_data_table)
 }
 
 item_parameters_as_data_table <- function(item_parameters) {
@@ -97,99 +120,77 @@ get_attribute_names <- function(q_matrix) {
 }
 
 #' @export
-item_parameters <- function(q_matrix, ir_matrix, time_pts) {
+item_parameters <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
     item_parameters <- item_parameters_as_data_table(results$item.parameters)
     return(item_parameters)
   }
 }
 
 #' @export
-growth <- function(q_matrix, ir_matrix, time_pts) {
+growth <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
     growth <- results$growth
     return(growth)
   }
 }
 
 #' @export
-visualize <- function(q_matrix, ir_matrix, time_pts) {
+visualize <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
     plot <- tdcm.plot(results)
     return(plot)
   }
 }
 
 #' @export
-trans_prob <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+trans_prob <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   probs <- results$transition.probabilities
   return(probs)
 }
 
 #' @export
-att_class <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+att_class <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   classifications <- results$classifications
   return(classifications)
 }
 
-convert_to_char_data_table <- function(new_data_frame) {
-  new_data_frame_nrow <- nrow(new_data_frame)
-  new_data_frame_ncol <- ncol(new_data_frame)
-
-  new_data_frame_rownames <- rownames(new_data_frame)
-  new_data_frame_colnames <- colnames(new_data_frame)
-
-  new_data_frame_matrix <- matrix(
-    data = as.matrix(new_data_frame),
-    nrow = new_data_frame_nrow,
-    ncol = new_data_frame_ncol,
-    dimnames = list(new_data_frame_rownames, new_data_frame_colnames)
-  )
-
-  new_data_frame_data_table <- as.data.table(
-    new_data_frame_matrix,
-    keep.rownames = TRUE
-  )
-
-  return(new_data_frame_data_table)
-}
-
 #' @export
-most_likely_trans <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+most_likely_trans <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   most_likely_trans <- convert_to_char_data_table(results$most.likely.transitions)
   return(most_likely_trans)
 }
 
 #' @export
-trans_pos <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+trans_pos <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   trans_pos <- results$posterior.probabilities
   return(trans_pos)
 }
 
 #' @export
-model_fit <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+model_fit <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   model_fit <- results$model.fit
   return(model_fit)
 }
 
 #' @export
-att_corr <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+att_corr <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   att_corr <- results$att.corr
   return(att_corr)
 }
 
 #' @export
-reliability <- function(q_matrix, ir_matrix, time_pts) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts)
+reliability <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
   rel <- convert_to_datatable(results$reliability)
   return(rel)
 }

@@ -94,10 +94,10 @@ server <- function(id, data) {
     ns <- session$ns
     observeEvent(input$item_params, {
       show_modal_spinner(spin = "fading-circle")
-      attribute_names_vector <- unlist(strsplit(data$param_specs_data$attribute_names, ","))
+      attribute_names <- data$param_specs_data$attribute_names
       time_pts <- data$param_specs_data$num_time_points
 
-      result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix, time_pts)
+      result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
       output$item_params_output <- renderDT({
         datatable(result,
                   caption = "Item Parameters",
@@ -127,9 +127,13 @@ server <- function(id, data) {
     observeEvent(input$growth_table, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
+      attribute_names <- data$param_specs_data$attribute_names
+
       result <- tdcm$growth(data$q_matrix,
                             data$ir_matrix,
-                            time_pts)
+                            time_pts,
+                            attribute_names)
+
       output$growth_output <- renderDT({
         datatable(
           result,
@@ -151,7 +155,9 @@ server <- function(id, data) {
     observeEvent(input$plot, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
-      result <- tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts)
+      attribute_names <- data$param_specs_data$attribute_names
+
+      result <- tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
       print(result)
       output$tdcmPlot <- renderPlot(result)
       remove_modal_spinner()
@@ -160,7 +166,9 @@ server <- function(id, data) {
     observeEvent(input$trans_prob, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
-      result <- tdcm$trans_prob(data$q_matrix, data$ir_matrix, time_pts)
+      attribute_names <- data$param_specs_data$attribute_names
+
+      result <- tdcm$trans_prob(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
 
       output$trans_prob_output <- renderUI({
         table_list <- lapply(1:dim(result)[3], function(i) { # nolint: seq_linter.
@@ -180,9 +188,13 @@ server <- function(id, data) {
     observeEvent(input$attr_class, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
+      attribute_names <- data$param_specs_data$attribute_names
+
       result <- tdcm$att_class(data$q_matrix,
                                data$ir_matrix,
-                               time_pts)
+                               time_pts,
+                               attribute_names)
+
       output$classification_output <- renderDT({
         datatable(
           result,
@@ -196,9 +208,13 @@ server <- function(id, data) {
     observeEvent(input$most_likely_trans, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
+      attribute_names <- data$param_specs_data$attribute_names
+
       result <- tdcm$most_likely_trans(data$q_matrix,
                                        data$ir_matrix,
-                                       time_pts)
+                                       time_pts,
+                                       attribute_names)
+
       output$most_likely_trans_output <- renderDT({
         datatable(
           result,
@@ -212,9 +228,13 @@ server <- function(id, data) {
     observeEvent(input$trans_pos, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
+      attribute_names <- data$param_specs_data$attribute_names
+
       result <- tdcm$trans_pos(data$q_matrix,
                                data$ir_matrix,
-                               time_pts)
+                               time_pts,
+                               attribute_names)
+
       output$trans_pos_output <- renderDT({
         datatable(
           result,
@@ -228,7 +248,9 @@ server <- function(id, data) {
     observeEvent(input$model_fit, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
-      result <- tdcm$model_fit(data$q_matrix, data$ir_matrix, time_pts)
+      attribute_names <- data$param_specs_data$attribute_names
+
+      result <- tdcm$model_fit(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
 
       # Create a data.table containing specific elements
       misc_data <- tdcm$get_misc_datatable(result)
@@ -290,9 +312,12 @@ server <- function(id, data) {
     observeEvent(input$att_corr, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
+      attribute_names <- data$param_specs_data$attribute_names
+
       result <- tdcm$att_corr(data$q_matrix,
                               data$ir_matrix,
-                              time_pts)
+                              time_pts,
+                              attribute_names)
       output$att_corr_output <- renderDT({
         datatable(
           result,
@@ -306,9 +331,12 @@ server <- function(id, data) {
     observeEvent(input$rel, {
       show_modal_spinner(spin = "fading-circle")
       time_pts <- data$param_specs_data$num_time_points
+      attribute_names <- data$param_specs_data$attribute_names
+
       result <- tdcm$reliability(data$q_matrix,
                                  data$ir_matrix,
-                                 time_pts)
+                                 time_pts,
+                                 attribute_names)
       output$rel_output <- renderDT({
         datatable(
           result,
