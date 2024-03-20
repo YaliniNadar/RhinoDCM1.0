@@ -120,7 +120,7 @@ server <- function(id, data) {
       generate_param_specs <- function() {
         num_time_points <- data$param_specs_data$num_time_points
         num_attributes <- data$param_specs_data$num_attributes
-        attribute_names <- data$param_specs_data$attribute_names
+        attribute_names <- data$review$col_names
         q_matrix_choice <- data$param_specs_data$q_matrix_choice
         num_items_single_time_point <- data$param_specs_data$num_items
         num_items_each_time_point <- data$param_specs_data$num_items_each_time_point
@@ -134,7 +134,8 @@ server <- function(id, data) {
         param_specs <- paste(
           "Number of time points:", ifelse(is.null(num_time_points), "N/A", num_time_points),
           "Number of attributes measured:", ifelse(is.null(num_attributes), "N/A", num_attributes),
-          "Attribute Names:", ifelse(is.null(attribute_names), "N/A", attribute_names),
+          "Attribute Names:",
+          ifelse(is.null(attribute_names), "N/A", paste(attribute_names, collapse = ", ")),
           "Is there a different Q-Matrix for each time point:",
           ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
           if (q_matrix_choice_message == "No") {
