@@ -190,7 +190,7 @@ server <- function(id, data) {
     iv$add_rule("num_attributes", ~ if (. <= 0) "Input must be positive")
     iv$add_rule("attribute_names", sv_optional()) # check this
     iv$add_rule("attribute_names", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
-      "Every space must be preceded by a comma"
+      "Attribute names cannot contain whitespace"
     })
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())

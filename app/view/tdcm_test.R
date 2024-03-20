@@ -32,7 +32,9 @@ box::use(
   DT[
     DTOutput,
     renderDT,
-    datatable
+    datatable,
+    formatRound,
+    formatSignif
   ],
   datasets[
     mtcars
@@ -217,7 +219,7 @@ server <- function(id, data) {
 
       output$most_likely_trans_output <- renderDT({
         datatable(
-          result,
+          result[, -1],
           caption = "Most Likely Transitions",
           options = list(scrollX = TRUE)
         )
@@ -271,14 +273,24 @@ server <- function(id, data) {
 
       # Render Global Fit Stats data frame
       output$global_fit_stats <- renderDT({
-        datatable(result$Global.Fit.Stats,
-                  options = list(scrollX = TRUE))
+        formatted_table <- formatSignif(
+          datatable(result$Global.Fit.Stats, options = list(scrollX = TRUE)),
+          1,
+          2
+        )
       })
 
       # Render Item Pairs data frame
       output$item_pairs <- renderDT({
-        datatable(result$Item.Pairs,
-                  options = list(scrollX = TRUE))
+        formatted_table <- formatRound(
+          formatRound(
+            datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
+            columns = 3:7,
+            digits = 0
+          ),
+          columns = 8:18,
+          digits = 2,
+        )
       })
 
       # Render Gloabl Fit Tests data frame
@@ -289,7 +301,10 @@ server <- function(id, data) {
 
       # Render Global Fit Stats data frame
       output$global_fit_stats2 <- renderDT({
-        datatable(result$Global.Fit.Stats2,
+        dt <- result$Global.Fit.Stats2
+        dt_transposed <- as.data.frame(t(dt))
+        colnames(dt_transposed) <- c("Value")
+        datatable(dt_transposed,
                   options = list(scrollX = TRUE))
       })
 
