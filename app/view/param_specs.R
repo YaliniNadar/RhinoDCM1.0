@@ -176,8 +176,7 @@ server <- function(id, data) {
                        num_attributes))
         }
       }
-}
-
+    }
 
     iv <- InputValidator$new()
     iv$add_rule("num_time_points", sv_required())
@@ -194,6 +193,10 @@ server <- function(id, data) {
     })
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
+    iv$add_rule("num_items_single_time_point", sv_required())
+    iv$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
+    iv$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
+    iv$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
     iv$enable()
     ui_components$nb_server("nextButton", "q_matrix")
   })
