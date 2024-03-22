@@ -83,7 +83,7 @@ server <- function(id, data) {
       if (!is.null(data$param_specs_data$attribute_names)) {
         data$review$col_names <- data$param_specs_data$attribute_names
       } else if (!is.null(file_header_list)) {
-        # Use header_list 
+        # Use header_list
         data$review$col_names <- file_header_list
       }
 
