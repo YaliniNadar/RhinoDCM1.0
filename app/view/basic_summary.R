@@ -73,10 +73,10 @@ server <- function(id, data) {
         ns <- session$ns
         observeEvent(input$item_params, {
             show_modal_spinner(spin = "fading-circle")
-            attribute_names_vector <- unlist(strsplit(data$param_specs_data$attribute_names, ","))
+            attribute_names <- data$review$col_names
             time_pts <- data$param_specs_data$num_time_points
 
-            result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix, time_pts)
+            result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
             output$item_params_output <- renderDT(
                 {
                     datatable(result,
@@ -110,11 +110,15 @@ server <- function(id, data) {
         observeEvent(input$growth_table, {
             show_modal_spinner(spin = "fading-circle")
             time_pts <- data$param_specs_data$num_time_points
+            attribute_names <- data$review$col_names
+
             result <- tdcm$growth(
                 data$q_matrix,
                 data$ir_matrix,
-                time_pts
+                time_pts,
+                attribute_names
             )
+
             output$growth_output <- renderDT({
                 datatable(
                     result,
@@ -136,6 +140,17 @@ server <- function(id, data) {
             remove_modal_spinner()
         })
 
-        ui_components$nb_server("nextButton", "/")
+        observeEvent(input$plot, {
+            show_modal_spinner(spin = "fading-circle")
+            time_pts <- data$param_specs_data$num_time_points
+            attribute_names <- data$review$col_names
+
+            result <- tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
+            print(result)
+            output$tdcmPlot <- renderPlot(result)
+            remove_modal_spinner()
+        })
+
+        ui_components$nb_server("nextButton", "primary_aggregate_results")
     })
 }
