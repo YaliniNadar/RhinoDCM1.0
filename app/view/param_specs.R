@@ -48,7 +48,7 @@ ui <- function(id) {
 
     # Input 4: Q-Matrix for each time point
     radioButtons(ns("q_matrix_choice"), "Is there a different Q-Matrix for each time point?",
-                 choices = c("Yes", "No"), selected = NULL),
+                 choices = c("Yes", "No"), selected = "No"),
 
     uiOutput(ns("conditional_num_items")),
 
@@ -196,7 +196,7 @@ server <- function(id, data) {
       }
     }
 
-# Print debugger for input values
+    # Print debugger for input values
     observe({
       print(paste("Number of time points:", input$num_time_points))
       print(paste("Number of attributes:", input$num_attributes))
@@ -246,24 +246,45 @@ server <- function(id, data) {
     })
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
-    iv$add_rule("num_items_single_time_point", sv_optional())
-    observe ({
-      if (input$q_matrix_choice == "No") {
-        iv$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
-        iv$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
-        iv$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
-      } else {
-        iv$add_rule("num_items_each_time_point", sv_required())
+    # iv$add_rule("num_items_single_time_point", sv_optional())
+    # observe ({
+    #   if (input$q_matrix_choice == "No") {
+    #     iv$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
+    #     iv$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
+    #     iv$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
+    #   } else {
+    #     iv$add_rule("num_items_each_time_point", sv_required())
 
-        iv$add_rule("num_items_each_time_point", ~ if (any(grepl("[^0-9,]", .))) {
-          "Input must be a comma-separated list of numbers"
-        })
-        iv$add_rule("num_items_each_time_point", num_item_each_time_point_validation)
-        iv$add_rule("num_items_each_time_point", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
-          "Attribute names cannot contain whitespace"
-        })
-      }
+    #     iv$add_rule("num_items_each_time_point", ~ if (any(grepl("[^0-9,]", .))) {
+    #       "Input must be a comma-separated list of numbers"
+    #     })
+    #     iv$add_rule("num_items_each_time_point", num_item_each_time_point_validation)
+    #     iv$add_rule("num_items_each_time_point", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
+    #       "Attribute names cannot contain whitespace"
+    #     })
+    #   }
+    # })
+
+    q_choice_yes <- InputValidator$new()
+    q_choice_yes$condition(~ input$q_matrix_choice == "No")
+    q_choice_yes$add_rule("num_items_single_time_point", sv_required())
+    q_choice_yes$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
+    q_choice_yes$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
+    q_choice_yes$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
+
+    q_choice_no <- InputValidator$new()
+    q_choice_no$condition(~ input$q_matrix_choice == "Yes")
+    q_choice_no$add_rule("num_items_each_time_point", sv_required())
+    q_choice_no$add_rule("num_items_each_time_point", ~ if (any(grepl("[^0-9,]", .))) {
+      "Input must be a comma-separated list of numbers"
     })
+    q_choice_no$add_rule("num_items_each_time_point", num_item_each_time_point_validation)
+    q_choice_no$add_rule("num_items_each_time_point", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
+      "Attribute names cannot contain whitespace"
+    })
+
+    iv$add_validator(q_choice_yes)
+    iv$add_validator(q_choice_no)
 
     iv$enable()
     ui_components$nb_server("nextButton", "q_matrix")
