@@ -30,7 +30,7 @@ box::use(
 
 #' @export
 ui <- function(id) {
-  ns <- NS(id)
+  ns <- shiny::NS(id)
 
   fluidPage(
     h2("Upload IR-Matrix File"),
@@ -139,6 +139,44 @@ server <- function(id, data) {
       } else {
         # Clear the preview if no file is selected
         output$filePreviewIR <- renderDT(NULL)
+      }
+    })
+
+    observeEvent(input$fileIR, {
+      ns <- session$ns  # Define the ns function
+      # Read data_temp
+      data_temp <- data$ir_matrix
+      # Read IR file
+      file_ir <- input$fileIR
+      # Read IR matrix columns
+      num_cols_in_ir_matrix <- ncol(data_temp)
+      # Code to read Q rows and time points
+      num_cols_in_q_matrix <- data$num_cols_in_q_matrix
+      num_time_points <- data$num_time_points
+      # Use the number of columns in the Q matrix * time points equal IR matrix columns
+      if (is.null(input$file_ir) || input$file_ir$size == 0) {
+        # shiny::showNotification("Please upload a file.")
+        # output$nextButtonUI <- renderUI({
+        #   actionButton(session$ns("nextButton"), "Next",
+        #     class = "btn-primary disabled",
+        #     disabled = TRUE
+        #   )
+        # })
+      } else if (num_cols_in_q_matrix * num_time_points != num_cols_in_ir_matrix) {
+      #   # Disable button
+      #   output$nextButtonUI <- renderUI({
+      #     actionButton(session$ns("nextButton"), "Next",
+      #       class = "btn-primary disabled",
+      #       disabled = TRUE
+      #     )
+      #   })
+      #   # Display error message
+      #   shiny::showNotification("The number of columns in the IR matrix does not match the number of columns in the Q matrix and time points.")
+      } else {
+        # Enable button
+        output$nextButtonUI <- renderUI({
+          actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
+        })
       }
     })
 
