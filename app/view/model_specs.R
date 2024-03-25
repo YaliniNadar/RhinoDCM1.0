@@ -111,10 +111,11 @@ server <- function(id, data) {
 
       # Check if dcmEstimate is not NULL and not an empty string
       if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
-        print(input$dcmEstimate)
-
-        # If dcmEstimate is not "Different on each item", store it directly
-        data$model_specs_data$dcmEstimate <- input$dcmEstimate
+        if (input$dcmEstimate != "Different on each item") {
+          print(input$dcmEstimate)
+          # If dcmEstimate is not "Different on each item", store it directly
+          data$model_specs_data$dcmEstimate <- input$dcmEstimate
+        }
       }
     })
 
