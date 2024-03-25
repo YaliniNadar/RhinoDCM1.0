@@ -21,9 +21,9 @@ box::use(
   ]
 )
 
-fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts, attribute_names) {
+fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model <- tdcm(ir_matrix, q_matrix, num.time.points = time_pts)
+    model <- tdcm(ir_matrix, q_matrix, num.time.points = time_pts, invariance = invariance, rule = rule)
     # Check if attribute_names is not NULL
     if (!is.null(attribute_names)) {
       results <- tdcm.summary(model, num.time.points = time_pts, attribute.names = attribute_names)
@@ -125,77 +125,77 @@ get_attribute_names <- function(q_matrix) {
 }
 
 #' @export
-item_parameters <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+item_parameters <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
     item_parameters <- item_parameters_as_data_table(results$item.parameters)
     return(item_parameters)
   }
 }
 
 #' @export
-growth <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+growth <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
     growth <- results$growth
     return(growth)
   }
 }
 
 #' @export
-visualize <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
+visualize <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
     plot <- tdcm.plot(results)
     return(plot)
   }
 }
 
 #' @export
-trans_prob <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+trans_prob <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   probs <- results$transition.probabilities
   return(probs)
 }
 
 #' @export
-att_class <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+att_class <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   classifications <- results$classifications
   return(classifications)
 }
 
 #' @export
-most_likely_trans <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+most_likely_trans <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   most_likely_trans <- convert_to_char_data_table(results$most.likely.transitions)
   return(most_likely_trans)
 }
 
 #' @export
-trans_pos <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+trans_pos <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   trans_pos <- results$posterior.probabilities
   return(trans_pos)
 }
 
 #' @export
-model_fit <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+model_fit <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   model_fit <- results$model.fit
   return(model_fit)
 }
 
 #' @export
-att_corr <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+att_corr <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   att_corr <- results$att.corr
   return(att_corr)
 }
 
 #' @export
-reliability <- function(q_matrix, ir_matrix, time_pts, attribute_names) {
-  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names)
+reliability <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
+  results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
   rel <- convert_to_datatable(results$reliability)
   return(rel)
 }
