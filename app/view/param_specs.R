@@ -18,7 +18,7 @@ box::use(
         div],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],
-  shinyvalidate[InputValidator, sv_required, sv_optional],
+  shinyvalidate[InputValidator, sv_required, sv_optional,],
   stringr[str_detect, str_trim, str_replace_all],
 )
 
@@ -69,6 +69,10 @@ server <- function(id, data) {
       data$numAttributes <- input$num_attributes
     })
 
+    observeEvent(input$num_items_single_time_point, {
+      data$numTimeSinglePoint <- input$num_items_single_time_point
+    })
+
     # Initialize the input validator
     iv <- InputValidator$new()
     iv$add_rule(ns("num_time_points"), sv_required())
@@ -81,7 +85,7 @@ server <- function(id, data) {
     output$conditional_num_items <- renderUI({
       if (input$q_matrix_choice == "Yes") {
         textInput(ns("num_items_each_time_point"),
-                  "Enter number of items for each time point separated by commas: ")
+                  "Enter number of items for each time point separated by commas: ", value = 1)
       } else {
         numericInput(ns("num_items_single_time_point"),
                      "Enter number of items at a single time point: ", value = 1, min = 1)
@@ -176,8 +180,56 @@ server <- function(id, data) {
                        num_attributes))
         }
       }
-}
+    }
 
+    num_item_each_time_point_validation <- function(value) {
+      # Extract individual numbers of items
+      num_items_each_time_point <- as.numeric(unlist(strsplit(value, ",")))
+      num_time_points <- input$num_time_points
+
+      # Check if the number of items for each time point matches the expected number
+      if (length(num_items_each_time_point) != num_time_points) {
+        return(paste("Expected",
+                     num_time_points,
+                     "numbers of items but found",
+                     length(num_items_each_time_point)))
+      }
+    }
+
+# Print debugger for input values
+    observe({
+      print(paste("Number of time points:", input$num_time_points))
+      print(paste("Number of attributes:", input$num_attributes))
+      print(paste("Attribute names:", input$attribute_names))
+      print(paste("Q-Matrix choice:", input$q_matrix_choice))
+    })
+
+    num_of_att_validation <- function(value) {
+      attribute_names <- strsplit(value, ",")[[1]]
+      num_attributes <- length(attribute_names)
+      print(paste("Validating attribute names:", toString(attribute_names)))
+
+      if (any(trimws(attribute_names) == "")) {
+        return("Attribute names cannot be just whitespace")
+      } else if (num_attributes != input$num_attributes) {
+        print(paste("Mismatch: Expected", input$num_attributes, "found", num_attributes))
+        if (num_attributes < input$num_attributes) {
+          return(paste("Expected", input$num_attributes, "attribute names but only found", num_attributes))
+        } else {
+          return(paste("Expected", input$num_attributes, "attribute names but found", num_attributes))
+        }
+      }
+    }
+
+    num_item_each_time_point_validation <- function(value) {
+      num_items_each_time_point <- as.numeric(unlist(strsplit(value, ",")))
+      print(paste("Validating number of items for each time point:", toString(num_items_each_time_point)))
+
+      if (length(num_items_each_time_point) != input$num_time_points) {
+        print(paste("Mismatch: Expected", input$num_time_points, "found", length(num_items_each_time_point)))
+        return(paste("Expected", input$num_time_points, "numbers of items but found", length(num_items_each_time_point)))
+      }
+    }
 
     iv <- InputValidator$new()
     iv$add_rule("num_time_points", sv_required())
@@ -194,6 +246,25 @@ server <- function(id, data) {
     })
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
+    iv$add_rule("num_items_single_time_point", sv_optional())
+    observe ({
+      if (input$q_matrix_choice == "No") {
+        iv$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
+        iv$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
+        iv$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
+      } else {
+        iv$add_rule("num_items_each_time_point", sv_required())
+
+        iv$add_rule("num_items_each_time_point", ~ if (any(grepl("[^0-9,]", .))) {
+          "Input must be a comma-separated list of numbers"
+        })
+        iv$add_rule("num_items_each_time_point", num_item_each_time_point_validation)
+        iv$add_rule("num_items_each_time_point", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
+          "Attribute names cannot contain whitespace"
+        })
+      }
+    })
+
     iv$enable()
     ui_components$nb_server("nextButton", "q_matrix")
   })

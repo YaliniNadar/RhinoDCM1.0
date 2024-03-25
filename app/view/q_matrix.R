@@ -125,12 +125,19 @@ server <- function(id, data) {
         observeEvent(input$fileQ, {
           # Code to read and process the Q matrix file
           num_cols_in_q_matrix <- ncol(data_temp)
-
+          num_rows_in_q_matrix <- nrow(data_temp)
           # Use data$numAttributes, which should be set by param_specs.R
           num_attributes <- data$numAttributes
-
-          # Implementing the check
-          if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
+          num_items_for_single_time <- data$numTimeSinglePoint
+          if(!is.null(num_items_for_single_time) && num_rows_in_q_matrix != num_items_for_single_time) {
+            shiny::showNotification("The number of rows in the Q matrix does not match the number of items. Please ensure they are equal.", type = "error")
+            output$nextButtonUI <- renderUI({
+              actionButton(session$ns("nextButton"), "Next",
+                class = "btn-primary disabled",
+                disabled = TRUE
+              )
+            })
+          } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
             # Providing feedback to the user
             shiny::showNotification("The number of attributes does not match the number of columns
             in the Q matrix. Please ensure they are equal.", type = "error")
