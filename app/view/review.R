@@ -79,12 +79,12 @@ server <- function(id, data) {
       file_header_list <- colnames(data$q_matrix)
       file_header_list <- gsub("\\\"", "", file_header_list)
 
-      # Check if header_list is not null
-      if (!is.null(file_header_list)) {
+      # Check if data$param_specs$attribute_names is not null
+      if (!is.null(data$param_specs_data$attribute_names)) {
+        data$review$col_names <- data$param_specs_data$attribute_names
+      } else if (!is.null(file_header_list)) {
+        # Use header_list
         data$review$col_names <- file_header_list
-      } else {
-        # Use data$param_specs$attribute_names if header_list is not available
-        data$review$col_names <- data$param_specs$attribute_names
       }
 
     })
