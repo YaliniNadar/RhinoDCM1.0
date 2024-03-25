@@ -45,8 +45,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm
+  app / view[ui_components],
+  app / logic / tdcm
 )
 
 #' @export
@@ -56,7 +56,6 @@ ui <- function(id) {
   fluidPage(
     h2("TDCM test"),
     br(),
-
     actionButton(ns("item_params"), "Item Parameters Table"),
     actionButton(ns("growth_table"), "Growth Table"),
     actionButton(ns("plot"), "Proficiency Proportion Plots *"),
@@ -67,24 +66,18 @@ ui <- function(id) {
     actionButton(ns("model_fit"), "Model Fit"),
     actionButton(ns("att_corr"), "Attribute Correlation Matrix"),
     actionButton(ns("rel"), "Reliability"),
-
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
-
     DTOutput(ns("growth_output")),
     # plotOutput(ns("tdcmPlot")),
     plotOutput(ns("plot_output"), click = "plot_click"),
-
     uiOutput(ns("trans_prob_output")),
-
     DTOutput(ns("classification_output")),
     DTOutput(ns("most_likely_trans_output")),
     DTOutput(ns("trans_pos_output")),
-
     uiOutput(ns("model_fit_output")),
     DTOutput(ns("att_corr_output")),
     DTOutput(ns("rel_output")),
-
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
@@ -100,12 +93,16 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
 
       result <- tdcm$item_parameters(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
-      output$item_params_output <- renderDT({
-        datatable(result,
-                  caption = "Item Parameters",
-                  rownames = rownames(result),
-                  colnames = colnames(result), )
-      }, server = FALSE)
+      output$item_params_output <- renderDT(
+        {
+          datatable(result,
+            caption = "Item Parameters",
+            rownames = rownames(result),
+            colnames = colnames(result),
+          )
+        },
+        server = FALSE
+      )
 
       output$item_params_down_wrapper <- renderUI({
         downloadButton(ns("item_params_download"), "Download")
@@ -131,10 +128,12 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
       attribute_names <- data$review$col_names
 
-      result <- tdcm$growth(data$q_matrix,
-                            data$ir_matrix,
-                            time_pts,
-                            attribute_names)
+      result <- tdcm$growth(
+        data$q_matrix,
+        data$ir_matrix,
+        time_pts,
+        attribute_names
+      )
 
       output$growth_output <- renderDT({
         datatable(
@@ -148,9 +147,12 @@ server <- function(id, data) {
 
     observeEvent(input$plot, {
       show_modal_spinner(spin = "fading-circle")
-      output$plot_output <- renderPlot({
-        plot(mtcars$wt, mtcars$mpg)
-      }, res = 96)
+      output$plot_output <- renderPlot(
+        {
+          plot(mtcars$wt, mtcars$mpg)
+        },
+        res = 96
+      )
       remove_modal_spinner()
     })
 
@@ -177,8 +179,9 @@ server <- function(id, data) {
           attribute_title <- dimnames(result)[[3]][i]
           renderDT({
             datatable(result[, , i],
-                      options = list(scrollX = TRUE),
-                      caption = attribute_title)
+              options = list(scrollX = TRUE),
+              caption = attribute_title
+            )
           })
         })
         tagList(table_list)
@@ -192,10 +195,12 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
       attribute_names <- data$review$col_names
 
-      result <- tdcm$att_class(data$q_matrix,
-                               data$ir_matrix,
-                               time_pts,
-                               attribute_names)
+      result <- tdcm$att_class(
+        data$q_matrix,
+        data$ir_matrix,
+        time_pts,
+        attribute_names
+      )
 
       output$classification_output <- renderDT({
         datatable(
@@ -212,10 +217,12 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
       attribute_names <- data$review$col_names
 
-      result <- tdcm$most_likely_trans(data$q_matrix,
-                                       data$ir_matrix,
-                                       time_pts,
-                                       attribute_names)
+      result <- tdcm$most_likely_trans(
+        data$q_matrix,
+        data$ir_matrix,
+        time_pts,
+        attribute_names
+      )
 
       output$most_likely_trans_output <- renderDT({
         datatable(
@@ -232,10 +239,12 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
       attribute_names <- data$review$col_names
 
-      result <- tdcm$trans_pos(data$q_matrix,
-                               data$ir_matrix,
-                               time_pts,
-                               attribute_names)
+      result <- tdcm$trans_pos(
+        data$q_matrix,
+        data$ir_matrix,
+        time_pts,
+        attribute_names
+      )
 
       output$trans_pos_output <- renderDT({
         datatable(
@@ -296,7 +305,8 @@ server <- function(id, data) {
       # Render Gloabl Fit Tests data frame
       output$global_fit_tests <- renderDT({
         datatable(result$Global.Fit.Tests,
-                  options = list(scrollX = TRUE))
+          options = list(scrollX = TRUE)
+        )
       })
 
       # Render Global Fit Stats data frame
@@ -305,20 +315,23 @@ server <- function(id, data) {
         dt_transposed <- as.data.frame(t(dt))
         colnames(dt_transposed) <- c("Value")
         datatable(dt_transposed,
-                  options = list(scrollX = TRUE))
+          options = list(scrollX = TRUE)
+        )
       })
 
       # Render Item RMSEA table
       output$item_rmsea <- renderDT({
         item_rmsea_dt <- tdcm$convert_to_datatable(result$Item.RMSEA)
         datatable(item_rmsea_dt,
-                  options = list(scrollX = TRUE))
+          options = list(scrollX = TRUE)
+        )
       })
 
       # Render Misc data table
       output$misc_table <- renderDT({
         datatable(misc_data,
-                  options = list(scrollX = TRUE))
+          options = list(scrollX = TRUE)
+        )
       })
 
       remove_modal_spinner()
@@ -329,10 +342,12 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
       attribute_names <- data$review$col_names
 
-      result <- tdcm$att_corr(data$q_matrix,
-                              data$ir_matrix,
-                              time_pts,
-                              attribute_names)
+      result <- tdcm$att_corr(
+        data$q_matrix,
+        data$ir_matrix,
+        time_pts,
+        attribute_names
+      )
       output$att_corr_output <- renderDT({
         datatable(
           result,
@@ -348,10 +363,12 @@ server <- function(id, data) {
       time_pts <- data$param_specs_data$num_time_points
       attribute_names <- data$review$col_names
 
-      result <- tdcm$reliability(data$q_matrix,
-                                 data$ir_matrix,
-                                 time_pts,
-                                 attribute_names)
+      result <- tdcm$reliability(
+        data$q_matrix,
+        data$ir_matrix,
+        time_pts,
+        attribute_names
+      )
       output$rel_output <- renderDT({
         datatable(
           result,
@@ -363,6 +380,6 @@ server <- function(id, data) {
     })
 
 
-    ui_components$nb_server("nextButton", "/")
+    ui_components$nb_server("nextButton", "basic_summary")
   })
 }

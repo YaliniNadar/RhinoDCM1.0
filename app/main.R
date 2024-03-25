@@ -4,7 +4,10 @@ box::use(
 )
 
 box::use(
-  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review, tdcm_test],
+  app / view[
+    home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review, tdcm_test,
+    basic_summary, primary_aggregate_results, primary_individual_results, secondary_results
+  ],
 )
 
 #' @export
@@ -14,7 +17,6 @@ ui <- function(id) {
     div(
       ui_components$navbar_ui(ns("navbar")),
     ),
-
     router_ui(
       route("/", home$ui(ns("home"))),
       route("param_specs", param_specs$ui(ns("param_specs"))),
@@ -23,6 +25,10 @@ ui <- function(id) {
       route("model_specs", model_specs$ui(ns("model_specs"))),
       route("review", review$ui(ns("review"))),
       route("tdcm_test", tdcm_test$ui(ns("tdcm_test"))),
+      route("basic_summary", basic_summary$ui(ns("basic_summary"))),
+      route("primary_aggregate_results", primary_aggregate_results$ui(ns("primary_aggregate_results"))),
+      route("primary_individual_results", primary_individual_results$ui(ns("primary_individual_results"))),
+      route("secondary_results", secondary_results$ui(ns("secondary_results"))),
     )
   )
 }
@@ -47,5 +53,9 @@ server <- function(id) {
     model_specs$server("model_specs", data)
     review$server("review", data)
     tdcm_test$server("tdcm_test", data)
+    basic_summary$server("basic_summary", data)
+    primary_aggregate_results$server("primary_aggregate_results", data)
+    primary_individual_results$server("primary_individual_results", data)
+    secondary_results$server("secondary_results", data)
   })
 }
