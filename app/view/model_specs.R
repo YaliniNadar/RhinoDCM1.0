@@ -71,6 +71,15 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
 
+    observeEvent(input$dcmEstimate, {
+      # Check if input$dcmEstimate is not NULL and not empty
+      if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
+        if (input$dcmEstimate != "Different on each item") {
+          output$itemRadioMatrix <- renderDT(NULL)
+        }
+      }
+    })
+
     observe({
       # Check if input$dcmEstimate is not NULL and not empty
       if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
@@ -130,7 +139,7 @@ server <- function(id, data) {
     observe({
       # Save the value of itemParameter
       data$model_specs_data$itemParameter <- input$itemParameter
-  
+      data$model_specs_data$dcmEstimate <- input$dcmEstimate
     })
 
     ui_components$nb_server("nextButton", "review")
