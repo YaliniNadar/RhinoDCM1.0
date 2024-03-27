@@ -306,10 +306,10 @@ server <- function(id, data) {
 
       # Render Global Fit Stats data frame
       output$global_fit_stats <- renderDT({
-        formatted_table <- formatSignif(
+        formatted_table <- formatRound(
           datatable(result$Global.Fit.Stats, options = list(scrollX = TRUE)),
-          1,
-          2
+          columns = 1,
+          digits = 3
         )
       })
 
