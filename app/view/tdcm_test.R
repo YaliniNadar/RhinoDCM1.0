@@ -304,32 +304,56 @@ server <- function(id, data) {
         )
       })
 
+      check_columns_for_rounding <- function(data) {
+        # Check if columns need rounding
+        columns_to_round <- which(sapply(data, function(x) {
+          is.numeric(x) && any(abs(x - round(x, 3)) > 0)
+        }))
+        return(columns_to_round)
+      }
+
+
+
       # Render Global Fit Stats data frame
       output$global_fit_stats <- renderDT({
+        columns_to_round <- check_columns_for_rounding(result$Global.Fit.Stats)
         formatted_table <- formatRound(
           datatable(result$Global.Fit.Stats, options = list(scrollX = TRUE)),
-          columns = 1,
+          columns = columns_to_round,
           digits = 3
         )
       })
 
+      # # Render Item Pairs data frame
+      # output$item_pairs <- renderDT({
+      #   formatted_table <- formatRound(
+      #     formatRound(
+      #       datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
+      #       columns = c(3:7, 18),
+      #       digits = 0
+      #     ),
+      #     columns = c(8:17, 24, 28, 19, 22:25, 27),
+      #     digits = 3,
+      #   )
+      # })
+
       # Render Item Pairs data frame
       output$item_pairs <- renderDT({
+        columns_to_round <- check_columns_for_rounding(result$Item.Pairs)
         formatted_table <- formatRound(
-          formatRound(
-            datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
-            columns = 3:7,
-            digits = 0
-          ),
-          columns = 8:18,
-          digits = 2,
+          datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
+          columns = columns_to_round,
+          digits = 3
         )
       })
 
       # Render Gloabl Fit Tests data frame
       output$global_fit_tests <- renderDT({
-        datatable(result$Global.Fit.Tests,
-          options = list(scrollX = TRUE)
+        columns_to_round <- check_columns_for_rounding(result$Global.Fit.Tests)
+        formatted_table <- formatRound(
+          datatable(result$Global.Fit.Tests, options = list(scrollX = TRUE)),
+          columns = columns_to_round,
+          digits = 3
         )
       })
 
@@ -338,23 +362,33 @@ server <- function(id, data) {
         dt <- result$Global.Fit.Stats2
         dt_transposed <- as.data.frame(t(dt))
         colnames(dt_transposed) <- c("Value")
-        datatable(dt_transposed,
-          options = list(scrollX = TRUE)
+
+        columns_to_round <- check_columns_for_rounding(dt_transposed)
+        formatted_table <- formatRound(
+          datatable(dt_transposed, options = list(scrollX = TRUE)),
+          columns = columns_to_round,
+          digits = 3
         )
       })
 
       # Render Item RMSEA table
       output$item_rmsea <- renderDT({
         item_rmsea_dt <- tdcm$convert_to_datatable(result$Item.RMSEA)
-        datatable(item_rmsea_dt,
-          options = list(scrollX = TRUE)
+        columns_to_round <- check_columns_for_rounding(item_rmsea_dt)
+        formatted_table <- formatRound(
+          datatable(item_rmsea_dt, options = list(scrollX = TRUE)),
+          columns = columns_to_round,
+          digits = 3
         )
       })
 
       # Render Misc data table
       output$misc_table <- renderDT({
-        datatable(misc_data,
-          options = list(scrollX = TRUE)
+        columns_to_round <- check_columns_for_rounding(misc_data)
+        formatted_table <- formatRound(
+          datatable(misc_data, options = list(scrollX = TRUE)),
+          columns = columns_to_round,
+          digits = 3
         )
       })
 
