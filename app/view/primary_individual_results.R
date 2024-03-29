@@ -63,7 +63,6 @@ ui <- function(id) {
         DTOutput(ns("classification_output")),
         DTOutput(ns("most_likely_trans_output")),
         DTOutput(ns("trans_pos_output")),
-        uiOutput(ns("trans_prob_output")),
         ui_components$next_button(ns("nextButton")),
         ui_components$back_button(ns("backButton")),
     )
@@ -89,23 +88,7 @@ server <- function(id, data) {
             )
         })
 
-        trans_prob_output_result <- reactive({
-            vals <- computedValues()
-            tdcm$trans_prob(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
-        })
 
-        output$trans_prob_output <- renderUI({
-            table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint: seq_linter.
-                attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
-                renderDT({
-                    datatable(trans_prob_output_result()[, , i],
-                        options = list(scrollX = TRUE),
-                        caption = attribute_title
-                    )
-                })
-            })
-            tagList(table_list)
-        })
 
         att_class_result <- reactive({
             vals <- computedValues() # This is now a reactive access
