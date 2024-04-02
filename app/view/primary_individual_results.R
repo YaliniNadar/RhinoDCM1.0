@@ -23,7 +23,8 @@ box::use(
         uiOutput,
         tagList,
         downloadButton,
-        downloadHandler
+        downloadHandler,
+        reactive
     ],
     shinybusy[
         show_modal_spinner,
@@ -56,9 +57,9 @@ ui <- function(id) {
     fluidPage(
         h2("Primary Individual Results"),
         br(),
-        actionButton(ns("attr_class"), "Attribute Classification"),
-        actionButton(ns("most_likely_trans"), "Most Likely Transitions"),
-        actionButton(ns("trans_pos"), "Transition Position"),
+        # actionButton(ns("attr_class"), "Attribute Classification"),
+        # actionButton(ns("most_likely_trans"), "Most Likely Transitions"),
+        # actionButton(ns("trans_pos"), "Transition Position"),
         DTOutput(ns("classification_output")),
         DTOutput(ns("most_likely_trans_output")),
         DTOutput(ns("trans_pos_output")),
@@ -71,70 +72,61 @@ ui <- function(id) {
 server <- function(id, data) {
     moduleServer(id, function(input, output, session) {
         ns <- session$ns
-        observeEvent(input$attr_class, {
-            show_modal_spinner(spin = "fading-circle")
-            time_pts <- data$param_specs_data$num_time_points
+        computedValues <- reactive({
+            # Access reactive values here
             attribute_names <- data$review$col_names
+            time_pts <- data$param_specs_data$num_time_points
+            invariance <- data$model_specs_data$itemParameter
+            rule <- data$model_specs_data$dcmEstimate
 
-            result <- tdcm$att_class(
-                data$q_matrix,
-                data$ir_matrix,
-                time_pts,
-                attribute_names
+            # Return a list of all computed values
+            list(
+                attribute_names = attribute_names,
+                time_pts = time_pts,
+                invariance = invariance,
+                rule = rule
             )
-
-            output$classification_output <- renderDT({
-                datatable(
-                    result,
-                    caption = "Attribute Classification",
-                    options = list(scrollX = TRUE)
-                )
-            })
-            remove_modal_spinner()
         })
 
-        observeEvent(input$most_likely_trans, {
-            show_modal_spinner(spin = "fading-circle")
-            time_pts <- data$param_specs_data$num_time_points
-            attribute_names <- data$review$col_names
 
-            result <- tdcm$most_likely_trans(
-                data$q_matrix,
-                data$ir_matrix,
-                time_pts,
-                attribute_names
-            )
 
-            output$most_likely_trans_output <- renderDT({
-                datatable(
-                    result[, -1],
-                    caption = "Most Likely Transitions",
-                    options = list(scrollX = TRUE)
-                )
-            })
-            remove_modal_spinner()
+        att_class_result <- reactive({
+            vals <- computedValues() # This is now a reactive access
+            tdcm$att_class(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
         })
 
-        observeEvent(input$trans_pos, {
-            show_modal_spinner(spin = "fading-circle")
-            time_pts <- data$param_specs_data$num_time_points
-            attribute_names <- data$review$col_names
-
-            result <- tdcm$trans_pos(
-                data$q_matrix,
-                data$ir_matrix,
-                time_pts,
-                attribute_names
+        output$classification_output <- renderDT({
+            datatable(
+                att_class_result(),
+                caption = "Attribute Classification",
+                options = list(scrollX = TRUE)
             )
+        })
 
-            output$trans_pos_output <- renderDT({
-                datatable(
-                    result,
-                    caption = "Transition Position",
-                    options = list(scrollX = TRUE)
-                )
-            })
-            remove_modal_spinner()
+        most_likely_trans_result <- reactive({
+            vals <- computedValues() # This is now a reactive access
+            tdcm$most_likely_trans(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+        })
+
+        output$most_likely_trans_output <- renderDT({
+            datatable(
+                most_likely_trans_result()[, -1],
+                caption = "Most Likely Transitions",
+                options = list(scrollX = TRUE)
+            )
+        })
+
+        trans_pos_output_result <- reactive({
+            vals <- computedValues() # This is now a reactive access
+            tdcm$trans_pos(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+        })
+
+        output$trans_pos_output <- renderDT({
+            datatable(
+                trans_pos_output_result(),
+                caption = "Transition Position",
+                options = list(scrollX = TRUE)
+            )
         })
 
         ui_components$nb_server("nextButton", "secondary_results")
