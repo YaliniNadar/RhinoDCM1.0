@@ -76,7 +76,6 @@ server <- function(id, data) {
 
     observe({
       output$test <- renderText(paste("Ready to Fit Model:", is_page("primary_aggregate_results")))
-      print(is_page("primary_aggregate_results"))
 
       if (is_page("primary_aggregate_results")) {
         # Define a reactive expression that contains all needed data
@@ -219,12 +218,14 @@ server <- function(id, data) {
 
         trans_prob_output_result <- reactive({
           vals <- computed_values()
-          tdcm$trans_prob(data$q_matrix,
-                          data$ir_matrix,
-                          vals$time_pts,
-                          vals$attribute_names,
-                          vals$invariance,
-                          vals$rule)
+          tdcm$trans_prob(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$trans_prob_output <- renderUI({

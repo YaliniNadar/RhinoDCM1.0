@@ -89,12 +89,14 @@ server <- function(id, data) {
         })
         att_class_result <- reactive({
           vals <- computed_values() # This is now a reactive access
-          tdcm$att_class(data$q_matrix,
-                         data$ir_matrix,
-                         vals$time_pts,
-                         vals$attribute_names,
-                         vals$invariance,
-                         vals$rule)
+          tdcm$att_class(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$classification_output <- renderDT({
@@ -107,12 +109,14 @@ server <- function(id, data) {
 
         most_likely_trans_result <- reactive({
           vals <- computed_values() # This is now a reactive access
-          tdcm$most_likely_trans(data$q_matrix,
-                                 data$ir_matrix,
-                                 vals$time_pts,
-                                 vals$attribute_names,
-                                 vals$invariance,
-                                 vals$rule)
+          tdcm$most_likely_trans(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$most_likely_trans_output <- renderDT({
@@ -125,12 +129,14 @@ server <- function(id, data) {
 
         trans_pos_output_result <- reactive({
           vals <- computed_values() # This is now a reactive access
-          tdcm$trans_pos(data$q_matrix,
-                         data$ir_matrix,
-                         vals$time_pts,
-                         vals$attribute_names,
-                         vals$invariance,
-                         vals$rule)
+          tdcm$trans_pos(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$trans_pos_output <- renderDT({

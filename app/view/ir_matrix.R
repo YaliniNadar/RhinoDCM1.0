@@ -24,7 +24,7 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components, ],
+  app/view[ui_components, ],
   app/logic/storage,
 )
 
@@ -57,11 +57,10 @@ ui <- function(id) {
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewIR")),
-
     div(
-      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
-      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+      uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
     )
   )
 }
@@ -78,7 +77,7 @@ server <- function(id, data) {
 
     # Dynamic rendering for the Next button based on file input
     output$nextButtonUI <- renderUI({
-      ns <- session$ns  # Ensure we have the namespace function available
+      ns <- session$ns # Ensure we have the namespace function available
 
       if (!is.null(input$fileIR) && input$fileIR$size > 0) {
         actionButton(ns("nextButton"), "Next", class = "btn-primary")
@@ -107,9 +106,10 @@ server <- function(id, data) {
           )
         } else {
           data_temp <- fread(file$datapath,
-                             sep = input$separatorType,
-                             header = input$excludeHeaders,
-                             quote = "")
+            sep = input$separatorType,
+            header = input$excludeHeaders,
+            quote = ""
+          )
         }
         # Exclude ID columns if specified
         if (input$excludeIdColumns) {
@@ -122,10 +122,11 @@ server <- function(id, data) {
         # Display file preview using DT
         output$filePreviewIR <- renderDT({
           datatable(data_temp,
-                    options = list(
-                      autoWidth = TRUE,
-                      scrollX = TRUE
-                    ), )
+            options = list(
+              autoWidth = TRUE,
+              scrollX = TRUE
+            ),
+          )
         })
 
         # Save the modified data to ir_matrix
@@ -135,7 +136,6 @@ server <- function(id, data) {
         output$dataDimensions <- renderText({
           paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
         })
-
       } else {
         # Clear the preview if no file is selected
         output$filePreviewIR <- renderDT(NULL)
@@ -143,7 +143,7 @@ server <- function(id, data) {
     })
 
     observeEvent(input$fileIR, {
-      ns <- session$ns  # Define the ns function
+      ns <- session$ns # Define the ns function
       # Read data_temp
       data_temp <- data$ir_matrix
       # Read IR file
@@ -163,15 +163,15 @@ server <- function(id, data) {
         #   )
         # })
       } else if (num_cols_in_q_matrix * num_time_points != num_cols_in_ir_matrix) {
-      #   # Disable button
-      #   output$nextButtonUI <- renderUI({
-      #     actionButton(session$ns("nextButton"), "Next",
-      #       class = "btn-primary disabled",
-      #       disabled = TRUE
-      #     )
-      #   })
-      #   # Display error message
-      #   shiny::showNotification("The number of columns in the IR matrix does not match the number of columns in the Q matrix and time points.")
+        #   # Disable button
+        #   output$nextButtonUI <- renderUI({
+        #     actionButton(session$ns("nextButton"), "Next",
+        #       class = "btn-primary disabled",
+        #       disabled = TRUE
+        #     )
+        #   })
+        #   # Display error message
+        #   shiny::showNotification("The number of columns in the IR matrix does not match the number of columns in the Q matrix and time points.")
       } else {
         # Enable button
         output$nextButtonUI <- renderUI({

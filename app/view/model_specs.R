@@ -21,7 +21,7 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components, ],
+  app/view[ui_components, ],
 )
 
 #' @export
@@ -60,7 +60,6 @@ ui <- function(id) {
       ),
       selected = "full LCDM"
     ),
-
     DTOutput(ns("itemRadioMatrix")),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
@@ -70,7 +69,6 @@ ui <- function(id) {
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
-
     observeEvent(input$dcmEstimate, {
       # Check if input$dcmEstimate is not NULL and not empty
       if (!is.null(input$dcmEstimate) && input$dcmEstimate != "") {
@@ -96,7 +94,8 @@ server <- function(id, data) {
           )
           # Generate a matrix of radio buttons
           radio_matrix <- matrix(
-            NA, nrow = num_items, ncol = length(choices),
+            NA,
+            nrow = num_items, ncol = length(choices),
             dimnames = list(paste0("Item ", 1:num_items), choices)
           )
 
@@ -117,7 +116,7 @@ server <- function(id, data) {
           output$itemRadioMatrix <- renderDT({
             datatable(
               radio_df,
-              escape = FALSE,  # Allow HTML
+              escape = FALSE, # Allow HTML
               selection = "none",
               options = list(dom = "t", paging = FALSE, ordering = FALSE),
               callback = JS("
@@ -130,7 +129,6 @@ server <- function(id, data) {
                 Shiny.bindAll(table.table().node());")
             )
           })
-
         }
       }
     })

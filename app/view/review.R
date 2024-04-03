@@ -28,7 +28,7 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
+  app/view[ui_components],
 )
 
 #' @export
@@ -73,7 +73,7 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-   
+
     # Save all input values to the data reactiveValues object
     observe({
       file_header_list <- colnames(data$q_matrix)
@@ -97,8 +97,10 @@ server <- function(id, data) {
 
       # Append item parameter to model_specs
       model_specs <-
-        paste(model_specs,
-              paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param)))
+        paste(
+          model_specs,
+          paste("Item Parameter Assumed:", ifelse(is.null(item_param), "N/A", item_param))
+        )
 
       if (!is.null(dcm_estimate)) {
         if (is.character(dcm_estimate)) {
@@ -137,11 +139,15 @@ server <- function(id, data) {
           "Is there a different Q-Matrix for each time point:",
           ifelse(is.null(q_matrix_choice), "N/A", q_matrix_choice),
           if (q_matrix_choice_message == "No") {
-            paste("Number of items at a single time point:",
-                  ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point))
+            paste(
+              "Number of items at a single time point:",
+              ifelse(is.null(num_items_single_time_point), "N/A", num_items_single_time_point)
+            )
           } else if (q_matrix_choice_message == "Yes") {
-            paste("Number of items at each time point:",
-                  ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point))
+            paste(
+              "Number of items at each time point:",
+              ifelse(is.null(num_items_each_time_point), "N/A", num_items_each_time_point)
+            )
           },
           sep = "<br>"
         )
