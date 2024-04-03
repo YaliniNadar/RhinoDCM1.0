@@ -80,7 +80,7 @@ server <- function(id, data) {
 
       if (is_page("primary_aggregate_results")) {
         # Define a reactive expression that contains all needed data
-        computedValues <- reactive({
+        computed_values <- reactive({
           # Access reactive values here
           attribute_names <- data$review$col_names
           time_pts <- data$param_specs_data$num_time_points
@@ -99,7 +99,7 @@ server <- function(id, data) {
         # Then use the reactive expression in other reactive contexts
         item_params_result <- reactive({
           # Access the values from computedValues() reactive expression
-          vals <- computedValues() # This is now a reactive access
+          vals <- computed_values() # This is now a reactive access
           tdcm$item_parameters(
             data$q_matrix,
             data$ir_matrix,
@@ -138,7 +138,7 @@ server <- function(id, data) {
         )
 
         growth_result <- reactive({
-          vals <- computedValues() # Correctly access the computed values here
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$growth(
             data$q_matrix,
             data$ir_matrix,
@@ -194,7 +194,7 @@ server <- function(id, data) {
           }
         )
         plot_result <- reactive({
-          vals <- computedValues()
+          vals <- computed_values()
           tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts, attribute_names, invariance, rule)
         })
         print(plot_result)
@@ -218,8 +218,13 @@ server <- function(id, data) {
         )
 
         trans_prob_output_result <- reactive({
-          vals <- computedValues()
-          tdcm$trans_prob(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+          vals <- computed_values()
+          tdcm$trans_prob(data$q_matrix,
+                          data$ir_matrix,
+                          vals$time_pts,
+                          vals$attribute_names,
+                          vals$invariance,
+                          vals$rule)
         })
 
         output$trans_prob_output <- renderUI({
