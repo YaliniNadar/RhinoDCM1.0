@@ -54,6 +54,9 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
+    # Inside your fluidPage, add:
+    uiOutput(ns("errorBox")),
+
     # Text output for displaying dimensions
     textOutput(ns("dataDimensions")),
 
@@ -142,14 +145,21 @@ server <- function(id, data) {
           }
           
           if (!is.null(error_message)) {
-            shiny::showNotification(error_message, type = "error")
+            output$errorBox <- renderUI({
+              div(class = "alert alert-danger", role = "alert",
+                shiny::tags$strong("Error: "), error_message
+              )
+            })
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next",
-                          class = "btn-primary disabled",
-                          disabled = TRUE
+                            class = "btn-primary disabled",
+                            disabled = TRUE
               )
             })
           } else {
+            # Clear the error box if there are no errors
+            output$errorBox <- renderUI({ NULL })
+            
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
             })
