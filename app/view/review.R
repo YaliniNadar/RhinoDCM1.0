@@ -12,7 +12,6 @@ box::use(
     textOutput,
     renderText,
     fluidRow,
-    observeEvent,
     observe,
     renderUI,
     tagList,
@@ -74,16 +73,7 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    # Variable to store the state
-    nextButtonClicked <- reactiveVal(FALSE)
-
-    # Observer to listen to the click event of nextButton
-    observeEvent(input$nextButton, {
-      print("button clicked")
-      nextButtonClicked(TRUE)
-    })
-
-
+   
     # Save all input values to the data reactiveValues object
     observe({
       file_header_list <- colnames(data$q_matrix)
@@ -96,8 +86,6 @@ server <- function(id, data) {
         # Use header_list
         data$review$col_names <- file_header_list
       }
-
-      data$review$fit_model <- nextButtonClicked()
 
     })
 
