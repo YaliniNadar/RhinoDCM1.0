@@ -56,6 +56,5 @@ nb_server <- function(id, route) {
     observeEvent(input$nextButton, {
       change_page(route)
     })
-
   })
 }

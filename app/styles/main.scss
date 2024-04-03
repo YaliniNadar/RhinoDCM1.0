@@ -276,3 +276,14 @@ table.dataTable {
     background-color: #ffffff;
 }
 
+#DataTables_Table_4_wrapper > div.dataTables_scroll > div.dataTables_scrollHead > div {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    position: relative !important;
+}
+
+#DataTables_Table_4_wrapper > div.dataTables_scroll {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    position: relative !important;
+}

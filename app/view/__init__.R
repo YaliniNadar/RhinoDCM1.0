@@ -11,7 +11,6 @@ box::use(
   app / view / model_specs,
   app / view / review,
   app / view / tdcm_test,
-  app / view / basic_summary,
   app / view / primary_aggregate_results,
   app / view / primary_individual_results,
   app / view / secondary_results,

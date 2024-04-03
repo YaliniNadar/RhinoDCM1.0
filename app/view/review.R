@@ -12,12 +12,12 @@ box::use(
     textOutput,
     renderText,
     fluidRow,
-    observeEvent,
     observe,
     renderUI,
     tagList,
     uiOutput,
     HTML,
+    reactiveVal
   ],
   DT[
     datatable,
@@ -73,7 +73,7 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
+   
     # Save all input values to the data reactiveValues object
     observe({
       file_header_list <- colnames(data$q_matrix)
@@ -86,9 +86,7 @@ server <- function(id, data) {
         # Use header_list
         data$review$col_names <- file_header_list
       }
-
     })
-
 
     generate_model_specs <- function() {
       item_param <- data$model_specs_data$itemParameter

@@ -30,6 +30,7 @@ box::use(
         show_modal_spinner,
         remove_modal_spinner,
     ],
+    shiny.router[is_page],
     DT[
         DTOutput,
         renderDT,
@@ -70,8 +71,10 @@ ui <- function(id) {
 
 #' @export
 server <- function(id, data) {
-    moduleServer(id, function(input, output, session) {
-        ns <- session$ns
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    observe({
+      if (is_page("primary_individual_results")) {
         computedValues <- reactive({
             # Access reactive values here
             attribute_names <- data$review$col_names
@@ -87,9 +90,6 @@ server <- function(id, data) {
                 rule = rule
             )
         })
-
-
-
         att_class_result <- reactive({
             vals <- computedValues() # This is now a reactive access
             tdcm$att_class(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
@@ -122,13 +122,15 @@ server <- function(id, data) {
         })
 
         output$trans_pos_output <- renderDT({
-            datatable(
+          datatable(
                 trans_pos_output_result(),
                 caption = "Transition Position",
                 options = list(scrollX = TRUE)
             )
         })
-
-        ui_components$nb_server("nextButton", "secondary_results")
+      }
     })
+
+    ui_components$nb_server("nextButton", "secondary_results")
+  })
 }
