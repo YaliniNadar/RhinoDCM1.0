@@ -212,7 +212,7 @@ server <- function(id, data) {
         data$ir_matrix,
         time_pts,
         attribute_names,
-        invariance, 
+        invariance,
         rule
       )
 
@@ -238,7 +238,7 @@ server <- function(id, data) {
         data$ir_matrix,
         time_pts,
         attribute_names,
-        invariance, 
+        invariance,
         rule
       )
 
@@ -446,6 +446,6 @@ server <- function(id, data) {
     })
 
 
-    ui_components$nb_server("nextButton", "basic_summary")
+    ui_components$nb_server("nextButton", "primary_aggregate_results")
   })
 }
