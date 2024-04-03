@@ -86,9 +86,7 @@ server <- function(id, data) {
         # Use header_list
         data$review$col_names <- file_header_list
       }
-
     })
-
 
     generate_model_specs <- function() {
       item_param <- data$model_specs_data$itemParameter
