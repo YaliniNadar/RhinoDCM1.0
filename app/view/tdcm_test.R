@@ -72,6 +72,7 @@ ui <- function(id) {
     # plotOutput(ns("tdcmPlot")),
     plotOutput(ns("plot_output"), click = "plot_click"),
     uiOutput(ns("trans_prob_output")),
+    uiOutput(ns("trans_prob_down_wrapper")),
     DTOutput(ns("classification_output")),
     DTOutput(ns("most_likely_trans_output")),
     DTOutput(ns("trans_pos_output")),
@@ -196,6 +197,21 @@ server <- function(id, data) {
         })
         tagList(table_list)
       })
+
+      output$trans_prob_down_wrapper <- renderUI({
+        downloadButton(ns("trans_prob_download"), "Download")
+      })
+
+
+      # Add download button
+      output$trans_prob_download <- downloadHandler(
+        filename = function() {
+          paste("transisition_probabilities.csv", sep = "")
+        },
+        content = function(file) {
+          write.csv(result, file)
+        }
+      )
 
       remove_modal_spinner()
     })
