@@ -72,7 +72,7 @@ server <- function(id, data) {
     ns <- session$ns
     observe({
       if (is_page("primary_individual_results")) {
-        computedValues <- reactive({
+        computed_values <- reactive({
           # Access reactive values here
           attribute_names <- data$review$col_names
           time_pts <- data$param_specs_data$num_time_points
@@ -88,13 +88,15 @@ server <- function(id, data) {
           )
         })
         att_class_result <- reactive({
-          vals <- computedValues() # This is now a reactive access
-          tdcm$att_class(data$q_matrix,
-                         data$ir_matrix,
-                         vals$time_pts,
-                         vals$attribute_names,
-                         vals$invariance,
-                         vals$rule)
+          vals <- computed_values() # This is now a reactive access
+          tdcm$att_class(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$classification_output <- renderDT({
@@ -106,13 +108,15 @@ server <- function(id, data) {
         })
 
         most_likely_trans_result <- reactive({
-          vals <- computedValues() # This is now a reactive access
-          tdcm$most_likely_trans(data$q_matrix,
-                                 data$ir_matrix,
-                                 vals$time_pts,
-                                 vals$attribute_names,
-                                 vals$invariance,
-                                 vals$rule)
+          vals <- computed_values() # This is now a reactive access
+          tdcm$most_likely_trans(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$most_likely_trans_output <- renderDT({
@@ -124,13 +128,15 @@ server <- function(id, data) {
         })
 
         trans_pos_output_result <- reactive({
-          vals <- computedValues() # This is now a reactive access
-          tdcm$trans_pos(data$q_matrix,
-                         data$ir_matrix,
-                         vals$time_pts,
-                         vals$attribute_names,
-                         vals$invariance,
-                         vals$rule)
+          vals <- computed_values() # This is now a reactive access
+          tdcm$trans_pos(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$trans_pos_output <- renderDT({

@@ -1,5 +1,7 @@
-box::use(shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer],
-         shiny.router[change_page], )
+box::use(
+  shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer],
+  shiny.router[change_page],
+)
 
 #' @export
 navbar_ui <- function(id) {

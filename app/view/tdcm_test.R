@@ -45,8 +45,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm
+  app/view[ui_components],
+  app/logic/tdcm
 )
 
 #' @export
@@ -72,6 +72,7 @@ ui <- function(id) {
     # plotOutput(ns("tdcmPlot")),
     plotOutput(ns("plot_output"), click = "plot_click"),
     uiOutput(ns("trans_prob_output")),
+    uiOutput(ns("trans_prob_down_wrapper")),
     DTOutput(ns("classification_output")),
     DTOutput(ns("most_likely_trans_output")),
     DTOutput(ns("trans_pos_output")),
@@ -196,6 +197,21 @@ server <- function(id, data) {
         })
         tagList(table_list)
       })
+
+      output$trans_prob_down_wrapper <- renderUI({
+        downloadButton(ns("trans_prob_download"), "Download")
+      })
+
+
+      # Add download button
+      output$trans_prob_download <- downloadHandler(
+        filename = function() {
+          paste("transisition_probabilities.csv", sep = "")
+        },
+        content = function(file) {
+          write.csv(result, file)
+        }
+      )
 
       remove_modal_spinner()
     })
@@ -324,26 +340,17 @@ server <- function(id, data) {
         )
       })
 
-      # # Render Item Pairs data frame
-      # output$item_pairs <- renderDT({
-      #   formatted_table <- formatRound(
-      #     formatRound(
-      #       datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
-      #       columns = c(3:7, 18),
-      #       digits = 0
-      #     ),
-      #     columns = c(8:17, 24, 28, 19, 22:25, 27),
-      #     digits = 3,
-      #   )
-      # })
-
       # Render Item Pairs data frame
       output$item_pairs <- renderDT({
         columns_to_round <- check_columns_for_rounding(result$Item.Pairs)
         formatted_table <- formatRound(
-          datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
-          columns = columns_to_round,
-          digits = 3
+          formatRound(
+            datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
+            columns = columns_to_round,
+            digits = 3
+          ),
+          columns = c(3:7),
+          digits = 0
         )
       })
 
