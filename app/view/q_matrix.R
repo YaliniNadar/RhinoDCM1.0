@@ -33,7 +33,6 @@ ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
-    shinyjs::useShinyjs(),
     h2("Upload Q-Matrix File"),
     br(),
 
@@ -73,7 +72,6 @@ ui <- function(id) {
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
-    shinyjs::useShinyjs()
 
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({

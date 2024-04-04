@@ -324,26 +324,17 @@ server <- function(id, data) {
         )
       })
 
-      # # Render Item Pairs data frame
-      # output$item_pairs <- renderDT({
-      #   formatted_table <- formatRound(
-      #     formatRound(
-      #       datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
-      #       columns = c(3:7, 18),
-      #       digits = 0
-      #     ),
-      #     columns = c(8:17, 24, 28, 19, 22:25, 27),
-      #     digits = 3,
-      #   )
-      # })
-
       # Render Item Pairs data frame
       output$item_pairs <- renderDT({
         columns_to_round <- check_columns_for_rounding(result$Item.Pairs)
         formatted_table <- formatRound(
-          datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
-          columns = columns_to_round,
-          digits = 3
+          formatRound(
+            datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
+            columns = columns_to_round,
+            digits = 3
+          ),
+          columns = c(3:7),
+          digits = 0
         )
       })
 
