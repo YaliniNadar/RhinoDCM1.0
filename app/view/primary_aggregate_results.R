@@ -230,7 +230,7 @@ server <- function(id, data) {
         })
 
         output$trans_prob_output <- renderUI({
-          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) {
+          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint
             attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
             renderDT({
               datatable(trans_prob_output_result()[, , i],
