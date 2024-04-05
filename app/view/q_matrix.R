@@ -72,7 +72,6 @@ ui <- function(id) {
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
-
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {

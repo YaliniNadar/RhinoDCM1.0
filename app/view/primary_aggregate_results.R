@@ -78,6 +78,7 @@ server <- function(id, data) {
       output$test <- renderText(paste("Ready to Fit Model:", is_page("primary_aggregate_results")))
 
       if (is_page("primary_aggregate_results")) {
+        show_modal_spinner(spin = "fading-circle")
         # Define a reactive expression that contains all needed data
         computed_values <- reactive({
           # Access reactive values here
@@ -229,7 +230,7 @@ server <- function(id, data) {
         })
 
         output$trans_prob_output <- renderUI({
-          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint: seq_linter.
+          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) {
             attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
             renderDT({
               datatable(trans_prob_output_result()[, , i],
@@ -239,6 +240,17 @@ server <- function(id, data) {
             })
           })
           tagList(table_list)
+        })
+
+
+        # Hide the spinner when all computations are done
+        # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
+        observe({
+          if (!is.null(item_params_result())
+              && !is.null(growth_result())
+              && !is.null(trans_prob_output_result())) {
+            remove_modal_spinner()
+          }
         })
       }
     })
