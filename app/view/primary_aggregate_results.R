@@ -35,7 +35,8 @@ box::use(
   DT[
     DTOutput,
     renderDT,
-    datatable
+    datatable,
+    JS
   ],
   datasets[
     mtcars
@@ -114,7 +115,9 @@ server <- function(id, data) {
               caption = "Item Parameters",
               rownames = rownames(item_params_result()),
               colnames = colnames(item_params_result()),
-              options = list(scrollX = TRUE, searching = FALSE)
+              options = list(scrollX = TRUE,
+                             searching = FALSE,
+                             initComplete = JS(ui_components$format_pagination()))
             )
           },
           server = FALSE
@@ -151,7 +154,9 @@ server <- function(id, data) {
           datatable(
             growth_result(),
             caption = "Growth Table",
-            options = list(scrollX = TRUE, searching = FALSE)
+            options = list(scrollX = TRUE,
+                           searching = FALSE,
+                           initComplete = JS(ui_components$format_pagination()))
           )
         })
 
@@ -232,7 +237,9 @@ server <- function(id, data) {
             attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
             renderDT({
               datatable(trans_prob_output_result()[, , i],
-                options = list(scrollX = TRUE, dom = "t"),
+                options = list(scrollX = TRUE,
+                               dom = "t",
+                               initComplete = JS(ui_components$format_pagination())),
                 caption = attribute_title
               )
             })

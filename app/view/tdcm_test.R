@@ -102,6 +102,7 @@ server <- function(id, data) {
             caption = "Item Parameters",
             rownames = rownames(result),
             colnames = colnames(result),
+            options = list(scrollX = TRUE, searching = FALSE)
           )
         },
         server = FALSE
@@ -146,7 +147,7 @@ server <- function(id, data) {
         datatable(
           result,
           caption = "Growth Table",
-          options = list(scrollX = TRUE)
+          options = list(scrollX = TRUE, searching = FALSE)
         )
       })
       remove_modal_spinner()
@@ -190,7 +191,7 @@ server <- function(id, data) {
           attribute_title <- dimnames(result)[[3]][i]
           renderDT({
             datatable(result[, , i],
-              options = list(scrollX = TRUE),
+              options = list(scrollX = TRUE, dom = "t"),
               caption = attribute_title
             )
           })

@@ -19,7 +19,8 @@ box::use(
     textOutput,
     renderText,
   ],
-  DT[DTOutput, renderDT, datatable],
+  shinyjs[runjs],
+  DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
 )
 
@@ -175,7 +176,7 @@ server <- function(id, data) {
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
-          datatable(data_temp)
+          datatable(data_temp, options = list(initComplete = JS(ui_components$format_pagination())))
         })
 
         # Save the modified data to q_matrix
