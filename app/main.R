@@ -25,8 +25,10 @@ ui <- function(id) {
       route("model_specs", model_specs$ui(ns("model_specs"))),
       route("review", review$ui(ns("review"))),
       route("tdcm_test", tdcm_test$ui(ns("tdcm_test"))),
-      route("primary_aggregate_results", primary_aggregate_results$ui(ns("primary_aggregate_results"))),
-      route("primary_individual_results", primary_individual_results$ui(ns("primary_individual_results"))),
+      route("primary_aggregate_results",
+            primary_aggregate_results$ui(ns("primary_aggregate_results"))),
+      route("primary_individual_results",
+            primary_individual_results$ui(ns("primary_individual_results"))),
       route("secondary_results", secondary_results$ui(ns("secondary_results"))),
     )
   )
