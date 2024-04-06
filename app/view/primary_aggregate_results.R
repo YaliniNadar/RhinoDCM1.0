@@ -57,7 +57,6 @@ ui <- function(id) {
   fluidPage(
     h2("Primary Aggregate Results"),
     br(),
-    textOutput(ns("test")),
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
     DTOutput(ns("growth_output")),
@@ -75,8 +74,6 @@ server <- function(id, data) {
     ns <- session$ns
 
     observe({
-      output$test <- renderText(paste("Ready to Fit Model:", is_page("primary_aggregate_results")))
-
       if (is_page("primary_aggregate_results")) {
         show_modal_spinner(spin = "fading-circle")
         # Define a reactive expression that contains all needed data
@@ -117,6 +114,7 @@ server <- function(id, data) {
               caption = "Item Parameters",
               rownames = rownames(item_params_result()),
               colnames = colnames(item_params_result()),
+              options = list(scrollX = TRUE, searching = FALSE)
             )
           },
           server = FALSE
@@ -153,7 +151,7 @@ server <- function(id, data) {
           datatable(
             growth_result(),
             caption = "Growth Table",
-            options = list(scrollX = TRUE)
+            options = list(scrollX = TRUE, searching = FALSE)
           )
         })
 
@@ -234,7 +232,7 @@ server <- function(id, data) {
             attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
             renderDT({
               datatable(trans_prob_output_result()[, , i],
-                options = list(scrollX = TRUE),
+                options = list(scrollX = TRUE, dom = "t"),
                 caption = attribute_title
               )
             })
