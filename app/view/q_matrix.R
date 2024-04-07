@@ -18,6 +18,8 @@ box::use(
     div,
     textOutput,
     renderText,
+    tagList,
+    HTML,
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
@@ -54,7 +56,6 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
-    # Inside your fluidPage, add:
     uiOutput(ns("errorBox")),
 
     # Text output for displaying dimensions
@@ -75,10 +76,21 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     shinyjs::useShinyjs()
 
+    observeEvent(input$num_cols_in_q_matrix, {
+      num_cols_in_q_matrix <- input$num_cols_in_q_matrix
+    })
+
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
-        textInput(session$ns("customSeparator"), "Enter Custom Separator:")
+        tagList(
+          textInput(session$ns("customSeparator"), "Enter Custom Separator:"),
+          tags$script(HTML(sprintf("$(document).on('shiny:inputchanged', function(event) {
+            if (event.name === '%s') {
+              $('#%s').attr('maxlength', 1);
+            }
+          });", session$ns("customSeparator"), session$ns("customSeparator"))))
+        )
       }
     })
 
@@ -132,6 +144,7 @@ server <- function(id, data) {
           # Use data$numAttributes, which should be set by param_specs.R
           num_attributes <- data$numAttributes
           num_items_for_single_time <- data$numTimeSinglePoint
+          data$num_cols_in_q_matrix <- ncol(data_temp)
           
           error_message <- NULL
           
@@ -180,6 +193,7 @@ server <- function(id, data) {
         # Update text output to display dimensions
         output$dataDimensions <- renderText({
           paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
+          num_cols_in_q_matrix <- ncol(data_temp)
         })
       } else {
         # Clear the preview if no file is selected
