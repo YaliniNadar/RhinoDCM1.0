@@ -67,5 +67,3 @@ export function readIndexedDBAndSave(dbName, inputIds, prefix) {
         }
     };
 }
-
-  

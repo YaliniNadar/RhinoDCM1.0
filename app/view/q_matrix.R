@@ -21,13 +21,14 @@ box::use(
     tagList,
     HTML,
   ],
-  DT[DTOutput, renderDT, datatable],
+  shinyjs[runjs],
+  DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
 )
 
 box::use(
-  app / view[ui_components, ],
-  app / logic / storage,
+  app/view[ui_components, ],
+  app/logic/storage,
 )
 
 #' @export
@@ -35,7 +36,6 @@ ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
-    shinyjs::useShinyjs(),
     h2("Upload Q-Matrix File"),
     br(),
 
@@ -79,7 +79,6 @@ server <- function(id, data) {
     observeEvent(input$num_rows_in_q_matrix, {
       num_rows_in_q_matrix <- input$num_rows_in_q_matrix
     })
-
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
@@ -161,7 +160,8 @@ server <- function(id, data) {
 
           if (!is.null(error_message)) {
             output$errorBox <- renderUI({
-              div(class = "alert alert-danger", role = "alert",
+              div(
+                class = "alert alert-danger", role = "alert",
                 shiny::tags$strong("Error: "), error_message
               )
             })
@@ -186,7 +186,7 @@ server <- function(id, data) {
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
-          datatable(data_temp)
+          datatable(data_temp, options = list(initComplete = JS(ui_components$format_pagination())))
         })
 
         # Save the modified data to q_matrix

@@ -1,5 +1,7 @@
-box::use(shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer],
-         shiny.router[change_page], )
+box::use(
+  shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer],
+  shiny.router[change_page],
+)
 
 #' @export
 navbar_ui <- function(id) {
@@ -56,6 +58,11 @@ nb_server <- function(id, route) {
     observeEvent(input$nextButton, {
       change_page(route)
     })
-
   })
+}
+
+#' @export
+format_pagination <- function() {
+  jquery_code <- "function(settings, json) {$(this.api().table().container()).find('.dataTables_paginate').css({'background-color': '#202020', 'color': '#fff'});}" # nolint
+  return(jquery_code)
 }

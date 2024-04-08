@@ -21,12 +21,12 @@ box::use(
     tagList,
     HTML,
   ],
-  DT[DTOutput, renderDT, datatable],
+  DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
 )
 
 box::use(
-  app / view[ui_components, ],
+  app/view[ui_components, ],
   app/logic/storage,
 )
 
@@ -61,11 +61,10 @@ ui <- function(id) {
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewIR")),
-
     div(
-      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
-      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+      uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
     )
   )
 }
@@ -90,7 +89,7 @@ server <- function(id, data) {
 
     # Dynamic rendering for the Next button based on file input
     output$nextButtonUI <- renderUI({
-      ns <- session$ns  # Ensure we have the namespace function available
+      ns <- session$ns # Ensure we have the namespace function available
 
       # Check if the file input is not NULL and has a size greater than 0
       if (!is.null(input$fileIR) && input$fileIR$size > 0) {
@@ -185,10 +184,12 @@ server <- function(id, data) {
         # Display file preview using DT
         output$filePreviewIR <- renderDT({
           datatable(data_temp,
-                    options = list(
-                      autoWidth = TRUE,
-                      scrollX = TRUE
-                    ), )
+            options = list(
+              autoWidth = TRUE,
+              scrollX = TRUE,
+              initComplete = JS(ui_components$format_pagination())
+            ),
+          )
         })
 
         # Save the modified data to ir_matrix
@@ -203,7 +204,7 @@ server <- function(id, data) {
         output$filePreviewIR <- renderDT(NULL)
       }
     })
-
+    
     ui_components$nb_server("nextButton", "model_specs")
   })
 }
