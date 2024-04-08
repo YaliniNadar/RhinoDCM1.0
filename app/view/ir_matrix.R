@@ -130,47 +130,47 @@ server <- function(id, data) {
           # Read IR matrix columns
           num_cols_in_ir_matrix <- ncol(data_temp)
           # Code to read Q rows and time points
-          num_cols_in_q_matrix <- data$num_cols_in_q_matrix
+          num_rows_in_q_matrix <- data$num_rows_in_q_matrix
           num_time_points <- data$numTimePoints #check
-          
+
           error_message <- NULL
-          
+
           num_cols_in_ir_matrix <- ncol(data_temp)
           print(paste("num_cols_in_ir_matrix: ", num_cols_in_ir_matrix))
 
-          num_cols_in_q_matrix <- data$num_cols_in_q_matrix
-          print(paste("num_cols_in_q_matrix: ", num_cols_in_q_matrix))
+          num_rows_in_q_matrix <- data$num_rows_in_q_matrix
+          print(paste("num_rows_in_q_matrix: ", num_rows_in_q_matrix))
 
-          num_time_points <- data$num_time_points
+          num_time_points <- data$numTimePoints
           print(paste("num_time_points: ", num_time_points))
 
-          if (!is.null(num_cols_in_ir_matrix) && !is.null(num_cols_in_q_matrix) && !is.null(num_time_points) && num_cols_in_q_matrix * num_time_points != num_cols_in_ir_matrix) {
+          if (!is.null(num_cols_in_ir_matrix) && !is.null(num_rows_in_q_matrix) && !is.null(num_time_points) && num_rows_in_q_matrix * num_time_points != num_cols_in_ir_matrix) {
             error_message <- paste("The number of IR columns does not equal the number of columns in the
             Q matrix multiplied by time points.", sep = "")
           }
 
           if (!is.null(error_message)) {
-              output$errorBox <- renderUI({
-                div(class = "alert alert-danger", role = "alert",
-                  shiny::tags$strong("Error: "), error_message
-                )
-              })
-              output$nextButtonUI <- renderUI({
-                actionButton(session$ns("nextButton"), "Next",
-                  class = "btn-primary disabled",
-                  disabled = TRUE
-                )
-              })
-            } else {
-              # Clear the error box if there are no errors
-              output$errorBox <- renderUI({ NULL })
+            output$errorBox <- renderUI({
+              div(class = "alert alert-danger", role = "alert",
+                shiny::tags$strong("Error: "), error_message
+              )
+            })
+            output$nextButtonUI <- renderUI({
+              actionButton(session$ns("nextButton"), "Next",
+                class = "btn-primary disabled",
+                disabled = TRUE
+              )
+            })
+          } else {
+            # Clear the error box if there are no errors
+            output$errorBox <- renderUI({ NULL })
 
-              output$nextButtonUI <- renderUI({
-                actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
-              })
-              # Proceed with saving the IR matrix data to the application's state if the numbers match
-              data$ir_matrix <<- data_temp
-            }
+            output$nextButtonUI <- renderUI({
+              actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
+            })
+            # Proceed with saving the IR matrix data to the application's state if the numbers match
+            data$ir_matrix <<- data_temp
+          }
         })
 
         # Display file preview using DT

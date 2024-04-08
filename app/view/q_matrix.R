@@ -76,8 +76,8 @@ server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     shinyjs::useShinyjs()
 
-    observeEvent(input$num_cols_in_q_matrix, {
-      num_cols_in_q_matrix <- input$num_cols_in_q_matrix
+    observeEvent(input$num_rows_in_q_matrix, {
+      num_rows_in_q_matrix <- input$num_rows_in_q_matrix
     })
 
     # Conditional Rendering for Custom Separator
@@ -144,19 +144,21 @@ server <- function(id, data) {
           # Use data$numAttributes, which should be set by param_specs.R
           num_attributes <- data$numAttributes
           num_items_for_single_time <- data$numTimeSinglePoint
-          data$num_cols_in_q_matrix <- ncol(data_temp)
-          
+          data$num_rows_in_q_matrix <- nrow(data_temp)
+
           error_message <- NULL
-          
-          if (!is.null(num_items_for_single_time) && num_rows_in_q_matrix != num_items_for_single_time) {
-            error_message <- paste("The number of rows in the Q matrix (", num_rows_in_q_matrix, 
-                                  ") does not match the number of items (", num_items_for_single_time, 
-                                  "). Please ensure they are equal.", sep = "")
+
+          if (!is.null(num_items_for_single_time) && num_rows_in_q_matrix !=
+                num_items_for_single_time) {
+            error_message <- paste("The number of rows in the Q matrix (", num_rows_in_q_matrix,
+                                   ") does not match the number of items (",
+                                   num_items_for_single_time, "). Please ensure they are equal.",
+                                   sep = "")
           } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
-            error_message <- paste("The number of attributes does not match the number of columns (", 
-                                  num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
+            error_message <- paste("The number of attributes does not match the number of columns
+            (", num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
           }
-          
+
           if (!is.null(error_message)) {
             output$errorBox <- renderUI({
               div(class = "alert alert-danger", role = "alert",
@@ -165,14 +167,14 @@ server <- function(id, data) {
             })
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next",
-                            class = "btn-primary disabled",
-                            disabled = TRUE
+                class = "btn-primary disabled",
+                disabled = TRUE
               )
             })
           } else {
             # Clear the error box if there are no errors
             output$errorBox <- renderUI({ NULL })
-            
+
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
             })
