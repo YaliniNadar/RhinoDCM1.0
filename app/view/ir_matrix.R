@@ -18,6 +18,8 @@ box::use(
     uiOutput,
     div,
     actionButton,
+    tagList,
+    HTML,
   ],
   DT[DTOutput, renderDT, datatable],
   data.table[fread],
@@ -75,7 +77,14 @@ server <- function(id, data) {
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
-        textInput(session$ns("customSeparator"), "Enter Custom Separator:")
+        tagList(
+          textInput(session$ns("customSeparator"), "Enter Custom Separator:"),
+          tags$script(HTML(sprintf("$(document).on('shiny:inputchanged', function(event) {
+            if (event.name === '%s') {
+              $('#%s').attr('maxlength', 1);
+            }
+          });", session$ns("customSeparator"), session$ns("customSeparator"))))
+        )
       }
     })
 
