@@ -50,10 +50,8 @@ ui <- function(id) {
       "DCM to estimate:",
       choices = c(
         "full LCDM",
-        "LDCM1",
-        "LDCM2",
-        "DINA",
         "ACDM",
+        "DINA",
         "GDINA1",
         "GDINA2",
         "Different on each item"
@@ -85,10 +83,8 @@ server <- function(id, data) {
         if (input$dcmEstimate == "Different on each item") {
           choices <- c(
             "full LCDM",
-            "LDCM1",
-            "LDCM2",
-            "DINA",
             "ACDM",
+            "DINA",
             "GDINA1",
             "GDINA2"
           )

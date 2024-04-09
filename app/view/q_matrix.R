@@ -19,7 +19,8 @@ box::use(
     textOutput,
     renderText,
   ],
-  DT[DTOutput, renderDT, datatable],
+  shinyjs[runjs],
+  DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
 )
 
@@ -33,7 +34,6 @@ ui <- function(id) {
   ns <- NS(id)
 
   fluidPage(
-    shinyjs::useShinyjs(),
     h2("Upload Q-Matrix File"),
     br(),
 
@@ -54,6 +54,9 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
 
+    # Inside your fluidPage, add:
+    uiOutput(ns("errorBox")),
+
     # Text output for displaying dimensions
     textOutput(ns("dataDimensions")),
 
@@ -70,8 +73,6 @@ ui <- function(id) {
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
-    shinyjs::useShinyjs()
-
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
@@ -146,7 +147,12 @@ server <- function(id, data) {
           }
 
           if (!is.null(error_message)) {
-            shiny::showNotification(error_message, type = "error")
+            output$errorBox <- renderUI({
+              div(
+                class = "alert alert-danger", role = "alert",
+                shiny::tags$strong("Error: "), error_message
+              )
+            })
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next",
                 class = "btn-primary disabled",
@@ -154,6 +160,11 @@ server <- function(id, data) {
               )
             })
           } else {
+            # Clear the error box if there are no errors
+            output$errorBox <- renderUI({
+              NULL
+            })
+
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
             })
@@ -165,7 +176,7 @@ server <- function(id, data) {
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
-          datatable(data_temp)
+          datatable(data_temp, options = list(initComplete = JS(ui_components$format_pagination())))
         })
 
         # Save the modified data to q_matrix

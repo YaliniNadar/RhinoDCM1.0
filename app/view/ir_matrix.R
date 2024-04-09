@@ -19,13 +19,13 @@ box::use(
     div,
     actionButton,
   ],
-  DT[DTOutput, renderDT, datatable],
+  DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
 )
 
 box::use(
-  app/view[ui_components, ],
-  app/logic/storage,
+  app / view[ui_components, ],
+  app / logic / storage,
 )
 
 #' @export
@@ -124,7 +124,8 @@ server <- function(id, data) {
           datatable(data_temp,
             options = list(
               autoWidth = TRUE,
-              scrollX = TRUE
+              scrollX = TRUE,
+              initComplete = JS(ui_components$format_pagination())
             ),
           )
         })

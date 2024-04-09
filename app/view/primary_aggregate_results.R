@@ -15,6 +15,7 @@ box::use(
     observe,
     renderTable,
     renderPlot,
+    renderText,
     tableOutput,
     textOutput,
     plotOutput,
@@ -30,10 +31,12 @@ box::use(
     show_modal_spinner,
     remove_modal_spinner,
   ],
+  shiny.router[is_page],
   DT[
     DTOutput,
     renderDT,
-    datatable
+    datatable,
+    JS
   ],
   datasets[
     mtcars
@@ -44,8 +47,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm
+  app / view[ui_components],
+  app / logic / tdcm
 )
 
 #' @export
@@ -55,17 +58,12 @@ ui <- function(id) {
   fluidPage(
     h2("Primary Aggregate Results"),
     br(),
-    # actionButton(ns("item_params"), "Item Parameters Table"),
-    # actionButton(ns("growth_table"), "Growth Table"),
-    # actionButton(ns("plot"), "Proficiency Proportion Plots *"),
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
     DTOutput(ns("growth_output")),
-    uiOutput(ns("growth_down_wrapper")),
     # plotOutput(ns("tdcmPlot")),
     plotOutput(ns("plot_output")),
     uiOutput(ns("trans_prob_output")),
-    uiOutput(ns("plot_result_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
@@ -75,166 +73,198 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    # Define a reactive expression that contains all needed data
-    computedValues <- reactive({
-      # Access reactive values here
-      attribute_names <- data$review$col_names
-      time_pts <- data$param_specs_data$num_time_points
-      invariance <- data$model_specs_data$itemParameter
-      rule <- data$model_specs_data$dcmEstimate
 
-      # Return a list of all computed values
-      list(
-        attribute_names = attribute_names,
-        time_pts = time_pts,
-        invariance = invariance,
-        rule = rule
-      )
-    })
+    observe({
+      if (is_page("primary_aggregate_results")) {
+        show_modal_spinner(spin = "fading-circle")
+        # Define a reactive expression that contains all needed data
+        computed_values <- reactive({
+          # Access reactive values here
+          attribute_names <- data$review$col_names
+          time_pts <- data$param_specs_data$num_time_points
+          invariance <- data$model_specs_data$itemParameter
+          rule <- data$model_specs_data$dcmEstimate
 
-    # Then use the reactive expression in other reactive contexts
-    item_params_result <- reactive({
-      # Access the values from computedValues() reactive expression
-      vals <- computedValues() # This is now a reactive access
-      tdcm$item_parameters(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
-    })
-
-    # Use result() inside your render functions
-    output$item_params_output <- renderDT(
-      {
-        datatable(item_params_result(),
-          caption = "Item Parameters",
-          rownames = rownames(item_params_result()),
-          colnames = colnames(item_params_result()),
-        )
-      },
-      server = FALSE
-    )
-
-    output$item_params_down_wrapper <- renderUI({
-      downloadButton(ns("item_params_download"), "Download")
-    })
-
-    # Add download button
-    output$item_params_download <- downloadHandler(
-      filename = function() {
-        paste("item_parameters.csv", sep = "")
-      },
-      content = function(itemParamFile) {
-        write.csv(item_params_result(), itemParamFile)
-      }
-    )
-
-    growth_result <- reactive({
-      vals <- computedValues() # Correctly access the computed values here
-      tdcm$growth(
-        data$q_matrix,
-        data$ir_matrix,
-        vals$time_pts, # Use the values from 'vals' here
-        vals$attribute_names, # Use the values from 'vals' here
-        vals$invariance, # Use the values from 'vals' here
-        vals$rule # Use the values from 'vals' here
-      )
-    })
-
-    output$growth_output <- renderDT({
-      datatable(
-        growth_result(),
-        caption = "Growth Table",
-        options = list(scrollX = TRUE)
-      )
-    })
-
-    output$growth_down_wrapper <- renderUI({
-      downloadButton(ns("growth_download"), "Download")
-    })
-
-
-    # Add download button
-    output$growth_download <- downloadHandler(
-      filename = function() {
-        paste("growth_output.csv", sep = "")
-      },
-      content = function(growthFile) {
-        write.csv(growth_result(), growthFile)
-      }
-    )
-
-    output$plot_output <- renderPlot(
-      {
-        plot(mtcars$wt, mtcars$mpg)
-      },
-      res = 96
-    )
-
-    output$plot_output_down_wrapper <- renderUI({
-      downloadButton(ns("plot_output_download"), "Download")
-    })
-
-    # Add download button
-    output$plot_output_download <- downloadHandler(
-      filename = function() {
-        paste("plot_output.csv", sep = "")
-      },
-      content = function(plotFile) {
-        write.csv(plot_output(), plotFile)
-      }
-    )
-
-    plot_result <- reactive({
-      vals <- computedValues()
-      tdcm$visualize(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
-    })
-    print(plot_result)
-    output$tdcmPlot <- renderPlot({
-      plot_result() # Call the reactive
-    })
-
-    output$plot_result_down_wrapper <- renderUI({
-      downloadButton(ns("plot_result_download"), "Download")
-    })
-
-    # Add download button
-    output$plot_result_download <- downloadHandler(
-      filename = function() {
-        paste("plot_result.csv", sep = "")
-      },
-      content = function(plotResultFile) {
-        write.csv(plot_result(), plotResultFile)
-      }
-    )
-
-    trans_prob_output_result <- reactive({
-      vals <- computedValues()
-      tdcm$trans_prob(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
-    })
-
-    output$trans_prob_output <- renderUI({
-      table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint: seq_linter.
-        attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
-        renderDT({
-          datatable(trans_prob_output_result()[, , i],
-            options = list(scrollX = TRUE),
-            caption = attribute_title
+          # Return a list of all computed values
+          list(
+            attribute_names = attribute_names,
+            time_pts = time_pts,
+            invariance = invariance,
+            rule = rule
           )
         })
-      })
-      tagList(table_list)
-    })
 
-    output$plot_result_down_wrapper <- renderUI({
-      downloadButton(ns("trans_prob_result_download"), "Download")
-    })
+        # Then use the reactive expression in other reactive contexts
+        item_params_result <- reactive({
+          # Access the values from computedValues() reactive expression
+          vals <- computed_values() # This is now a reactive access
+          tdcm$item_parameters(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
+        })
 
-    # Add download button
-    output$trans_prob_result_download <- downloadHandler(
-      filename = function() {
-        paste("trans_prob_output_result.csv", sep = "")
-      },
-      content = function(transFile) {
-        write.csv(trans_prob_output_result(), transFile)
+        # Use result() inside your render functions
+        output$item_params_output <- renderDT(
+          {
+            datatable(item_params_result(),
+              caption = "Item Parameters",
+              rownames = rownames(item_params_result()),
+              colnames = colnames(item_params_result()),
+              options = list(
+                scrollX = TRUE,
+                searching = FALSE,
+                initComplete = JS(ui_components$format_pagination())
+              )
+            )
+          },
+          server = FALSE
+        )
+
+        output$item_params_down_wrapper <- renderUI({
+          downloadButton(ns("item_params_download"), "Download")
+        })
+
+
+        # Add download button
+        output$item_params_download <- downloadHandler(
+          filename = function() {
+            paste("item_parameters.csv", sep = "")
+          },
+          content = function(file) {
+            write.csv(result, file)
+          }
+        )
+
+        growth_result <- reactive({
+          vals <- computed_values() # Correctly access the computed values here
+          tdcm$growth(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts, # Use the values from 'vals' here
+            vals$attribute_names, # Use the values from 'vals' here
+            vals$invariance, # Use the values from 'vals' here
+            vals$rule # Use the values from 'vals' here
+          )
+        })
+
+        output$growth_output <- renderDT({
+          datatable(
+            growth_result(),
+            caption = "Growth Table",
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
+          )
+        })
+
+        output$growth_down_wrapper <- renderUI({
+          downloadButton(ns("growth_output_download"), "Download")
+        })
+
+
+        # Add download button
+        output$growth_download <- downloadHandler(
+          filename = function() {
+            paste("growth_output.csv", sep = "")
+          },
+          content = function(file) {
+            write.csv(result, file)
+          }
+        )
+
+        output$plot_output <- renderPlot(
+          {
+            plot(mtcars$wt, mtcars$mpg)
+          },
+          res = 96
+        )
+
+        output$plot_output_down_wrapper <- renderUI({
+          downloadButton(ns("plot_output_download"), "Download")
+        })
+
+
+        # Add download button
+        output$plot_output_download <- downloadHandler(
+          filename = function() {
+            paste("plot_output.csv", sep = "")
+          },
+          content = function(file) {
+            write.csv(result, file)
+          }
+        )
+        plot_result <- reactive({
+          vals <- computed_values()
+          tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts, attribute_names, invariance, rule)
+        })
+        print(plot_result)
+        output$tdcmPlot <- renderPlot({
+          plot_result() # Call the reactive
+        })
+
+        output$plot_result_down_wrapper <- renderUI({
+          downloadButton(ns("plot_result_download"), "Download")
+        })
+
+
+        # Add download button
+        output$plot_result_download <- downloadHandler(
+          filename = function() {
+            paste("plot_result.csv", sep = "")
+          },
+          content = function(file) {
+            write.csv(result, file)
+          }
+        )
+
+        trans_prob_output_result <- reactive({
+          vals <- computed_values()
+          tdcm$trans_prob(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
+        })
+
+        output$trans_prob_output <- renderUI({
+          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint
+            attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
+            renderDT({
+              datatable(trans_prob_output_result()[, , i],
+                options = list(
+                  scrollX = TRUE,
+                  dom = "t",
+                  initComplete = JS(ui_components$format_pagination())
+                ),
+                caption = attribute_title
+              )
+            })
+          })
+          tagList(table_list)
+        })
+
+
+        # Hide the spinner when all computations are done
+        # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
+        observe({
+          if (!is.null(item_params_result()) &&
+            !is.null(growth_result()) &&
+            !is.null(trans_prob_output_result())) {
+            remove_modal_spinner()
+          }
+        })
       }
-    )
+    })
 
     ui_components$nb_server("nextButton", "primary_individual_results")
   })

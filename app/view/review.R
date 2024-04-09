@@ -12,12 +12,12 @@ box::use(
     textOutput,
     renderText,
     fluidRow,
-    observeEvent,
     observe,
     renderUI,
     tagList,
     uiOutput,
     HTML,
+    reactiveVal
   ],
   DT[
     datatable,
@@ -87,7 +87,6 @@ server <- function(id, data) {
         data$review$col_names <- file_header_list
       }
     })
-
 
     generate_model_specs <- function() {
       item_param <- data$model_specs_data$itemParameter
