@@ -20,6 +20,7 @@ box::use(
     actionButton,
     tagList,
     HTML,
+    tags
   ],
   DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
