@@ -130,7 +130,7 @@ server <- function(id, data) {
         output$global_fit_stats <- renderDT({
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Stats)
           formatted_table <- formatRound(
-            datatable(model_fit_result()$Global.Fit.Stats, options = list(scrollX = TRUE)),
+            datatable(model_fit_result()$Global.Fit.Stats, options = list(scrollX = TRUE, searching = FALSE)),
             columns = columns_to_round,
             digits = 3
           )
@@ -141,7 +141,7 @@ server <- function(id, data) {
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Item.Pairs)
           formatted_table <- formatRound(
             formatRound(
-              datatable(model_fit_result()$Item.Pairs, options = list(scrollX = TRUE)),
+              datatable(model_fit_result()$Item.Pairs, options = list(scrollX = TRUE, searching = FALSE)),
               columns = columns_to_round,
               digits = 3
             ),
@@ -154,7 +154,7 @@ server <- function(id, data) {
         output$global_fit_tests <- renderDT({
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Tests)
           formatted_table <- formatRound(
-            datatable(model_fit_result()$Global.Fit.Tests, options = list(scrollX = TRUE)),
+            datatable(model_fit_result()$Global.Fit.Tests, options = list(scrollX = TRUE, searching = FALSE)),
             columns = columns_to_round,
             digits = 3
           )
@@ -168,7 +168,7 @@ server <- function(id, data) {
 
           columns_to_round <- check_columns_for_rounding(dt_transposed)
           formatted_table <- formatRound(
-            datatable(dt_transposed, options = list(scrollX = TRUE)),
+            datatable(dt_transposed, options = list(scrollX = TRUE, searching = FALSE)),
             columns = columns_to_round,
             digits = 3
           )
@@ -179,7 +179,7 @@ server <- function(id, data) {
           item_rmsea_dt <- tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
           columns_to_round <- check_columns_for_rounding(item_rmsea_dt)
           formatted_table <- formatRound(
-            datatable(item_rmsea_dt, options = list(scrollX = TRUE)),
+            datatable(item_rmsea_dt, options = list(scrollX = TRUE, searching = FALSE)),
             columns = columns_to_round,
             digits = 3
           )
@@ -189,7 +189,7 @@ server <- function(id, data) {
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
           formatted_table <- formatRound(
-            datatable(misc_data(), options = list(scrollX = TRUE)),
+            datatable(misc_data(), options = list(scrollX = TRUE, searching = FALSE)),
             columns = columns_to_round,
             digits = 3
           )
@@ -217,7 +217,7 @@ server <- function(id, data) {
           datatable(
             att_corr_result(),
             caption = "Attribute Correlation",
-            options = list(scrollX = TRUE)
+            options = list(scrollX = TRUE, searching = FALSE)
           )
         })
 
@@ -243,7 +243,7 @@ server <- function(id, data) {
           datatable(
             reli_result(),
             caption = "Reliability",
-            options = list(scrollX = TRUE)
+            options = list(scrollX = TRUE, searching = FALSE)
           )
         })
         output$reli_result_down_wrapper <- renderUI({

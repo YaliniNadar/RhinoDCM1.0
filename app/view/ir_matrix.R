@@ -20,6 +20,7 @@ box::use(
     actionButton,
     tagList,
     HTML,
+    tags
   ],
   DT[DTOutput, renderDT, datatable, JS],
   data.table[fread],
@@ -187,6 +188,7 @@ server <- function(id, data) {
             options = list(
               autoWidth = TRUE,
               scrollX = TRUE,
+              searching = FALSE,
               initComplete = JS(ui_components$format_pagination())
             ),
           )
