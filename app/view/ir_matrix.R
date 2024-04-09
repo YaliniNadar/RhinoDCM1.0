@@ -26,8 +26,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, ],
-  app/logic/storage,
+  app / view[ui_components, ],
+  app / logic / storage,
 )
 
 #' @export

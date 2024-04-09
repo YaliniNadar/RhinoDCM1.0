@@ -287,3 +287,32 @@ table.dataTable {
     overflow-y: auto !important;
     position: relative !important;
 }
+
+caption {
+    padding-top: 80px;
+    padding-bottom: 8px;
+    color: #ffc403;
+    text-align: left;
+}
+
+.btn-primary.active,
+.btn-primary:active,
+.btn-primary.focus,
+.btn-primary:focus,
+.open>.dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #474747 !important;
+    background-image: none;
+    border-color: #474747 !important;
+}
+
+a {
+    color: #ffc403;
+    text-decoration: none;
+}
+
+a:focus,
+a:hover {
+    color: #474747;
+    text-decoration: underline;
+}

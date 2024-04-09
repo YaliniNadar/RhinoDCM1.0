@@ -47,8 +47,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm
+  app / view[ui_components],
+  app / logic / tdcm
 )
 
 #' @export
@@ -61,9 +61,13 @@ ui <- function(id) {
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
     DTOutput(ns("growth_output")),
+    uiOutput(ns("growth_down_wrapper")),
     # plotOutput(ns("tdcmPlot")),
     plotOutput(ns("plot_output")),
+    # uiOutput(ns("plot_output_down_wrapper")),
+    uiOutput(ns("plot_result_down_wrapper")),
     uiOutput(ns("trans_prob_output")),
+    uiOutput(ns("trans_prob_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
   )
@@ -115,9 +119,11 @@ server <- function(id, data) {
               caption = "Item Parameters",
               rownames = rownames(item_params_result()),
               colnames = colnames(item_params_result()),
-              options = list(scrollX = TRUE,
-                             searching = FALSE,
-                             initComplete = JS(ui_components$format_pagination()))
+              options = list(
+                scrollX = TRUE,
+                searching = FALSE,
+                initComplete = JS(ui_components$format_pagination())
+              )
             )
           },
           server = FALSE
@@ -127,14 +133,13 @@ server <- function(id, data) {
           downloadButton(ns("item_params_download"), "Download")
         })
 
-
         # Add download button
         output$item_params_download <- downloadHandler(
           filename = function() {
             paste("item_parameters.csv", sep = "")
           },
-          content = function(file) {
-            write.csv(result, file)
+          content = function(itemParamsFile) {
+            write.csv(item_params_result(), itemParamsFile)
           }
         )
 
@@ -154,9 +159,11 @@ server <- function(id, data) {
           datatable(
             growth_result(),
             caption = "Growth Table",
-            options = list(scrollX = TRUE,
-                           searching = FALSE,
-                           initComplete = JS(ui_components$format_pagination()))
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
 
@@ -164,14 +171,13 @@ server <- function(id, data) {
           downloadButton(ns("growth_output_download"), "Download")
         })
 
-
         # Add download button
-        output$growth_download <- downloadHandler(
+        output$growth_output_download <- downloadHandler(
           filename = function() {
             paste("growth_output.csv", sep = "")
           },
-          content = function(file) {
-            write.csv(result, file)
+          content = function(growthFile) {
+            write.csv(growth_result(), growthFile)
           }
         )
 
@@ -186,7 +192,6 @@ server <- function(id, data) {
           downloadButton(ns("plot_output_download"), "Download")
         })
 
-
         # Add download button
         output$plot_output_download <- downloadHandler(
           filename = function() {
@@ -196,9 +201,17 @@ server <- function(id, data) {
             write.csv(result, file)
           }
         )
+
         plot_result <- reactive({
           vals <- computed_values()
-          tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts, attribute_names, invariance, rule)
+          tdcm$visualize(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
         print(plot_result)
         output$tdcmPlot <- renderPlot({
@@ -209,14 +222,13 @@ server <- function(id, data) {
           downloadButton(ns("plot_result_download"), "Download")
         })
 
-
         # Add download button
         output$plot_result_download <- downloadHandler(
           filename = function() {
             paste("plot_result.csv", sep = "")
           },
-          content = function(file) {
-            write.csv(result, file)
+          content = function(plotResultFile) {
+            write.csv(plot_result(), plotResultFile)
           }
         )
 
@@ -237,9 +249,11 @@ server <- function(id, data) {
             attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
             renderDT({
               datatable(trans_prob_output_result()[, , i],
-                options = list(scrollX = TRUE,
-                               dom = "t",
-                               initComplete = JS(ui_components$format_pagination())),
+                options = list(
+                  scrollX = TRUE,
+                  dom = "t",
+                  initComplete = JS(ui_components$format_pagination())
+                ),
                 caption = attribute_title
               )
             })
@@ -247,13 +261,27 @@ server <- function(id, data) {
           tagList(table_list)
         })
 
+        output$trans_prob_down_wrapper <- renderUI({
+          downloadButton(ns("trans_prob_result_download"), "Download")
+        })
+
+        # Add download button
+        output$trans_prob_result_download <- downloadHandler(
+          filename = function() {
+            paste("trans_prob_result.csv", sep = "")
+          },
+          content = function(transProbFile) {
+            write.csv(trans_prob_output_result(), transProbFile)
+          }
+        )
+
 
         # Hide the spinner when all computations are done
         # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
         observe({
-          if (!is.null(item_params_result())
-              && !is.null(growth_result())
-              && !is.null(trans_prob_output_result())) {
+          if (!is.null(item_params_result()) &&
+            !is.null(growth_result()) &&
+            !is.null(trans_prob_output_result())) {
             remove_modal_spinner()
           }
         })
