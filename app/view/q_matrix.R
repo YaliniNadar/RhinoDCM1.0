@@ -24,8 +24,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components, ],
-  app / logic / storage,
+  app/view[ui_components, ],
+  app/logic/storage,
 )
 
 #' @export
@@ -129,24 +129,28 @@ server <- function(id, data) {
           # Use data$numAttributes, which should be set by param_specs.R
           num_attributes <- data$numAttributes
           num_items_for_single_time <- data$numTimeSinglePoint
-          
+
           error_message <- NULL
-          
+
           if (!is.null(num_items_for_single_time) && num_rows_in_q_matrix != num_items_for_single_time) {
-            error_message <- paste("The number of rows in the Q matrix (", num_rows_in_q_matrix, 
-                                  ") does not match the number of items (", num_items_for_single_time, 
-                                  "). Please ensure they are equal.", sep = "")
+            error_message <- paste("The number of rows in the Q matrix (", num_rows_in_q_matrix,
+              ") does not match the number of items (", num_items_for_single_time,
+              "). Please ensure they are equal.",
+              sep = ""
+            )
           } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
-            error_message <- paste("The number of attributes does not match the number of columns (", 
-                                  num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
+            error_message <- paste("The number of attributes does not match the number of columns (",
+              num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.",
+              sep = ""
+            )
           }
-          
+
           if (!is.null(error_message)) {
             shiny::showNotification(error_message, type = "error")
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next",
-                          class = "btn-primary disabled",
-                          disabled = TRUE
+                class = "btn-primary disabled",
+                disabled = TRUE
               )
             })
           } else {

@@ -45,8 +45,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm
+  app/view[ui_components],
+  app/logic/tdcm
 )
 
 #' @export

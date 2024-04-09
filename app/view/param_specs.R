@@ -1,30 +1,32 @@
 box::use(
-  shiny[moduleServer,
-        NS,
-        fluidPage,
-        h2,
-        p,
-        br,
-        HTML,
-        numericInput,
-        textInput,
-        radioButtons,
-        actionButton,
-        observeEvent,
-        uiOutput,
-        renderUI,
-        observe,
-        reactive,
-        div],
+  shiny[
+    moduleServer,
+    NS,
+    fluidPage,
+    h2,
+    p,
+    br,
+    HTML,
+    numericInput,
+    textInput,
+    radioButtons,
+    actionButton,
+    observeEvent,
+    uiOutput,
+    renderUI,
+    observe,
+    reactive,
+    div
+  ],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],
-  shinyvalidate[InputValidator, sv_required, sv_optional,],
+  shinyvalidate[InputValidator, sv_required, sv_optional, ],
   stringr[str_detect, str_trim, str_replace_all],
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / storage,
+  app/view[ui_components],
+  app/logic/storage,
 )
 
 #' @export
@@ -48,14 +50,13 @@ ui <- function(id) {
 
     # Input 4: Q-Matrix for each time point
     radioButtons(ns("q_matrix_choice"), "Is there a different Q-Matrix for each time point?",
-                 choices = c("Yes", "No"), selected = "No"),
-
+      choices = c("Yes", "No"), selected = "No"
+    ),
     uiOutput(ns("conditional_num_items")),
-
     div(
-      style = "display: flex; justify-content: flex-end;",  # Aligns the buttons to the right
+      style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
-      uiOutput(ns("nextButtonUI"))  # Placeholder for dynamic Next button rendering
+      uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
     )
   )
 }
@@ -85,10 +86,14 @@ server <- function(id, data) {
     output$conditional_num_items <- renderUI({
       if (input$q_matrix_choice == "Yes") {
         textInput(ns("num_items_each_time_point"),
-                  "Enter number of items for each time point separated by commas: ", value = 1)
+          "Enter number of items for each time point separated by commas: ",
+          value = 1
+        )
       } else {
         numericInput(ns("num_items_single_time_point"),
-                     "Enter number of items at a single time point: ", value = 1, min = 1)
+          "Enter number of items at a single time point: ",
+          value = 1, min = 1
+        )
       }
     })
 
@@ -132,14 +137,14 @@ server <- function(id, data) {
         data$param_specs_data$num_items <- input$num_items_single_time_point
       } else {
         # Check if input$num_items_each_time_point is not empty
-        if (!is.null(input$num_items_each_time_point)
-            && nchar(input$num_items_each_time_point) > 0) {
+        if (!is.null(input$num_items_each_time_point) &&
+          nchar(input$num_items_each_time_point) > 0) {
           # Split the comma-separated values for each time point
           num_items_each_time_point <- as.numeric(unlist(strsplit(input$num_items_each_time_point, ","))) # nolint: line_length_linter.
           data$param_specs_data$num_items <- num_items_each_time_point
         } else {
           # Handle case when input$num_items_each_time_point is empty
-          data$param_specs_data$num_items <- NULL  # Or any default value you want to set
+          data$param_specs_data$num_items <- NULL # Or any default value you want to set
         }
       }
     })
@@ -169,15 +174,19 @@ server <- function(id, data) {
         return("Attribute names cannot be just whitespace")
       } else if (num_attributes != input$num_attributes) {
         if (num_attributes < input$num_attributes) {
-          return(paste("Expected",
-                       input$num_attributes,
-                       "attribute names but only found",
-                       num_attributes))
+          return(paste(
+            "Expected",
+            input$num_attributes,
+            "attribute names but only found",
+            num_attributes
+          ))
         } else {
-          return(paste("Expected",
-                       input$num_attributes,
-                       "attribute names but found",
-                       num_attributes))
+          return(paste(
+            "Expected",
+            input$num_attributes,
+            "attribute names but found",
+            num_attributes
+          ))
         }
       }
     }
@@ -189,10 +198,12 @@ server <- function(id, data) {
 
       # Check if the number of items for each time point matches the expected number
       if (length(num_items_each_time_point) != num_time_points) {
-        return(paste("Expected",
-                     num_time_points,
-                     "numbers of items but found",
-                     length(num_items_each_time_point)))
+        return(paste(
+          "Expected",
+          num_time_points,
+          "numbers of items but found",
+          length(num_items_each_time_point)
+        ))
       }
     }
 

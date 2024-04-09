@@ -1,201 +1,243 @@
 box::use(
-    shiny[
-        NS,
-        fluidPage,
-        tabsetPanel,
-        tabPanel,
-        br,
-        h2,
-        h4,
-        fluidRow,
-        column,
-        actionButton,
-        observeEvent,
-        moduleServer,
-        observe,
-        renderTable,
-        renderPlot,
-        tableOutput,
-        textOutput,
-        plotOutput,
-        renderDataTable,
-        renderUI,
-        uiOutput,
-        tagList,
-        downloadButton,
-        downloadHandler
-    ],
-    shinybusy[
-        show_modal_spinner,
-        remove_modal_spinner,
-    ],
-    DT[
-        DTOutput,
-        renderDT,
-        datatable,
-        formatRound,
-        formatSignif
-    ],
-    datasets[
-        mtcars
-    ],
-    utils[
-        write.csv
-    ]
+  shiny[
+    NS,
+    fluidPage,
+    tabsetPanel,
+    tabPanel,
+    br,
+    h2,
+    h4,
+    fluidRow,
+    column,
+    actionButton,
+    observeEvent,
+    moduleServer,
+    observe,
+    renderTable,
+    renderPlot,
+    tableOutput,
+    textOutput,
+    plotOutput,
+    renderDataTable,
+    renderUI,
+    uiOutput,
+    tagList,
+    downloadButton,
+    downloadHandler,
+    reactive
+  ],
+  shinybusy[
+    show_modal_spinner,
+    remove_modal_spinner,
+  ],
+  DT[
+    DTOutput,
+    renderDT,
+    datatable,
+    formatRound,
+    formatSignif
+  ],
+  datasets[
+    mtcars
+  ],
+  utils[
+    write.csv
+  ]
 )
 
 box::use(
-    app / view[ui_components],
-    app / logic / tdcm
+  app/view[ui_components],
+  app/logic/tdcm
 )
 
 #' @export
 ui <- function(id) {
-    ns <- NS(id)
+  ns <- NS(id)
 
-    fluidPage(
-        h2("Secondary Results"),
-        br(),
-        actionButton(ns("model_fit"), "Model Fit"),
-        actionButton(ns("att_corr"), "Attribute Correlation Matrix"),
-        actionButton(ns("rel"), "Reliability"),
-        uiOutput(ns("model_fit_output")),
-        DTOutput(ns("att_corr_output")),
-        DTOutput(ns("rel_output")),
-        ui_components$next_button(ns("nextButton")),
-        ui_components$back_button(ns("backButton")),
-    )
+  fluidPage(
+    h2("Secondary Results"),
+    br(),
+    # actionButton(ns("model_fit"), "Model Fit"),
+    # actionButton(ns("att_corr"), "Attribute Correlation Matrix"),
+    # actionButton(ns("rel"), "Reliability"),
+    uiOutput(ns("model_fit_output")),
+    DTOutput(ns("att_corr_output")),
+    uiOutput(ns("att_corr_down_wrapper")),
+    DTOutput(ns("rel_output")),
+    uiOutput(ns("reli_results_down_wrapper")),
+    ui_components$next_button(ns("nextButton")),
+    ui_components$back_button(ns("backButton")),
+  )
 }
 
 #' @export
 server <- function(id, data) {
-    moduleServer(id, function(input, output, session) {
-        ns <- session$ns
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    computedValues <- reactive({
+      # Access reactive values here
+      attribute_names <- data$review$col_names
+      time_pts <- data$param_specs_data$num_time_points
+      invariance <- data$model_specs_data$itemParameter
+      rule <- data$model_specs_data$dcmEstimate
 
-        observeEvent(input$model_fit, {
-            show_modal_spinner(spin = "fading-circle")
-            time_pts <- data$param_specs_data$num_time_points
-            attribute_names <- data$review$col_names
-
-            result <- tdcm$model_fit(data$q_matrix, data$ir_matrix, time_pts, attribute_names)
-
-            # Create a data.table containing specific elements
-            misc_data <- tdcm$get_misc_datatable(result)
-
-            output$model_fit_output <- renderUI({
-                tagList(
-                    tabsetPanel(
-                        tabPanel("Global Fit Stats", DTOutput(ns("global_fit_stats"))),
-                        tabPanel("Item Pairs", DTOutput(ns("item_pairs"))),
-                        tabPanel("Global Fit Tests", DTOutput(ns("global_fit_tests"))),
-                        tabPanel("Global Fit Stats 2", DTOutput(ns("global_fit_stats2"))),
-                        tabPanel("Item RMSEA", DTOutput(ns("item_rmsea"))),
-                        tabPanel("Misc", DTOutput(ns("misc_table"))),
-                        # Add more tabPanels for other elements as needed
-                    )
-                )
-            })
-
-            # Render Global Fit Stats data frame
-            output$global_fit_stats <- renderDT({
-                formatted_table <- formatSignif(
-                    datatable(result$Global.Fit.Stats, options = list(scrollX = TRUE)),
-                    1,
-                    2
-                )
-            })
-
-            # Render Item Pairs data frame
-            output$item_pairs <- renderDT({
-                formatted_table <- formatRound(
-                    formatRound(
-                        datatable(result$Item.Pairs, options = list(scrollX = TRUE)),
-                        columns = 3:7,
-                        digits = 0
-                    ),
-                    columns = 8:18,
-                    digits = 2,
-                )
-            })
-
-            # Render Gloabl Fit Tests data frame
-            output$global_fit_tests <- renderDT({
-                datatable(result$Global.Fit.Tests,
-                    options = list(scrollX = TRUE)
-                )
-            })
-
-            # Render Global Fit Stats data frame
-            output$global_fit_stats2 <- renderDT({
-                dt <- result$Global.Fit.Stats2
-                dt_transposed <- as.data.frame(t(dt))
-                colnames(dt_transposed) <- c("Value")
-                datatable(dt_transposed,
-                    options = list(scrollX = TRUE)
-                )
-            })
-
-            # Render Item RMSEA table
-            output$item_rmsea <- renderDT({
-                item_rmsea_dt <- tdcm$convert_to_datatable(result$Item.RMSEA)
-                datatable(item_rmsea_dt,
-                    options = list(scrollX = TRUE)
-                )
-            })
-
-            # Render Misc data table
-            output$misc_table <- renderDT({
-                datatable(misc_data,
-                    options = list(scrollX = TRUE)
-                )
-            })
-
-            remove_modal_spinner()
-        })
-
-        observeEvent(input$att_corr, {
-            show_modal_spinner(spin = "fading-circle")
-            time_pts <- data$param_specs_data$num_time_points
-            attribute_names <- data$review$col_names
-
-            result <- tdcm$att_corr(
-                data$q_matrix,
-                data$ir_matrix,
-                time_pts,
-                attribute_names
-            )
-            output$att_corr_output <- renderDT({
-                datatable(
-                    result,
-                    caption = "Attribute Correlation",
-                    options = list(scrollX = TRUE)
-                )
-            })
-            remove_modal_spinner()
-        })
-
-        observeEvent(input$rel, {
-            show_modal_spinner(spin = "fading-circle")
-            time_pts <- data$param_specs_data$num_time_points
-            attribute_names <- data$review$col_names
-
-            result <- tdcm$reliability(
-                data$q_matrix,
-                data$ir_matrix,
-                time_pts,
-                attribute_names
-            )
-            output$rel_output <- renderDT({
-                datatable(
-                    result,
-                    caption = "Reliability",
-                    options = list(scrollX = TRUE)
-                )
-            })
-            remove_modal_spinner()
-        })
-
-
-        ui_components$nb_server("nextButton", "/")
+      # Return a list of all computed values
+      list(
+        attribute_names = attribute_names,
+        time_pts = time_pts,
+        invariance = invariance,
+        rule = rule
+      )
     })
+
+    model_fit_result <- reactive({
+      vals <- computedValues()
+      tdcm$model_fit(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+    })
+    # Create a data.table containing specific elements
+    misc_data <- reactive({
+      tdcm$get_misc_datatable(model_fit_result())
+    })
+
+    output$model_fit_output <- renderUI({
+      tagList(
+        tabsetPanel(
+          tabPanel("Global Fit Stats", DTOutput(ns("global_fit_stats"))),
+          tabPanel("Item Pairs", DTOutput(ns("item_pairs"))),
+          tabPanel("Global Fit Tests", DTOutput(ns("global_fit_tests"))),
+          tabPanel("Global Fit Stats 2", DTOutput(ns("global_fit_stats2"))),
+          tabPanel("Item RMSEA", DTOutput(ns("item_rmsea"))),
+          tabPanel("Misc", DTOutput(ns("misc_table"))),
+          # Add more tabPanels for other elements as needed
+        )
+      )
+    })
+
+    check_columns_for_rounding <- function(data) {
+      # Check if columns need rounding
+      columns_to_round <- which(sapply(data, function(x) {
+        is.numeric(x) && any(abs(x - round(x, 3)) > 0)
+      }))
+      return(columns_to_round)
+    }
+
+    # Render Global Fit Stats data frame
+    output$global_fit_stats <- renderDT({
+      columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Stats)
+      formatted_table <- formatRound(
+        datatable(model_fit_result()$Global.Fit.Stats, options = list(scrollX = TRUE)),
+        columns = columns_to_round,
+        digits = 3
+      )
+    })
+
+    # Render Item Pairs data frame
+    output$item_pairs <- renderDT({
+      columns_to_round <- check_columns_for_rounding(model_fit_result()$Item.Pairs)
+      formatted_table <- formatRound(
+        datatable(model_fit_result()$Item.Pairs, options = list(scrollX = TRUE)),
+        columns = columns_to_round,
+        digits = 3
+      )
+    })
+
+    # Render Gloabl Fit Tests data frame
+    output$global_fit_tests <- renderDT({
+      columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Tests)
+      formatted_table <- formatRound(
+        datatable(model_fit_result()$Global.Fit.Tests, options = list(scrollX = TRUE)),
+        columns = columns_to_round,
+        digits = 3
+      )
+    })
+
+    # Render Global Fit Stats data frame
+    output$global_fit_stats2 <- renderDT({
+      dt <- model_fit_result()$Global.Fit.Stats2
+      dt_transposed <- as.data.frame(t(dt))
+      colnames(dt_transposed) <- c("Value")
+
+      columns_to_round <- check_columns_for_rounding(dt_transposed)
+      formatted_table <- formatRound(
+        datatable(dt_transposed, options = list(scrollX = TRUE)),
+        columns = columns_to_round,
+        digits = 3
+      )
+    })
+
+    # Render Item RMSEA table
+    output$item_rmsea <- renderDT({
+      item_rmsea_dt <- tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
+      columns_to_round <- check_columns_for_rounding(item_rmsea_dt)
+      formatted_table <- formatRound(
+        datatable(item_rmsea_dt, options = list(scrollX = TRUE)),
+        columns = columns_to_round,
+        digits = 3
+      )
+    })
+
+    # Render Misc data table
+    output$misc_table <- renderDT({
+      columns_to_round <- check_columns_for_rounding(misc_data)
+      formatted_table <- formatRound(
+        datatable(misc_data(), options = list(scrollX = TRUE)),
+        columns = columns_to_round,
+        digits = 3
+      )
+    })
+
+    att_corr_result <- reactive({
+      vals <- computedValues()
+      tdcm$att_corr(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+    })
+    output$att_corr_output <- renderDT({
+      datatable(
+        att_corr_result(),
+        caption = "Attribute Correlation",
+        options = list(scrollX = TRUE)
+      )
+    })
+
+    output$att_corr_result_down_wrapper <- renderUI({
+      downloadButton(ns("att_result_download"), "Download")
+    })
+
+    # Add download button
+    output$att_result_download <- downloadHandler(
+      filename = function() {
+        paste("att_corr.csv", sep = "")
+      },
+      content = function(attCorrResultFile) {
+        write.csv(att_corr_result(), attCorrResultFile)
+      }
+    )
+
+
+    reli_result <- reactive({
+      vals <- computedValues()
+      tdcm$reliability(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+    })
+    output$rel_output <- renderDT({
+      datatable(
+        reli_result(),
+        caption = "Reliability",
+        options = list(scrollX = TRUE)
+      )
+    })
+    output$reli_result_down_wrapper <- renderUI({
+      downloadButton(ns("reli_result_download"), "Download")
+    })
+
+    # Add download button
+    output$reli_result_download <- downloadHandler(
+      filename = function() {
+        paste("reli_result.csv", sep = "")
+      },
+      content = function(reliResultFile) {
+        write.csv(reli_result(), reliResultFile)
+      }
+    )
+
+    ui_components$nb_server("nextButton", "/")
+  })
 }
