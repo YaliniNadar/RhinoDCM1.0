@@ -105,6 +105,7 @@ server <- function(id, data) {
             att_class_result(),
             caption = "Attribute Classification",
             options = list(scrollX = TRUE,
+                           searching = FALSE,
                            initComplete = JS(ui_components$format_pagination()))
           )
         })
@@ -126,6 +127,7 @@ server <- function(id, data) {
             most_likely_trans_result()[, -1],
             caption = "Most Likely Transitions",
             options = list(scrollX = TRUE,
+                           searching = FALSE,
                            initComplete = JS(ui_components$format_pagination()))
           )
         })
@@ -147,6 +149,7 @@ server <- function(id, data) {
             trans_pos_output_result(),
             caption = "Transition Position",
             options = list(scrollX = TRUE,
+                           searching = FALSE,
                            initComplete = JS(ui_components$format_pagination()))
           )
         })

@@ -125,6 +125,7 @@ server <- function(id, data) {
             options = list(
               autoWidth = TRUE,
               scrollX = TRUE,
+              searching = FALSE,
               initComplete = JS(ui_components$format_pagination())
             ),
           )
