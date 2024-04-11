@@ -22,6 +22,7 @@ box::use(
   shinyStorePlus[initStore, setupStorage],
   shinyvalidate[InputValidator, sv_required, sv_optional, ],
   stringr[str_detect, str_trim, str_replace_all],
+  rintrojs[introjsUI, introjs, introBox],
 )
 
 box::use(
@@ -36,21 +37,46 @@ ui <- function(id) {
   fluidPage(
     initStore(),
     useShinyjs(),
+    introjsUI(),
+
     h2("Parameter Specifications"),
     br(),
 
+    # Trigger button for the tour
+    introBox(
+      actionButton(ns("startTour"), "Start Tour", class = "btn-info"),
+      data.step = 5,
+      data.intro = "Click this button to start a guided tour of the application."
+    ),
+
     # Input 1: Number of time points
-    numericInput(ns("num_time_points"), "Enter number of time points: ", value = 1, min = 1),
+    introBox(
+      numericInput(ns("num_time_points"), "Enter number of time points: ", value = 1, min = 1),
+      data.step = 1,
+      data.intro = "Enter the total number of time points for your analysis."
+    ),
 
     # Input 2: Number of attributes measured
-    numericInput(ns("num_attributes"), "Enter number of attributes measured: ", value = 1, min = 1),
+    introBox(
+      numericInput(ns("num_attributes"), "Enter number of attributes measured: ", value = 1, min = 1),
+      data.step = 2,
+      data.intro = "Enter the total number of attributes measured in your data."
+    ),
 
     # Input 3: Attribute names separated by commas
-    textInput(ns("attribute_names"), "Enter attribute names separated by commas (optional): "),
+    introBox(
+      textInput(ns("attribute_names"), "Enter attribute names separated by commas (optional): "),
+      data.step = 3,
+      data.intro = "Enter the names of the attributes measured in your data, separated by commas."
+    ),
 
     # Input 4: Q-Matrix for each time point
-    radioButtons(ns("q_matrix_choice"), "Is there a different Q-Matrix for each time point?",
-      choices = c("Yes", "No"), selected = "No"
+    introBox(
+      radioButtons(ns("q_matrix_choice"), "Is there a different Q-Matrix for each time point?",
+        choices = c("Yes", "No"), selected = "No"
+      ),
+      data.step = 4,
+      data.intro = "Choose whether there is a different Q-Matrix for each time point in your data."
     ),
     uiOutput(ns("conditional_num_items")),
     div(
@@ -65,6 +91,10 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+
+    observeEvent(input$startTour, {
+      introjs(session)
+    })
 
     observeEvent(input$num_attributes, {
       data$numAttributes <- input$num_attributes
