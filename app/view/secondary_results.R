@@ -43,14 +43,15 @@ box::use(
     mtcars
   ],
   utils[
-    write.csv
-  ]
+    write.csv,
+    zip
+  ],
 )
 
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm
+  app/view[ui_components],
+  app/logic/tdcm
 )
 
 #' @export
@@ -130,7 +131,13 @@ server <- function(id, data) {
         output$global_fit_stats <- renderDT({
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Stats)
           formatted_table <- formatRound(
-            datatable(model_fit_result()$Global.Fit.Stats, options = list(scrollX = TRUE, searching = FALSE)),
+            datatable(model_fit_result()$Global.Fit.Stats,
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
@@ -141,7 +148,13 @@ server <- function(id, data) {
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Item.Pairs)
           formatted_table <- formatRound(
             formatRound(
-              datatable(model_fit_result()$Item.Pairs, options = list(scrollX = TRUE, searching = FALSE)),
+              datatable(model_fit_result()$Item.Pairs,
+                options = list(
+                  scrollX = TRUE,
+                  searching = FALSE,
+                  initComplete = JS(ui_components$format_pagination())
+                )
+              ),
               columns = columns_to_round,
               digits = 3
             ),
@@ -154,13 +167,19 @@ server <- function(id, data) {
         output$global_fit_tests <- renderDT({
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Tests)
           formatted_table <- formatRound(
-            datatable(model_fit_result()$Global.Fit.Tests, options = list(scrollX = TRUE, searching = FALSE)),
+            datatable(model_fit_result()$Global.Fit.Tests,
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
         })
 
-        # Render Global Fit Stats data frame
+        # Render Global Fit Stats 2 data frame
         output$global_fit_stats2 <- renderDT({
           dt <- model_fit_result()$Global.Fit.Stats2
           dt_transposed <- as.data.frame(t(dt))
@@ -168,18 +187,34 @@ server <- function(id, data) {
 
           columns_to_round <- check_columns_for_rounding(dt_transposed)
           formatted_table <- formatRound(
-            datatable(dt_transposed, options = list(scrollX = TRUE, searching = FALSE)),
+            datatable(dt_transposed,
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
         })
 
+        # Create a data.table for Item RMSEA table
+        item_rmsea_dt <- reactive({
+          tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
+        })
+
         # Render Item RMSEA table
         output$item_rmsea <- renderDT({
-          item_rmsea_dt <- tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
           columns_to_round <- check_columns_for_rounding(item_rmsea_dt)
           formatted_table <- formatRound(
-            datatable(item_rmsea_dt, options = list(scrollX = TRUE, searching = FALSE)),
+            datatable(item_rmsea_dt(),
+              options = list(
+                scrollX = TRUE,
+                searching = FALSE,
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
@@ -189,11 +224,37 @@ server <- function(id, data) {
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
           formatted_table <- formatRound(
-            datatable(misc_data(), options = list(scrollX = TRUE, searching = FALSE)),
+            datatable(misc_data(),
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
         })
+
+        # Function to create a ZIP file containing multiple CSV files
+        # create_zip_file <- function() {
+        #   # Create a temporary directory
+        #   temp_dir <- tempdir()
+        #   # Write each table to a separate CSV file
+        #   write.csv(model_fit_result()$Global.Fit.Stats, file.path(temp_dir, "global_fit_stats.csv"))
+        #   write.csv(model_fit_result()$Item.Pairs, file.path(temp_dir, "item_pairs.csv"))
+        #   write.csv(model_fit_result()$Global.Fit.Tests, file.path(temp_dir, "global_fit_tests.csv"))
+        #   write.csv(model_fit_result()$Global.Fit.Stats2, file.path(temp_dir, "global_fit_stats2.csv"))
+        #   write.csv(item_rmsea_dt(), file.path(temp_dir, "item_rmsea.csv"))
+        #   write.csv(misc_data(), file.path(temp_dir, "misc_table.csv"))
+
+        #   # Create a ZIP file containing all CSV files
+        #   zip_file <- file.path(temp_dir, "model_fit_results.zip")
+        #   utils::zip(zip_file, files = list.files(temp_dir, full.names = TRUE), zip = Sys.getenv("R_ZIPCMD", "zip"))
+
+        #   # Return the path to the ZIP file
+        #   return(zip_file)
+        # }
 
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
@@ -202,10 +263,12 @@ server <- function(id, data) {
         # Add download button
         output$model_fit_download <- downloadHandler(
           filename = function() {
-            paste("model_fit.csv", sep = "")
+            "model_fit_results.zip"
           },
-          content = function(modelFitResultFile) {
-            write.csv(model_fit_result(), modelFitResultFile)
+          content = function(file) {
+            zip_file <- create_zip_file()
+            file.copy(zip_file, file)
+            unlink(zip_file)
           }
         )
 
@@ -217,7 +280,11 @@ server <- function(id, data) {
           datatable(
             att_corr_result(),
             caption = "Attribute Correlation",
-            options = list(scrollX = TRUE, searching = FALSE)
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
 
@@ -243,7 +310,11 @@ server <- function(id, data) {
           datatable(
             reli_result(),
             caption = "Reliability",
-            options = list(scrollX = TRUE, searching = FALSE)
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
         output$reli_result_down_wrapper <- renderUI({
@@ -261,7 +332,6 @@ server <- function(id, data) {
         )
 
         # Hide the spinner when all computations are done
-        # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
         observe({
           if (!is.null(model_fit_result()) &&
             !is.null(att_corr_result()) &&
