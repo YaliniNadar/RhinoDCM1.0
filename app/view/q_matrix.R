@@ -55,7 +55,6 @@ ui <- function(id) {
     # Input: Additional options
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
-
     uiOutput(ns("errorBox")),
 
     # Text output for displaying dimensions
@@ -148,11 +147,12 @@ server <- function(id, data) {
           error_message <- NULL
 
           if (!is.null(num_items_for_single_time) && num_rows_in_q_matrix !=
-                num_items_for_single_time) {
+            num_items_for_single_time) {
             error_message <- paste("The number of rows in the Q matrix (", num_rows_in_q_matrix,
-                                   ") does not match the number of items (",
-                                   num_items_for_single_time, "). Please ensure they are equal.",
-                                   sep = "")
+              ") does not match the number of items (",
+              num_items_for_single_time, "). Please ensure they are equal.",
+              sep = ""
+            )
           } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
             error_message <- paste("The number of attributes does not match the number of columns
             (", num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
@@ -173,7 +173,9 @@ server <- function(id, data) {
             })
           } else {
             # Clear the error box if there are no errors
-            output$errorBox <- renderUI({ NULL })
+            output$errorBox <- renderUI({
+              NULL
+            })
 
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
@@ -187,8 +189,11 @@ server <- function(id, data) {
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
           datatable(data_temp,
-                    options = list(searching = FALSE,
-                                   initComplete = JS(ui_components$format_pagination())))
+            options = list(
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
+          )
         })
 
         # Save the modified data to q_matrix

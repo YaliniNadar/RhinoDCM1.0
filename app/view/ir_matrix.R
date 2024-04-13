@@ -27,8 +27,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components, ],
-  app / logic / storage,
+  app/view[ui_components, ],
+  app/logic/storage,
 )
 
 #' @export
@@ -54,7 +54,6 @@ ui <- function(id) {
     # Input: Additional options
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
-
     uiOutput(ns("errorBox")),
 
     # Text output for displaying dimensions
@@ -73,7 +72,6 @@ ui <- function(id) {
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
-    
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
@@ -140,7 +138,7 @@ server <- function(id, data) {
           num_cols_in_ir_matrix <- ncol(data_temp)
           # Code to read Q rows and time points
           num_rows_in_q_matrix <- data$num_rows_in_q_matrix
-          num_time_points <- data$numTimePoints #check
+          num_time_points <- data$numTimePoints # check
 
           error_message <- NULL
 
@@ -160,7 +158,8 @@ server <- function(id, data) {
 
           if (!is.null(error_message)) {
             output$errorBox <- renderUI({
-              div(class = "alert alert-danger", role = "alert",
+              div(
+                class = "alert alert-danger", role = "alert",
                 shiny::tags$strong("Error: "), error_message
               )
             })
@@ -172,7 +171,9 @@ server <- function(id, data) {
             })
           } else {
             # Clear the error box if there are no errors
-            output$errorBox <- renderUI({ NULL })
+            output$errorBox <- renderUI({
+              NULL
+            })
 
             output$nextButtonUI <- renderUI({
               actionButton(session$ns("nextButton"), "Next", class = "btn-primary")
@@ -206,7 +207,7 @@ server <- function(id, data) {
         output$filePreviewIR <- renderDT(NULL)
       }
     })
-    
+
     ui_components$nb_server("nextButton", "model_specs")
   })
 }

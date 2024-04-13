@@ -48,8 +48,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm
+  app/view[ui_components],
+  app/logic/tdcm
 )
 
 #' @export
@@ -107,9 +107,11 @@ server <- function(id, data) {
           datatable(
             att_class_result(),
             caption = "Attribute Classification",
-            options = list(scrollX = TRUE,
-                           searching = FALSE,
-                           initComplete = JS(ui_components$format_pagination()))
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
 
@@ -143,9 +145,11 @@ server <- function(id, data) {
           datatable(
             most_likely_trans_result()[, -1],
             caption = "Most Likely Transitions",
-            options = list(scrollX = TRUE,
-                           searching = FALSE,
-                           initComplete = JS(ui_components$format_pagination()))
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
 
@@ -179,9 +183,11 @@ server <- function(id, data) {
           datatable(
             trans_pos_output_result(),
             caption = "Transition Position",
-            options = list(scrollX = TRUE,
-                           searching = FALSE,
-                           initComplete = JS(ui_components$format_pagination()))
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
 
