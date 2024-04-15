@@ -25,13 +25,19 @@ box::use(
     tagList,
     downloadButton,
     downloadHandler,
-    reactive
+    reactive,
+    showModal,
+    modalDialog,
+    modalButton
   ],
   shinybusy[
     show_modal_spinner,
     remove_modal_spinner,
   ],
-  shiny.router[is_page],
+  shiny.router[
+    is_page,
+    change_page,
+  ],
   DT[
     DTOutput,
     renderDT,
@@ -69,6 +75,7 @@ ui <- function(id) {
     uiOutput(ns("reli_result_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
+    actionButton(ns("resetBtn"), "Restart App"),
   )
 }
 
@@ -76,7 +83,6 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
     observe({
       if (is_page("primary_aggregate_results")) {
         show_modal_spinner(spin = "fading-circle")
@@ -235,27 +241,6 @@ server <- function(id, data) {
             digits = 3
           )
         })
-
-        # Function to create a ZIP file containing multiple CSV files
-        # create_zip_file <- function() {
-        #   # Create a temporary directory
-        #   temp_dir <- tempdir()
-        #   # Write each table to a separate CSV file
-        #   write.csv(model_fit_result()$Global.Fit.Stats, file.path(temp_dir, "global_fit_stats.csv"))
-        #   write.csv(model_fit_result()$Item.Pairs, file.path(temp_dir, "item_pairs.csv"))
-        #   write.csv(model_fit_result()$Global.Fit.Tests, file.path(temp_dir, "global_fit_tests.csv"))
-        #   write.csv(model_fit_result()$Global.Fit.Stats2, file.path(temp_dir, "global_fit_stats2.csv"))
-        #   write.csv(item_rmsea_dt(), file.path(temp_dir, "item_rmsea.csv"))
-        #   write.csv(misc_data(), file.path(temp_dir, "misc_table.csv"))
-
-        #   # Create a ZIP file containing all CSV files
-        #   zip_file <- file.path(temp_dir, "model_fit_results.zip")
-        #   utils::zip(zip_file, files = list.files(temp_dir, full.names = TRUE), zip = Sys.getenv("R_ZIPCMD", "zip"))
-
-        #   # Return the path to the ZIP file
-        #   return(zip_file)
-        # }
-
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
         })
@@ -263,12 +248,19 @@ server <- function(id, data) {
         # Add download button
         output$model_fit_download <- downloadHandler(
           filename = function() {
-            "model_fit_results.zip"
+            "model_fit_results"
           },
           content = function(file) {
-            zip_file <- create_zip_file()
-            file.copy(zip_file, file)
-            unlink(zip_file)
+            # Save each table as a csv file
+            save_table <- function(table_name, info) {
+              write.csv(info, file.path(dirname(file), paste0(table_name, ".csv")), row.names = FALSE)
+            }
+            save_table("global_fit_stats", model_fit_result()$Global.Fit.Stats)
+            # save_table("item_pairs", model_fit_result()$Item.Pairs)
+            # save_table("global_fit_tests", model_fit_result()$Global.Fit.Tests)
+            # save_table("global_fit_stats2", model_fit_result()$Global.Fit.Stats2)
+            # save_table("item_rmsea", model_fit_result()$Item.RMSEA)
+            # save_table("misc_table", misc_data())
           }
         )
 
@@ -340,6 +332,28 @@ server <- function(id, data) {
           }
         })
       }
+    })
+
+    # Reset button action
+    observeEvent(input$resetBtn, {
+      print("reset button is clicked")
+      # Reset all variables
+      # # Add more reset actions for other variables as needed
+      showModal(modalDialog(
+        title = "Confirm Navigation",
+        "Are you sure you want to leave this page? This action will erase all enetered data requiring you to start over.",
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton(ns("No")),
+          actionButton(ns("confirmLeave"), "Yes"),
+        )
+      ))
+
+      observeEvent(input$confirmCreate, {
+        change_page("/")
+        session$reload()
+        # removeModal()
+      })
     })
     ui_components$nb_server("nextButton", "/")
   })
