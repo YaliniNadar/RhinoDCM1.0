@@ -18,6 +18,8 @@ box::use(
     div,
     textOutput,
     renderText,
+    tagList,
+    HTML,
   ],
   shinyjs[runjs],
   DT[DTOutput, renderDT, datatable, JS],
@@ -53,8 +55,6 @@ ui <- function(id) {
     # Input: Additional options
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
-
-    # Inside your fluidPage, add:
     uiOutput(ns("errorBox")),
 
     # Text output for displaying dimensions
@@ -73,10 +73,22 @@ ui <- function(id) {
 #' @export
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
+    shinyjs::useShinyjs()
+
+    observeEvent(input$num_rows_in_q_matrix, {
+      num_rows_in_q_matrix <- input$num_rows_in_q_matrix
+    })
     # Conditional Rendering for Custom Separator
     output$custom_separator_input <- renderUI({
       if (input$separatorType == "") {
-        textInput(session$ns("customSeparator"), "Enter Custom Separator:")
+        tagList(
+          textInput(session$ns("customSeparator"), "Enter Custom Separator:"),
+          tags$script(HTML(sprintf("$(document).on('shiny:inputchanged', function(event) {
+            if (event.name === '%s') {
+              $('#%s').attr('maxlength', 1);
+            }
+          });", session$ns("customSeparator"), session$ns("customSeparator"))))
+        )
       }
     })
 
@@ -130,20 +142,20 @@ server <- function(id, data) {
           # Use data$numAttributes, which should be set by param_specs.R
           num_attributes <- data$numAttributes
           num_items_for_single_time <- data$numTimeSinglePoint
+          data$num_rows_in_q_matrix <- nrow(data_temp)
 
           error_message <- NULL
 
-          if (!is.null(num_items_for_single_time) && num_rows_in_q_matrix != num_items_for_single_time) {
+          if (!is.null(num_items_for_single_time) && num_rows_in_q_matrix !=
+            num_items_for_single_time) {
             error_message <- paste("The number of rows in the Q matrix (", num_rows_in_q_matrix,
-              ") does not match the number of items (", num_items_for_single_time,
-              "). Please ensure they are equal.",
+              ") does not match the number of items (",
+              num_items_for_single_time, "). Please ensure they are equal.",
               sep = ""
             )
           } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
-            error_message <- paste("The number of attributes does not match the number of columns (",
-              num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.",
-              sep = ""
-            )
+            error_message <- paste("The number of attributes does not match the number of columns
+            (", num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
           }
 
           if (!is.null(error_message)) {
@@ -176,7 +188,12 @@ server <- function(id, data) {
 
         # Display file preview using DT
         output$filePreviewQ <- renderDT({
-          datatable(data_temp, options = list(initComplete = JS(ui_components$format_pagination())))
+          datatable(data_temp,
+            options = list(
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
+          )
         })
 
         # Save the modified data to q_matrix
@@ -185,6 +202,7 @@ server <- function(id, data) {
         # Update text output to display dimensions
         output$dataDimensions <- renderText({
           paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
+          num_cols_in_q_matrix <- ncol(data_temp)
         })
       } else {
         # Clear the preview if no file is selected

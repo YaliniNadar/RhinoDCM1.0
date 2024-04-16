@@ -23,7 +23,7 @@ box::use(
 
 fit_and_summarize <- memoise(function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    model <- if (rule == "full LCDM") {
+    model <- if (rule == "full LCDM" || rule == "Different on each item") { # Remove this when Different on each item is implemented
       tdcm(ir_matrix, q_matrix, num.time.points = time_pts, invariance = invariance)
     } else {
       tdcm(ir_matrix, q_matrix, num.time.points = time_pts, invariance = invariance, rule = rule)

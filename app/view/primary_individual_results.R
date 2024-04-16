@@ -128,6 +128,7 @@ server <- function(id, data) {
             caption = "Attribute Classification",
             options = list(
               scrollX = TRUE,
+              searching = FALSE,
               initComplete = JS(ui_components$format_pagination())
             )
           )
@@ -165,6 +166,7 @@ server <- function(id, data) {
             caption = "Most Likely Transitions",
             options = list(
               scrollX = TRUE,
+              searching = FALSE,
               initComplete = JS(ui_components$format_pagination())
             )
           )
@@ -202,6 +204,7 @@ server <- function(id, data) {
             caption = "Transition Position",
             options = list(
               scrollX = TRUE,
+              searching = FALSE,
               initComplete = JS(ui_components$format_pagination())
             )
           )

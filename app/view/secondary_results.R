@@ -29,12 +29,22 @@ box::use(
     div,
     tags,
     a
+    showModal,
+    modalDialog,
+    modalButton
   ],
   shinybusy[
     show_modal_spinner,
     remove_modal_spinner,
   ],
-  shiny.router[is_page, router_ui, router_server, route, route_link],
+  shiny.router[
+    is_page,
+    change_page,
+    router_ui,
+    router_server,
+    route, 
+    route_link
+  ],
   DT[
     DTOutput,
     renderDT,
@@ -46,8 +56,9 @@ box::use(
     mtcars
   ],
   utils[
-    write.csv
-  ]
+    write.csv,
+    zip
+  ],
 )
 
 box::use(
@@ -86,6 +97,7 @@ ui <- function(id) {
     uiOutput(ns("reli_result_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
+    actionButton(ns("resetBtn"), "Restart App"),
   )
 }
 
@@ -93,7 +105,6 @@ ui <- function(id) {
 server <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
     observe({
       if (is_page("primary_aggregate_results")) {
         show_modal_spinner(spin = "fading-circle")
@@ -148,7 +159,13 @@ server <- function(id, data) {
         output$global_fit_stats <- renderDT({
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Stats)
           formatted_table <- formatRound(
-            datatable(model_fit_result()$Global.Fit.Stats, options = list(scrollX = TRUE)),
+            datatable(model_fit_result()$Global.Fit.Stats,
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
@@ -159,7 +176,13 @@ server <- function(id, data) {
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Item.Pairs)
           formatted_table <- formatRound(
             formatRound(
-              datatable(model_fit_result()$Item.Pairs, options = list(scrollX = TRUE)),
+              datatable(model_fit_result()$Item.Pairs,
+                options = list(
+                  scrollX = TRUE,
+                  searching = FALSE,
+                  initComplete = JS(ui_components$format_pagination())
+                )
+              ),
               columns = columns_to_round,
               digits = 3
             ),
@@ -172,13 +195,19 @@ server <- function(id, data) {
         output$global_fit_tests <- renderDT({
           columns_to_round <- check_columns_for_rounding(model_fit_result()$Global.Fit.Tests)
           formatted_table <- formatRound(
-            datatable(model_fit_result()$Global.Fit.Tests, options = list(scrollX = TRUE)),
+            datatable(model_fit_result()$Global.Fit.Tests,
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
         })
 
-        # Render Global Fit Stats data frame
+        # Render Global Fit Stats 2 data frame
         output$global_fit_stats2 <- renderDT({
           dt <- model_fit_result()$Global.Fit.Stats2
           dt_transposed <- as.data.frame(t(dt))
@@ -186,18 +215,34 @@ server <- function(id, data) {
 
           columns_to_round <- check_columns_for_rounding(dt_transposed)
           formatted_table <- formatRound(
-            datatable(dt_transposed, options = list(scrollX = TRUE)),
+            datatable(dt_transposed,
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
         })
 
+        # Create a data.table for Item RMSEA table
+        item_rmsea_dt <- reactive({
+          tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
+        })
+
         # Render Item RMSEA table
         output$item_rmsea <- renderDT({
-          item_rmsea_dt <- tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
           columns_to_round <- check_columns_for_rounding(item_rmsea_dt)
           formatted_table <- formatRound(
-            datatable(item_rmsea_dt, options = list(scrollX = TRUE)),
+            datatable(item_rmsea_dt(),
+              options = list(
+                scrollX = TRUE,
+                searching = FALSE,
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
@@ -207,12 +252,17 @@ server <- function(id, data) {
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
           formatted_table <- formatRound(
-            datatable(misc_data(), options = list(scrollX = TRUE)),
+            datatable(misc_data(),
+              options = list(
+                scrollX = TRUE,
+                dom = "t",
+                initComplete = JS(ui_components$format_pagination())
+              )
+            ),
             columns = columns_to_round,
             digits = 3
           )
         })
-
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
         })
@@ -220,10 +270,19 @@ server <- function(id, data) {
         # Add download button
         output$model_fit_download <- downloadHandler(
           filename = function() {
-            paste("model_fit.csv", sep = "")
+            "model_fit_results"
           },
-          content = function(modelFitResultFile) {
-            write.csv(model_fit_result(), modelFitResultFile)
+          content = function(file) {
+            # Save each table as a csv file
+            save_table <- function(table_name, info) {
+              write.csv(info, file.path(dirname(file), paste0(table_name, ".csv")), row.names = FALSE)
+            }
+            save_table("global_fit_stats", model_fit_result()$Global.Fit.Stats)
+            # save_table("item_pairs", model_fit_result()$Item.Pairs)
+            # save_table("global_fit_tests", model_fit_result()$Global.Fit.Tests)
+            # save_table("global_fit_stats2", model_fit_result()$Global.Fit.Stats2)
+            # save_table("item_rmsea", model_fit_result()$Item.RMSEA)
+            # save_table("misc_table", misc_data())
           }
         )
 
@@ -235,7 +294,11 @@ server <- function(id, data) {
           datatable(
             att_corr_result(),
             caption = "Attribute Correlation",
-            options = list(scrollX = TRUE)
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
 
@@ -261,7 +324,11 @@ server <- function(id, data) {
           datatable(
             reli_result(),
             caption = "Reliability",
-            options = list(scrollX = TRUE)
+            options = list(
+              scrollX = TRUE,
+              searching = FALSE,
+              initComplete = JS(ui_components$format_pagination())
+            )
           )
         })
         output$reli_result_down_wrapper <- renderUI({
@@ -279,7 +346,6 @@ server <- function(id, data) {
         )
 
         # Hide the spinner when all computations are done
-        # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
         observe({
           if (!is.null(model_fit_result()) &&
             !is.null(att_corr_result()) &&
@@ -288,6 +354,28 @@ server <- function(id, data) {
           }
         })
       }
+    })
+
+    # Reset button action
+    observeEvent(input$resetBtn, {
+      print("reset button is clicked")
+      # Reset all variables
+      # # Add more reset actions for other variables as needed
+      showModal(modalDialog(
+        title = "Confirm Navigation",
+        "Are you sure you want to leave this page? This action will erase all enetered data requiring you to start over.",
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton(ns("No")),
+          actionButton(ns("confirmLeave"), "Yes"),
+        )
+      ))
+
+      observeEvent(input$confirmCreate, {
+        change_page("/")
+        session$reload()
+        # removeModal()
+      })
     })
     ui_components$nb_server("nextButton", "/")
   })
