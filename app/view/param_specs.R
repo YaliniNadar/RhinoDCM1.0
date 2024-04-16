@@ -119,6 +119,10 @@ server <- function(id, data) {
       data$numTimeSinglePoint <- input$num_items_single_time_point
     })
 
+    observeEvent(input$num_time_points, {
+      data$numTimePoints <- input$num_time_points
+    })
+
     # Initialize the input validator
     iv <- InputValidator$new()
     iv$add_rule(ns("num_time_points"), sv_required())
