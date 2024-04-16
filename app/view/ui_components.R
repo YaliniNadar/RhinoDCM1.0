@@ -75,7 +75,9 @@ format_pagination <- function() {
 #' @export
 create_download_handler <- function(data, filename) {
   downloadHandler(
-    filename = function() { filename },
+    filename = function() {
+      filename
+    },
     content = function(file) {
       write.xlsx(data, file, sheetName = "Sheet1", row.names = FALSE)
     }

@@ -58,11 +58,12 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm,
-  app / view / primary_aggregate_results,
-  app / view / primary_individual_results,
-  app / view / secondary_results
+  app/view[ui_components],
+  app/logic/tdcm,
+  app/logic/table,
+  app/view/primary_aggregate_results,
+  app/view/primary_individual_results,
+  app/view/secondary_results
 )
 
 #' @export
@@ -122,12 +123,14 @@ server <- function(id, data) {
 
         model_fit_result <- reactive({
           vals <- computedValues()
-          tdcm$model_fit(data$q_matrix,
-                         data$ir_matrix,
-                         vals$time_pts,
-                         vals$attribute_names,
-                         vals$invariance,
-                         vals$rule)
+          tdcm$model_fit(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
         # Create a data.table containing specific elements
         misc_data <- reactive({
@@ -269,32 +272,34 @@ server <- function(id, data) {
         })
 
         # Add download button
+        data_tables <- list(
+          list(name = "Global Fit Stats", data = model_fit_result()$Global.Fit.Stats),
+          list(name = "Item Pairs", data = model_fit_result()$Item.Pairs),
+          list(name = "Global Fit Tests", data = model_fit_result()$Global.Fit.Tests),
+          list(name = "Global Fit Stats 2", data = model_fit_result()$Global.Fit.Stats2),
+          list(name = "Item RMSEA", data = item_rmsea_dt()),
+          list(name = "Misc Data", data = misc_data())
+        )
+
         output$model_fit_download <- downloadHandler(
           filename = function() {
-            "model_fit_results"
+            "model_fit.xlsx"
           },
           content = function(file) {
-            # Save each table as a csv file
-            save_table <- function(table_name, info) {
-              write.csv(info, file.path(dirname(file), paste0(table_name, ".csv")), row.names = FALSE)
-            }
-            save_table("global_fit_stats", model_fit_result()$Global.Fit.Stats)
-            # save_table("item_pairs", model_fit_result()$Item.Pairs)
-            # save_table("global_fit_tests", model_fit_result()$Global.Fit.Tests)
-            # save_table("global_fit_stats2", model_fit_result()$Global.Fit.Stats2)
-            # save_table("item_rmsea", model_fit_result()$Item.RMSEA)
-            # save_table("misc_table", misc_data())
+            table$write_multiple_sheets(data_tables, file)
           }
         )
 
         att_corr_result <- reactive({
           vals <- computedValues()
-          tdcm$att_corr(data$q_matrix,
-                        data$ir_matrix,
-                        vals$time_pts,
-                        vals$attribute_names,
-                        vals$invariance,
-                        vals$rule)
+          tdcm$att_corr(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
         output$att_corr_output <- renderDT({
           datatable(
@@ -321,12 +326,14 @@ server <- function(id, data) {
 
         reli_result <- reactive({
           vals <- computedValues()
-          tdcm$reliability(data$q_matrix,
-                           data$ir_matrix,
-                           vals$time_pts,
-                           vals$attribute_names,
-                           vals$invariance,
-                           vals$rule)
+          tdcm$reliability(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
         output$rel_output <- renderDT({
           datatable(
@@ -369,7 +376,7 @@ server <- function(id, data) {
       showModal(modalDialog(
         title = "Confirm Navigation",
         "Are you sure you want to leave this page?
-        This action will erase all entered data requiring you to start over. 
+        This action will erase all entered data requiring you to start over.
         Make sure to download any file(s) you need before leaving.",
         easyClose = FALSE,
         footer = tagList(

@@ -48,11 +48,11 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm,
-  app / view / primary_aggregate_results,
-  app / view / primary_individual_results,
-  app / view / secondary_results
+  app/view[ui_components],
+  app/logic/tdcm,
+  app/view/primary_aggregate_results,
+  app/view/primary_individual_results,
+  app/view/secondary_results
 )
 
 #' @export

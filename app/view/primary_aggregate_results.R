@@ -48,11 +48,11 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm,
-  app / view / primary_aggregate_results,
-  app / view / primary_individual_results,
-  app / view / secondary_results
+  app/view[ui_components],
+  app/logic/tdcm,
+  app/view/primary_aggregate_results,
+  app/view/primary_individual_results,
+  app/view/secondary_results
 )
 
 #' @export
@@ -158,9 +158,11 @@ server <- function(id, data, input, output) {
           downloadButton(ns("item_params_download"), "Download")
         })
 
-        #Dowloand Handler for item parameters
-        output$item_params_download <- ui_components$create_download_handler(item_params_result(),
-                                                                             "item_parameters.xlsx")
+        # Dowloand Handler for item parameters
+        output$item_params_download <- ui_components$create_download_handler(
+          item_params_result(),
+          "item_parameters.xlsx"
+        )
 
         growth_result <- reactive({
           vals <- computed_values() # Correctly access the computed values here
@@ -191,8 +193,10 @@ server <- function(id, data, input, output) {
         })
 
         # Add download button
-        output$growth_output_download <- ui_components$create_download_handler(growth_result(),
-                                                                               "growth_table.xlsx")
+        output$growth_output_download <- ui_components$create_download_handler(
+          growth_result(),
+          "growth_table.xlsx"
+        )
 
         output$plot_output <- renderPlot(
           {
@@ -267,8 +271,8 @@ server <- function(id, data, input, output) {
         # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
         observe({
           if (!is.null(item_params_result()) &&
-                !is.null(growth_result()) &&
-                !is.null(trans_prob_output_result())) {
+            !is.null(growth_result()) &&
+            !is.null(trans_prob_output_result())) {
             remove_modal_spinner()
           }
         })
