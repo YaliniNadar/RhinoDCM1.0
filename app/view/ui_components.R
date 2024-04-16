@@ -1,6 +1,9 @@
 box::use(
-  shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer],
+  shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer, downloadHandler],
   shiny.router[change_page],
+  xlsx[
+    write.xlsx
+  ]
 )
 
 #' @export
@@ -68,15 +71,15 @@ format_pagination <- function() {
 }
 
 
-# Function to create a download handler for a CSV file
+# Function to create a download handler for an Excel file
 #' @export
-create_download_handler <- function(file_name, data_function) {
+create_download_handler <- function(data, filename) {
   downloadHandler(
     filename = function() {
-      file_name
+      filename
     },
     content = function(file) {
-      write.csv(data_function(), file)
+      write.xlsx(data, file, sheetName = "Sheet1", row.names = FALSE)
     }
   )
 }
