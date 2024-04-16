@@ -19,7 +19,7 @@ box::use(
 )
 
 box::use(
-  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
+  app / view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
 )
 
 #' @export
