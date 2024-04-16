@@ -16,7 +16,10 @@ box::use(
     renderUI,
     observe,
     reactive,
-    div
+    div,
+    tags,
+    plotOutput,
+    renderPlot,
   ],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],
@@ -79,11 +82,23 @@ ui <- function(id) {
       data.intro = "Choose whether there is a different Q-Matrix for each time point in your data."
     ),
     uiOutput(ns("conditional_num_items")),
+    # Input 5: Glowing dashes
+    introBox(
+      tags$div(style = "display: flex; flex-direction: row; justify-content: space-between;",
+           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: yellow;"),
+           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+      ),
+      data.step = 5,
+      data.intro = "These are three short lines next to each other."
+    ),
     div(
       style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
       uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
-    )
+    ),
   )
 }
 
