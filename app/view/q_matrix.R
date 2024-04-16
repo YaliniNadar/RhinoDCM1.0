@@ -154,8 +154,10 @@ server <- function(id, data) {
               sep = ""
             )
           } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
-            error_message <- paste("The number of attributes does not match the number of columns
-            (", num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
+            error_message <- paste("The number of attributes (", num_attributes,
+                                   ") does not match the number of columns (",
+                                   num_cols_in_q_matrix, ") in the Q matrix.
+                                   Please ensure they are equal.", sep = "")
           }
 
           if (!is.null(error_message)) {

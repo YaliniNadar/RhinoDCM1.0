@@ -45,9 +45,6 @@ box::use(
   datasets[
     mtcars
   ],
-  utils[
-    write.csv
-  ]
 )
 
 box::use(
@@ -161,15 +158,9 @@ server <- function(id, data, input, output) {
           downloadButton(ns("item_params_download"), "Download")
         })
 
-        # Add download button
-        output$item_params_download <- downloadHandler(
-          filename = function() {
-            paste("item_parameters.csv", sep = "")
-          },
-          content = function(itemParamsFile) {
-            write.csv(item_params_result(), itemParamsFile)
-          }
-        )
+        #Dowloand Handler for item parameters
+        output$item_params_download <- ui_components$create_download_handler(item_params_result(),
+                                                                             "item_parameters.xlsx")
 
         growth_result <- reactive({
           vals <- computed_values() # Correctly access the computed values here
@@ -200,14 +191,8 @@ server <- function(id, data, input, output) {
         })
 
         # Add download button
-        output$growth_output_download <- downloadHandler(
-          filename = function() {
-            paste("growth_output.csv", sep = "")
-          },
-          content = function(growthFile) {
-            write.csv(growth_result(), growthFile)
-          }
-        )
+        output$growth_output_download <- ui_components$create_download_handler(growth_result(),
+                                                                               "growth_table.xlsx")
 
         output$plot_output <- renderPlot(
           {
@@ -220,15 +205,7 @@ server <- function(id, data, input, output) {
           downloadButton(ns("plot_output_download"), "Download")
         })
 
-        # Add download button
-        output$plot_output_download <- downloadHandler(
-          filename = function() {
-            paste("plot_output.csv", sep = "")
-          },
-          content = function(file) {
-            write.csv(result, file)
-          }
-        )
+        # Add download handler for plot here
 
         plot_result <- reactive({
           vals <- computed_values()
@@ -246,19 +223,6 @@ server <- function(id, data, input, output) {
           plot_result() # Call the reactive
         })
 
-        output$plot_result_down_wrapper <- renderUI({
-          downloadButton(ns("plot_result_download"), "Download")
-        })
-
-        # Add download button
-        output$plot_result_download <- downloadHandler(
-          filename = function() {
-            paste("plot_result.csv", sep = "")
-          },
-          content = function(plotResultFile) {
-            write.csv(plot_result(), plotResultFile)
-          }
-        )
 
         trans_prob_output_result <- reactive({
           vals <- computed_values()
@@ -294,22 +258,17 @@ server <- function(id, data, input, output) {
         })
 
         # Add download button
-        output$trans_prob_result_download <- downloadHandler(
-          filename = function() {
-            paste("trans_prob_result.csv", sep = "")
-          },
-          content = function(transProbFile) {
-            write.csv(trans_prob_output_result(), transProbFile)
-          }
+        output$trans_prob_result_download <- ui_components$create_download_handler(
+          trans_prob_output_result(),
+          "transition_probabilities.xlsx"
         )
-
 
         # Hide the spinner when all computations are done
         # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
         observe({
           if (!is.null(item_params_result()) &&
-            !is.null(growth_result()) &&
-            !is.null(trans_prob_output_result())) {
+                !is.null(growth_result()) &&
+                !is.null(trans_prob_output_result())) {
             remove_modal_spinner()
           }
         })
