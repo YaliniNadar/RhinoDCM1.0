@@ -366,12 +366,12 @@ server <- function(id, data) {
         "Are you sure you want to leave this page? This action will erase all enetered data requiring you to start over.",
         easyClose = FALSE,
         footer = tagList(
-          modalButton(ns("No")),
+          modalButton("No"),
           actionButton(ns("confirmLeave"), "Yes"),
         )
       ))
 
-      observeEvent(input$confirmCreate, {
+      observeEvent(input$confirmLeave, {
         change_page("/")
         session$reload()
         # removeModal()

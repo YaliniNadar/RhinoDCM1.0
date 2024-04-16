@@ -26,9 +26,9 @@ box::use(
 ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    h1("TDCM", align = "center"),
+    h1("TDCMApp", align = "center"),
     br(),
-    p("TDCM provides a user-friendly
+    p("TDCMApp provides a user-friendly
         interface to help you gain valuable
         insights from your test data", align = "center"),
     br(),
