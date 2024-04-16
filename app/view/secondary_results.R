@@ -28,7 +28,7 @@ box::use(
     reactive,
     div,
     tags,
-    a
+    a,
     showModal,
     modalDialog,
     modalButton
@@ -42,7 +42,7 @@ box::use(
     change_page,
     router_ui,
     router_server,
-    route, 
+    route,
     route_link
   ],
   DT[
