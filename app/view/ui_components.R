@@ -8,7 +8,7 @@ navbar_ui <- function(id) {
   ns <- NS(id)
 
   navbarPage(
-    title = "DCM",
+    title = "TDCMApp",
     id = ns("navbar"),
     # tabPanel("Primary Aggregate Results", value = "primary_aggregate_results.R"),
     # tabPanel("Primary Aggregate Results", value = "primary_individual_results.R"),

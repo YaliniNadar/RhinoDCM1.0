@@ -1336,6 +1336,18 @@
       ],
       "Hash": "ff605bc0e89a93b4ccf76f565bc1cdfc"
     },
+    "rintrojs": {
+      "Package": "rintrojs",
+      "Version": "0.3.4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "jsonlite",
+        "shiny"
+      ],
+      "Hash": "e01800bef019328509364ab655fbcca6"
+    },
     "rlang": {
       "Package": "rlang",
       "Version": "1.1.1",
