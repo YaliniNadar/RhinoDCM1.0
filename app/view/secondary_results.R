@@ -31,11 +31,7 @@ box::use(
     modalButton,
     div,
     tags,
-    a,
-    reactive,
-    showModal,
-    modalDialog,
-    modalButton
+    a
   ],
   shinybusy[
     show_modal_spinner,
