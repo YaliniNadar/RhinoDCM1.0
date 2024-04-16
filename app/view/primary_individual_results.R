@@ -5,6 +5,7 @@ box::use(
     tabsetPanel,
     tabPanel,
     br,
+    h1,
     h2,
     h4,
     fluidRow,
@@ -15,6 +16,7 @@ box::use(
     observe,
     renderTable,
     renderPlot,
+    renderText,
     tableOutput,
     textOutput,
     plotOutput,
@@ -24,19 +26,20 @@ box::use(
     tagList,
     downloadButton,
     downloadHandler,
-    reactive
+    reactive,
+    div,
+    tags,
+    a
   ],
   shinybusy[
     show_modal_spinner,
     remove_modal_spinner,
   ],
-  shiny.router[is_page],
+  shiny.router[is_page, router_ui, router_server, route, route_link],
   DT[
     DTOutput,
     renderDT,
     datatable,
-    formatRound,
-    formatSignif,
     JS
   ],
   datasets[
@@ -48,8 +51,11 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm
+  app / view[ui_components],
+  app / logic / tdcm,
+  app / view / primary_aggregate_results,
+  app / view / primary_individual_results,
+  app / view / secondary_results
 )
 
 #' @export
@@ -58,6 +64,19 @@ ui <- function(id) {
 
   fluidPage(
     h2("Primary Individual Results"),
+    tagList(
+      tabsetPanel(
+        id = ns("output_tabs"),
+        tabPanel(a("Primary Aggregate Results", href = route_link("primary_aggregate_results"))),
+        tabPanel(a("Primary Individual Results", href = route_link("primary_individual_results"))),
+        tabPanel(a("Secondary Results", href = route_link("secondary_results")))
+      )
+    ),
+    # router_ui(
+    #   route("primary_aggregate_results", primary_individual_results$ui(ns("primary_aggregate_results"))),
+    #   route("primary_individual_results", primary_individual_results$ui(ns("primary_individual_results"))),
+    #   route("secondary_results", secondary_results$ui(ns("secondary_results")))
+    # ),
     br(),
     DTOutput(ns("classification_output")),
     uiOutput(ns("att_class_result_down_wrapper")),

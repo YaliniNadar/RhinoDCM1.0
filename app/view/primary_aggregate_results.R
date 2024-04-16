@@ -5,6 +5,7 @@ box::use(
     tabsetPanel,
     tabPanel,
     br,
+    h1,
     h2,
     h4,
     fluidRow,
@@ -25,13 +26,16 @@ box::use(
     tagList,
     downloadButton,
     downloadHandler,
-    reactive
+    reactive,
+    div,
+    tags,
+    a
   ],
   shinybusy[
     show_modal_spinner,
     remove_modal_spinner,
   ],
-  shiny.router[is_page],
+  shiny.router[is_page, router_ui, router_server, route, route_link],
   DT[
     DTOutput,
     renderDT,
@@ -47,17 +51,42 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm
+  app / view[ui_components],
+  app / logic / tdcm,
+  app / view / primary_aggregate_results,
+  app / view / primary_individual_results,
+  app / view / secondary_results
 )
 
 #' @export
 ui <- function(id) {
   ns <- NS(id)
-
   fluidPage(
     h2("Primary Aggregate Results"),
+    tagList(
+      tabsetPanel(
+        id = ns("output_tabs"),
+        tabPanel(a("Primary Aggregate Results", href = route_link("primary_aggregate_results"))),
+        tabPanel(a("Primary Individual Results", href = route_link("primary_individual_results"))),
+        tabPanel(a("Secondary Results", href = route_link("secondary_results")))
+      )
+    ),
+    router_ui(
+      route(
+        "primary_individual_results",
+        primary_individual_results$ui(ns("primary_individual_results"))
+      ),
+      # route(
+      #   "primary_aggregate_results",
+      #   primary_individual_results$ui(ns("primary_aggregate_results"))
+      # ),
+      route(
+        "secondary_results",
+        secondary_results$ui(ns("secondary_results"))
+      )
+    ),
     br(),
+    uiOutput(ns("dynamic_content")),
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
     DTOutput(ns("growth_output")),
@@ -74,10 +103,9 @@ ui <- function(id) {
 }
 
 #' @export
-server <- function(id, data) {
+server <- function(id, data, input, output) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
     observe({
       if (is_page("primary_aggregate_results")) {
         show_modal_spinner(spin = "fading-circle")

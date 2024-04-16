@@ -10,9 +10,9 @@ navbar_ui <- function(id) {
   navbarPage(
     title = "DCM",
     id = ns("navbar"),
-    tabPanel("Home", value = "home"),
-    tabPanel("Page 1", value = "page1"),
-    tabPanel("Page 2", value = "page2"),
+    # tabPanel("Primary Aggregate Results", value = "primary_aggregate_results.R"),
+    # tabPanel("Primary Aggregate Results", value = "primary_individual_results.R"),
+    # tabPanel("Secondary Results", value = "secondary_results.R"),
   )
 }
 
