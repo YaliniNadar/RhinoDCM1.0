@@ -28,10 +28,7 @@ box::use(
     reactive,
     div,
     tags,
-    a,
-    showModal,
-    modalDialog,
-    modalButton
+    a
   ],
   shinybusy[
     show_modal_spinner,
@@ -92,9 +89,7 @@ ui <- function(id) {
     uiOutput(ns("att_corr_result_down_wrapper")),
     DTOutput(ns("rel_output")),
     uiOutput(ns("reli_result_down_wrapper")),
-    ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
-    actionButton(ns("resetBtn"), "Restart App"),
   )
 }
 
@@ -370,29 +365,5 @@ server <- function(id, data) {
         })
       }
     })
-
-    # Reset button action
-    observeEvent(input$resetBtn, {
-      print("reset button is clicked")
-      # Reset all variables
-      # # Add more reset actions for other variables as needed
-      showModal(modalDialog(
-        title = "Confirm Navigation",
-        "Are you sure you want to leave this page?\n
-        This action will erase all entered data requiring you to start over.\n
-        Make sure to download any file(s) you need before leaving.",
-        easyClose = FALSE,
-        footer = tagList(
-          actionButton(ns("confirmLeave"), "Yes, Leave"),
-          modalButton("No, Stay"),
-        )
-      ))
-
-      observeEvent(input$confirmLeave, {
-        change_page("/")
-        session$reload()
-      })
-    })
-    ui_components$nb_server("nextButton", "/")
   })
 }
