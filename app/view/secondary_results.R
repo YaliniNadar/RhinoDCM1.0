@@ -243,7 +243,7 @@ server <- function(id, data) {
                 initComplete = JS(format_table$format_pagination())
               )
             ),
-            columns = columns_to_round,
+            columns = 2,
             digits = 3
           )
         })
@@ -256,15 +256,16 @@ server <- function(id, data) {
         # Render Misc data table
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
+          print(columns_to_round)
           formatted_table <- formatRound(
-            datatable(tdcm$get_misc_datatable(model_fit_result()),
+            datatable(misc_data(),
               options = list(
                 scrollX = TRUE,
                 dom = "t",
                 initComplete = JS(format_table$format_pagination())
               )
             ),
-            columns = columns_to_round,
+            columns = 2,
             digits = 3
           )
         })
@@ -377,13 +378,13 @@ server <- function(id, data) {
       # # Add more reset actions for other variables as needed
       showModal(modalDialog(
         title = "Confirm Navigation",
-        "Are you sure you want to leave this page?
-        This action will erase all entered data requiring you to start over.
+        "Are you sure you want to leave this page?\n
+        This action will erase all entered data requiring you to start over.\n
         Make sure to download any file(s) you need before leaving.",
         easyClose = FALSE,
         footer = tagList(
-          modalButton("No"),
-          actionButton(ns("confirmLeave"), "Yes"),
+          actionButton(ns("confirmLeave"), "Yes, Leave"),
+          modalButton("No, Stay"),
         )
       ))
 
