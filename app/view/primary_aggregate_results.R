@@ -30,10 +30,6 @@ box::use(
     div,
     tags,
     a,
-    HTML,
-    showModal,
-    modalDialog,
-    modalButton
   ],
   shinybusy[
     show_modal_spinner,
@@ -52,11 +48,13 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components,
-           primary_aggregate_results,
-           primary_individual_results,
-           secondary_results,
-           format_table],
+  app/view[
+    ui_components,
+    primary_aggregate_results,
+    primary_individual_results,
+    secondary_results,
+    format_table
+  ],
   app/logic[tdcm],
 )
 
@@ -100,7 +98,7 @@ ui <- function(id) {
     uiOutput(ns("trans_prob_output")),
     uiOutput(ns("trans_prob_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
-    actionButton(ns("resetBtn"), "Back"),
+    ui_components$reset_button(ns("resetBtn")),
   )
 }
 
@@ -294,30 +292,7 @@ server <- function(id, data, input, output) {
         })
       }
     })
-
-    # Reset button action
-    observeEvent(input$resetBtn, {
-      print("reset button is clicked")
-      # Reset all variables
-      # Add more reset actions for other variables as needed
-      showModal(modalDialog(
-        title = "Confirm Navigation",
-        HTML("Are you sure you want to leave this page?<br/><br/>
-         This action will erase all entered data requiring you to start over.<br/>
-         Make sure to download any file(s) you need before leaving."),
-        easyClose = FALSE,
-        footer = tagList(
-          actionButton(ns("confirmLeave"), "Yes, Leave"),
-          modalButton("No, Stay"),
-        )
-      ))
-
-      observeEvent(input$confirmLeave, {
-        change_page("/")
-        session$reload()
-      })
-    })
-
+    ui_components$rb_server("resetBtn")
     ui_components$nb_server("nextButton", "primary_individual_results")
   })
 }

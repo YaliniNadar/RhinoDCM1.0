@@ -1,5 +1,18 @@
 box::use(
-  shiny[navbarPage, tabPanel, NS, actionButton, observeEvent, moduleServer, downloadHandler],
+  shiny[
+    navbarPage,
+    tabPanel,
+    NS,
+    actionButton,
+    observeEvent,
+    moduleServer,
+    downloadHandler,
+    HTML,
+    showModal,
+    modalDialog,
+    modalButton,
+    tagList
+  ],
   shiny.router[change_page],
   xlsx[
     write.xlsx
@@ -53,6 +66,45 @@ back_button <- function(id) {
     style = "float: right; margin-right: 5px; margin-left: 5px;",
     onclick = "App.goBack();"
   )
+}
+
+#' @export
+reset_button <- function(id) {
+  ns <- NS(id)
+
+  actionButton(
+    ns("resetBtn"),
+    "Back",
+    class = "btn-primary",
+    style = "float: right; margin-right: 5px; margin-left: 5px;",
+  )
+}
+
+#' @export
+rb_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    observeEvent(input$resetBtn, {
+      print("reset button is clicked")
+      # Reset all variables
+      # Add more reset actions for other variables as needed
+      showModal(modalDialog(
+        title = "Confirm Navigation",
+        HTML("Are you sure you want to leave this page?<br/><br/>
+         This action will erase all entered data requiring you to start over.<br/>
+         Make sure to download any file(s) you need before leaving."),
+        easyClose = FALSE,
+        footer = tagList(
+          actionButton(ns("confirmLeave"), "Yes, Leave"),
+          modalButton("No, Stay"),
+        )
+      ))
+    })
+    observeEvent(input$confirmLeave, {
+      change_page("/")
+      session$reload()
+    })
+  })
 }
 
 #' @export

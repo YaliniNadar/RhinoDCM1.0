@@ -48,11 +48,13 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components,
-           primary_aggregate_results,
-           primary_individual_results,
-           secondary_results,
-           format_table],
+  app/view[
+    ui_components,
+    primary_aggregate_results,
+    primary_individual_results,
+    secondary_results,
+    format_table
+  ],
   app/logic[tdcm],
 )
 
