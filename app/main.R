@@ -6,7 +6,7 @@ box::use(
 box::use(
   app / view[
     home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review, tdcm_test,
-    primary_aggregate_results, primary_individual_results, secondary_results
+    primary_aggregate_results, primary_individual_results, secondary_results, format_table
   ],
 )
 

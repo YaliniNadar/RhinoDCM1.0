@@ -64,13 +64,6 @@ nb_server <- function(id, route) {
   })
 }
 
-#' @export
-format_pagination <- function() {
-  jquery_code <- "function(settings, json) {$(this.api().table().container()).find('.dataTables_paginate').css({'background-color': '#202020', 'color': '#fff'});}" # nolint
-  return(jquery_code)
-}
-
-
 # Function to create a download handler for an Excel file
 #' @export
 create_download_handler <- function(data, filename) {

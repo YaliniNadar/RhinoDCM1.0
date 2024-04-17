@@ -28,10 +28,7 @@ box::use(
     reactive,
     div,
     tags,
-    a,
-    showModal,
-    modalDialog,
-    modalButton
+    a
   ],
   shinybusy[
     show_modal_spinner,
@@ -58,12 +55,12 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm,
-  app/logic/table,
-  app/view/primary_aggregate_results,
-  app/view/primary_individual_results,
-  app/view/secondary_results
+  app/view[ui_components,
+           format_table,
+           primary_aggregate_results,
+           primary_individual_results,
+           secondary_results],
+  app/logic[tdcm, table]
 )
 
 #' @export
@@ -92,9 +89,7 @@ ui <- function(id) {
     uiOutput(ns("att_corr_result_down_wrapper")),
     DTOutput(ns("rel_output")),
     uiOutput(ns("reli_result_down_wrapper")),
-    ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
-    actionButton(ns("resetBtn"), "Restart App"),
   )
 }
 
@@ -132,10 +127,6 @@ server <- function(id, data) {
             vals$rule
           )
         })
-        # Create a data.table containing specific elements
-        misc_data <- reactive({
-          tdcm$get_misc_datatable(model_fit_result())
-        })
 
         output$model_fit_output <- renderUI({
           tagList(
@@ -167,7 +158,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -184,7 +175,7 @@ server <- function(id, data) {
                 options = list(
                   scrollX = TRUE,
                   searching = FALSE,
-                  initComplete = JS(ui_components$format_pagination())
+                  initComplete = JS(format_table$format_pagination())
                 )
               ),
               columns = columns_to_round,
@@ -203,7 +194,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -223,7 +214,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -244,29 +235,36 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
-            columns = columns_to_round,
+            columns = 2,
             digits = 3
           )
+        })
+
+        # Create a data.table containing specific elements
+        misc_data <- reactive({
+          tdcm$get_misc_datatable(model_fit_result())
         })
 
         # Render Misc data table
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
+          print(columns_to_round)
           formatted_table <- formatRound(
             datatable(misc_data(),
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
-            columns = columns_to_round,
+            columns = 2,
             digits = 3
           )
         })
+
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
         })
@@ -308,7 +306,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -342,7 +340,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -367,29 +365,5 @@ server <- function(id, data) {
         })
       }
     })
-
-    # Reset button action
-    observeEvent(input$resetBtn, {
-      print("reset button is clicked")
-      # Reset all variables
-      # # Add more reset actions for other variables as needed
-      showModal(modalDialog(
-        title = "Confirm Navigation",
-        "Are you sure you want to leave this page?
-        This action will erase all entered data requiring you to start over.
-        Make sure to download any file(s) you need before leaving.",
-        easyClose = FALSE,
-        footer = tagList(
-          modalButton("No"),
-          actionButton(ns("confirmLeave"), "Yes"),
-        )
-      ))
-
-      observeEvent(input$confirmLeave, {
-        change_page("/")
-        session$reload()
-      })
-    })
-    ui_components$nb_server("nextButton", "/")
   })
 }

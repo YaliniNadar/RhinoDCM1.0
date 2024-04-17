@@ -29,7 +29,11 @@ box::use(
     reactive,
     div,
     tags,
-    a
+    a,
+    HTML,
+    showModal,
+    modalDialog,
+    modalButton
   ],
   shinybusy[
     show_modal_spinner,
@@ -48,11 +52,12 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm,
-  app/view/primary_aggregate_results,
-  app/view/primary_individual_results,
-  app/view/secondary_results
+  app/view[ui_components,
+           primary_aggregate_results,
+           primary_individual_results,
+           secondary_results,
+           format_table],
+  app/logic[tdcm],
 )
 
 #' @export
@@ -95,7 +100,7 @@ ui <- function(id) {
     uiOutput(ns("trans_prob_output")),
     uiOutput(ns("trans_prob_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    actionButton(ns("resetBtn"), "Back"),
   )
 }
 
@@ -147,7 +152,7 @@ server <- function(id, data, input, output) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             )
           },
@@ -183,7 +188,7 @@ server <- function(id, data, input, output) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -241,21 +246,32 @@ server <- function(id, data, input, output) {
         })
 
         output$trans_prob_output <- renderUI({
-          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint
-            attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
-            renderDT({
-              datatable(trans_prob_output_result()[, , i],
-                options = list(
-                  scrollX = TRUE,
-                  dom = "t",
-                  initComplete = JS(ui_components$format_pagination())
-                ),
-                caption = attribute_title
-              )
-            })
+          table_list <- lapply(1:2, function(row) {
+            fluidRow(
+              lapply(1:2, function(col) {
+                index <- (row - 1) * 2 + col
+                if (index <= dim(trans_prob_output_result())[3]) {
+                  attribute_title <- dimnames(trans_prob_output_result())[[3]][index]
+                  column(
+                    width = 6,
+                    renderDT({
+                      datatable(trans_prob_output_result()[, , index],
+                        options = list(
+                          scrollX = TRUE,
+                          dom = "t",
+                          initComplete = JS(format_table$format_pagination())
+                        ),
+                        caption = attribute_title
+                      )
+                    })
+                  )
+                }
+              })
+            )
           })
           tagList(table_list)
         })
+
 
         output$trans_prob_down_wrapper <- renderUI({
           downloadButton(ns("trans_prob_result_download"), "Download")
@@ -277,6 +293,29 @@ server <- function(id, data, input, output) {
           }
         })
       }
+    })
+
+    # Reset button action
+    observeEvent(input$resetBtn, {
+      print("reset button is clicked")
+      # Reset all variables
+      # Add more reset actions for other variables as needed
+      showModal(modalDialog(
+        title = "Confirm Navigation",
+        HTML("Are you sure you want to leave this page?<br/><br/>
+         This action will erase all entered data requiring you to start over.<br/>
+         Make sure to download any file(s) you need before leaving."),
+        easyClose = FALSE,
+        footer = tagList(
+          actionButton(ns("confirmLeave"), "Yes, Leave"),
+          modalButton("No, Stay"),
+        )
+      ))
+
+      observeEvent(input$confirmLeave, {
+        change_page("/")
+        session$reload()
+      })
     })
 
     ui_components$nb_server("nextButton", "primary_individual_results")
