@@ -27,8 +27,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, ],
-  app/logic/storage,
+  app/view[ui_components, format_table],
+  app/logic[storage],
 )
 
 #' @export
@@ -195,7 +195,7 @@ server <- function(id, data) {
           datatable(data_temp,
             options = list(
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })

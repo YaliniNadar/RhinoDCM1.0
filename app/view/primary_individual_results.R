@@ -48,11 +48,12 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm,
-  app/view/primary_aggregate_results,
-  app/view/primary_individual_results,
-  app/view/secondary_results
+  app/view[ui_components,
+           primary_aggregate_results,
+           primary_individual_results,
+           secondary_results,
+           format_table],
+  app/logic[tdcm],
 )
 
 #' @export
@@ -126,7 +127,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -161,7 +162,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -196,7 +197,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })

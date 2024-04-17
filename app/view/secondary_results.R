@@ -58,12 +58,12 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/tdcm,
-  app/logic/table,
-  app/view/primary_aggregate_results,
-  app/view/primary_individual_results,
-  app/view/secondary_results
+  app/view[ui_components,
+           format_table,
+           primary_aggregate_results,
+           primary_individual_results,
+           secondary_results],
+  app/logic[tdcm, table]
 )
 
 #' @export
@@ -132,10 +132,6 @@ server <- function(id, data) {
             vals$rule
           )
         })
-        # Create a data.table containing specific elements
-        misc_data <- reactive({
-          tdcm$get_misc_datatable(model_fit_result())
-        })
 
         output$model_fit_output <- renderUI({
           tagList(
@@ -167,7 +163,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -184,7 +180,7 @@ server <- function(id, data) {
                 options = list(
                   scrollX = TRUE,
                   searching = FALSE,
-                  initComplete = JS(ui_components$format_pagination())
+                  initComplete = JS(format_table$format_pagination())
                 )
               ),
               columns = columns_to_round,
@@ -203,7 +199,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -223,7 +219,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -244,7 +240,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -252,21 +248,27 @@ server <- function(id, data) {
           )
         })
 
+        # Create a data.table containing specific elements
+        misc_data <- reactive({
+          tdcm$get_misc_datatable(model_fit_result())
+        })
+
         # Render Misc data table
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
           formatted_table <- formatRound(
-            datatable(misc_data(),
+            datatable(tdcm$get_misc_datatable(model_fit_result()),
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
             digits = 3
           )
         })
+
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
         })
@@ -308,7 +310,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -342,7 +344,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
