@@ -148,13 +148,15 @@ growth <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, r
 }
 
 #' @export
-visualize <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
-  if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
-    plot <- tdcm.plot(results)
-    return(plot)
+visualize <-
+  function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule, type) {
+    if (!is.null(q_matrix) && !is.null(ir_matrix)) {
+      print(paste("Type: ", type))
+      results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
+      plot <- tdcm.plot(results, attribute.names = attribute_names, type = type)
+      return(plot)
+    }
   }
-}
 
 #' @export
 trans_prob <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {

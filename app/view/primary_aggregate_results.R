@@ -42,9 +42,6 @@ box::use(
     datatable,
     JS
   ],
-  datasets[
-    mtcars
-  ],
 )
 
 box::use(
@@ -91,8 +88,10 @@ ui <- function(id) {
     uiOutput(ns("item_params_down_wrapper")),
     DTOutput(ns("growth_output")),
     uiOutput(ns("growth_down_wrapper")),
-    # plotOutput(ns("tdcmPlot")),
-    plotOutput(ns("plot_output")),
+    plotOutput(ns("tdcmLinePlot")),
+    br(),
+    plotOutput(ns("tdcmBarPlot")),
+    # plotOutput(ns("plot_output")),
     # uiOutput(ns("plot_output_down_wrapper")),
     uiOutput(ns("plot_result_down_wrapper")),
     uiOutput(ns("trans_prob_output")),
@@ -201,20 +200,15 @@ server <- function(id, data, input, output) {
           "growth_table.xlsx"
         )
 
-        output$plot_output <- renderPlot(
-          {
-            plot(mtcars$wt, mtcars$mpg)
-          },
-          res = 96
-        )
-
+        # PLOT DOWNLOAD
         output$plot_output_down_wrapper <- renderUI({
           downloadButton(ns("plot_output_download"), "Download")
         })
 
         # Add download handler for plot here
 
-        plot_result <- reactive({
+        # Render Line Plot
+        line_plot_result <- reactive({
           vals <- computed_values()
           tdcm$visualize(
             data$q_matrix,
@@ -222,12 +216,29 @@ server <- function(id, data, input, output) {
             vals$time_pts,
             vals$attribute_names,
             vals$invariance,
-            vals$rule
+            vals$rule,
+            type = "line"
           )
         })
-        print(plot_result)
-        output$tdcmPlot <- renderPlot({
-          plot_result() # Call the reactive
+        output$tdcmLinePlot <- renderPlot({
+          line_plot_result() # Call the reactive
+        })
+
+        # Render Bar Plot
+        bar_plot_result <- reactive({
+          vals <- computed_values()
+          tdcm$visualize(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule,
+            type = "bar"
+          )
+        })
+        output$tdcmBarPlot <- renderPlot({
+          bar_plot_result() # Call the reactive
         })
 
 
