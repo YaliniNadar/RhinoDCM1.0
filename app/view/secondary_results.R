@@ -26,6 +26,9 @@ box::use(
     downloadButton,
     downloadHandler,
     reactive,
+    showModal,
+    modalDialog,
+    modalButton,
     div,
     tags,
     a
