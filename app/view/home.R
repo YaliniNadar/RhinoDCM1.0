@@ -19,16 +19,16 @@ box::use(
 )
 
 box::use(
-  app / view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
+  app/view[home, ui_components, param_specs, q_matrix, ir_matrix, model_specs, review],
 )
 
 #' @export
 ui <- function(id) {
   ns <- NS(id)
   fluidPage(
-    h1("TDCM", align = "center"),
+    h1("TDCMApp", align = "center"),
     br(),
-    p("TDCM provides a user-friendly
+    p("TDCMApp provides a user-friendly
         interface to help you gain valuable
         insights from your test data", align = "center"),
     br(),

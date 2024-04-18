@@ -45,17 +45,17 @@ box::use(
   datasets[
     mtcars
   ],
-  utils[
-    write.csv
-  ]
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm,
-  app / view / primary_aggregate_results,
-  app / view / primary_individual_results,
-  app / view / secondary_results
+  app/view[
+    ui_components,
+    primary_aggregate_results,
+    primary_individual_results,
+    secondary_results,
+    format_table
+  ],
+  app/logic[tdcm],
 )
 
 #' @export
@@ -129,7 +129,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -139,14 +139,11 @@ server <- function(id, data) {
         })
 
         # Add download button
-        output$att_class_result_download <- downloadHandler(
-          filename = function() {
-            paste("att_class_result.csv", sep = "")
-          },
-          content = function(attClassFile) {
-            write.csv(att_class_result(), attClassFile)
-          }
-        )
+        output$att_class_result_download <-
+          ui_components$create_download_handler(
+            att_class_result(),
+            "attribute_classification.xlsx"
+          )
 
         most_likely_trans_result <- reactive({
           vals <- computed_values() # This is now a reactive access
@@ -167,7 +164,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -177,14 +174,11 @@ server <- function(id, data) {
         })
 
         # Add download button
-        output$most_likely_trans_output_download <- downloadHandler(
-          filename = function() {
-            paste("most_likely_trans.csv", sep = "")
-          },
-          content = function(mostLikelyTransFile) {
-            write.csv(most_likely_trans_result(), mostLikelyTransFile)
-          }
-        )
+        output$most_likely_trans_output_download <-
+          ui_components$create_download_handler(
+            most_likely_trans_result(),
+            "most_likely_transitions.xlsx"
+          )
 
         trans_pos_output_result <- reactive({
           vals <- computed_values() # This is now a reactive access
@@ -205,7 +199,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -223,6 +217,11 @@ server <- function(id, data) {
             write.csv(trans_pos_output_result(), transPosFile)
           }
         )
+        output$trans_pos_output_download <-
+          ui_components$create_download_handler(
+            trans_pos_output_result(),
+            "transition_position.xlsx"
+          )
       }
     })
 

@@ -48,10 +48,12 @@ get_misc_datatable <- function(result) {
   # Create a data.table containing specific elements
   misc_data <- data.table(
     Name = c("Mean.Item.RMSEA", "loglike", "deviance", "AIC", "BIC", "CAIC", "Npars"),
-    Value =  sapply(c("Mean.Item.RMSEA",
-                      "loglike", "deviance",
-                      "AIC", "BIC", "CAIC",
-                      "Npars"), function(name) result[[name]])
+    Value = sapply(c(
+      "Mean.Item.RMSEA",
+      "loglike", "deviance",
+      "AIC", "BIC", "CAIC",
+      "Npars"
+    ), function(name) result[[name]])
   )
   return(misc_data)
 }
@@ -80,7 +82,6 @@ convert_to_char_data_table <- function(new_data_frame) {
 }
 
 item_parameters_as_data_table <- function(item_parameters) {
-
   item_parameters_nrow <- nrow(item_parameters)
   item_parameters_ncol <- ncol(item_parameters)
 
@@ -147,13 +148,15 @@ growth <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, r
 }
 
 #' @export
-visualize <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {
-  if (!is.null(q_matrix) && !is.null(ir_matrix)) {
-    results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
-    plot <- tdcm.plot(results)
-    return(plot)
+visualize <-
+  function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule, type) {
+    if (!is.null(q_matrix) && !is.null(ir_matrix)) {
+      print(paste("Type: ", type))
+      results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
+      plot <- tdcm.plot(results, attribute.names = attribute_names, type = type)
+      return(plot)
+    }
   }
-}
 
 #' @export
 trans_prob <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule) {

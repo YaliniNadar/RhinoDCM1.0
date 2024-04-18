@@ -29,8 +29,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / storage,
+  app/view[ui_components],
+  app/logic[storage],
 )
 
 #' @export
@@ -94,7 +94,6 @@ ui <- function(id) {
     ),
     uiOutput(ns("conditional_num_items")),
     # Input 5: Glowing dashes
-
     div(
       style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),

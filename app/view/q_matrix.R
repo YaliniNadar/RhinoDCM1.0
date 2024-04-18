@@ -27,8 +27,8 @@ box::use(
 )
 
 box::use(
-  app / view[ui_components, ],
-  app / logic / storage,
+  app/view[ui_components, format_table],
+  app/logic[storage],
 )
 
 #' @export
@@ -163,8 +163,12 @@ server <- function(id, data) {
               sep = ""
             )
           } else if (!is.null(num_attributes) && num_cols_in_q_matrix != num_attributes) {
-            error_message <- paste("The number of attributes does not match the number of columns
-            (", num_cols_in_q_matrix, ") in the Q matrix. Please ensure they are equal.", sep = "")
+            error_message <- paste("The number of attributes (", num_attributes,
+              ") does not match the number of columns (",
+              num_cols_in_q_matrix, ") in the Q matrix.
+                                   Please ensure they are equal.",
+              sep = ""
+            )
           }
 
           if (!is.null(error_message)) {
@@ -200,7 +204,7 @@ server <- function(id, data) {
           datatable(data_temp,
             options = list(
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })

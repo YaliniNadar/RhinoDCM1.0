@@ -37,7 +37,14 @@ box::use(
     show_modal_spinner,
     remove_modal_spinner,
   ],
-  shiny.router[is_page, router_ui, router_server, route, route_link],
+  shiny.router[
+    is_page,
+    change_page,
+    router_ui,
+    router_server,
+    route,
+    route_link
+  ],
   DT[
     DTOutput,
     renderDT,
@@ -48,18 +55,17 @@ box::use(
   datasets[
     mtcars
   ],
-  utils[
-    write.csv,
-    zip
-  ],
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm,
-  app / view / primary_aggregate_results,
-  app / view / primary_individual_results,
-  app / view / secondary_results
+  app/view[
+    ui_components,
+    format_table,
+    primary_aggregate_results,
+    primary_individual_results,
+    secondary_results
+  ],
+  app/logic[tdcm, table]
 )
 
 #' @export
@@ -88,9 +94,7 @@ ui <- function(id) {
     uiOutput(ns("att_corr_result_down_wrapper")),
     DTOutput(ns("rel_output")),
     uiOutput(ns("reli_result_down_wrapper")),
-    ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
-    actionButton(ns("resetBtn"), "Restart App"),
   )
 }
 
@@ -119,11 +123,14 @@ server <- function(id, data) {
 
         model_fit_result <- reactive({
           vals <- computedValues()
-          tdcm$model_fit(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
-        })
-        # Create a data.table containing specific elements
-        misc_data <- reactive({
-          tdcm$get_misc_datatable(model_fit_result())
+          tdcm$model_fit(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
 
         output$model_fit_output <- renderUI({
@@ -156,7 +163,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -173,7 +180,7 @@ server <- function(id, data) {
                 options = list(
                   scrollX = TRUE,
                   searching = FALSE,
-                  initComplete = JS(ui_components$format_pagination())
+                  initComplete = JS(format_table$format_pagination())
                 )
               ),
               columns = columns_to_round,
@@ -192,7 +199,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -212,7 +219,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -233,55 +240,69 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
-            columns = columns_to_round,
+            columns = 2,
             digits = 3
           )
+        })
+
+        # Create a data.table containing specific elements
+        misc_data <- reactive({
+          tdcm$get_misc_datatable(model_fit_result())
         })
 
         # Render Misc data table
         output$misc_table <- renderDT({
           columns_to_round <- check_columns_for_rounding(misc_data)
+          print(columns_to_round)
           formatted_table <- formatRound(
             datatable(misc_data(),
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             ),
-            columns = columns_to_round,
+            columns = 2,
             digits = 3
           )
         })
+
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
         })
 
         # Add download button
+        data_tables <- list(
+          list(name = "Global Fit Stats", data = model_fit_result()$Global.Fit.Stats),
+          list(name = "Item Pairs", data = model_fit_result()$Item.Pairs),
+          list(name = "Global Fit Tests", data = model_fit_result()$Global.Fit.Tests),
+          list(name = "Global Fit Stats 2", data = model_fit_result()$Global.Fit.Stats2),
+          list(name = "Item RMSEA", data = item_rmsea_dt()),
+          list(name = "Misc Data", data = misc_data())
+        )
+
         output$model_fit_download <- downloadHandler(
           filename = function() {
-            "model_fit_results"
+            "model_fit.xlsx"
           },
           content = function(file) {
-            # Save each table as a csv file
-            save_table <- function(table_name, info) {
-              write.csv(info, file.path(dirname(file), paste0(table_name, ".csv")), row.names = FALSE)
-            }
-            save_table("global_fit_stats", model_fit_result()$Global.Fit.Stats)
-            # save_table("item_pairs", model_fit_result()$Item.Pairs)
-            # save_table("global_fit_tests", model_fit_result()$Global.Fit.Tests)
-            # save_table("global_fit_stats2", model_fit_result()$Global.Fit.Stats2)
-            # save_table("item_rmsea", model_fit_result()$Item.RMSEA)
-            # save_table("misc_table", misc_data())
+            table$write_multiple_sheets(data_tables, file)
           }
         )
 
         att_corr_result <- reactive({
           vals <- computedValues()
-          tdcm$att_corr(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+          tdcm$att_corr(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
         output$att_corr_output <- renderDT({
           datatable(
@@ -290,7 +311,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -300,18 +321,22 @@ server <- function(id, data) {
         })
 
         # Add download button
-        output$att_result_download <- downloadHandler(
-          filename = function() {
-            paste("att_corr.csv", sep = "")
-          },
-          content = function(attCorrResultFile) {
-            write.csv(att_corr_result(), attCorrResultFile)
-          }
-        )
+        output$att_result_download <-
+          ui_components$create_download_handler(
+            att_corr_result(),
+            "attribute_correlation.xlsx"
+          )
 
         reli_result <- reactive({
           vals <- computedValues()
-          tdcm$reliability(data$q_matrix, data$ir_matrix, vals$time_pts, vals$attribute_names, vals$invariance, vals$rule)
+          tdcm$reliability(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule
+          )
         })
         output$rel_output <- renderDT({
           datatable(
@@ -320,7 +345,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -329,14 +354,11 @@ server <- function(id, data) {
         })
 
         # Add download button
-        output$reli_result_download <- downloadHandler(
-          filename = function() {
-            paste("reli_result.csv", sep = "")
-          },
-          content = function(reliResultFile) {
-            write.csv(reli_result(), reliResultFile)
-          }
-        )
+        output$reli_result_download <-
+          ui_components$create_download_handler(
+            reli_result(),
+            "reliability.xlsx"
+          )
 
         # Hide the spinner when all computations are done
         observe({
@@ -348,28 +370,5 @@ server <- function(id, data) {
         })
       }
     })
-
-    # Reset button action
-    observeEvent(input$resetBtn, {
-      print("reset button is clicked")
-      # Reset all variables
-      # # Add more reset actions for other variables as needed
-      showModal(modalDialog(
-        title = "Confirm Navigation",
-        "Are you sure you want to leave this page? This action will erase all enetered data requiring you to start over.",
-        easyClose = FALSE,
-        footer = tagList(
-          modalButton(ns("No")),
-          actionButton(ns("confirmLeave"), "Yes"),
-        )
-      ))
-
-      observeEvent(input$confirmCreate, {
-        change_page("/")
-        session$reload()
-        # removeModal()
-      })
-    })
-    ui_components$nb_server("nextButton", "/")
   })
 }

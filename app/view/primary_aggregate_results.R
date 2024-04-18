@@ -29,7 +29,7 @@ box::use(
     reactive,
     div,
     tags,
-    a
+    a,
   ],
   shinybusy[
     show_modal_spinner,
@@ -42,20 +42,17 @@ box::use(
     datatable,
     JS
   ],
-  datasets[
-    mtcars
-  ],
-  utils[
-    write.csv
-  ]
 )
 
 box::use(
-  app / view[ui_components],
-  app / logic / tdcm,
-  app / view / primary_aggregate_results,
-  app / view / primary_individual_results,
-  app / view / secondary_results
+  app/view[
+    ui_components,
+    primary_aggregate_results,
+    primary_individual_results,
+    secondary_results,
+    format_table
+  ],
+  app/logic[tdcm],
 )
 
 #' @export
@@ -91,14 +88,16 @@ ui <- function(id) {
     uiOutput(ns("item_params_down_wrapper")),
     DTOutput(ns("growth_output")),
     uiOutput(ns("growth_down_wrapper")),
-    # plotOutput(ns("tdcmPlot")),
-    plotOutput(ns("plot_output")),
+    plotOutput(ns("tdcmLinePlot")),
+    br(),
+    plotOutput(ns("tdcmBarPlot")),
+    # plotOutput(ns("plot_output")),
     # uiOutput(ns("plot_output_down_wrapper")),
     uiOutput(ns("plot_result_down_wrapper")),
     uiOutput(ns("trans_prob_output")),
     uiOutput(ns("trans_prob_down_wrapper")),
     ui_components$next_button(ns("nextButton")),
-    ui_components$back_button(ns("backButton")),
+    ui_components$reset_button(ns("resetBtn")),
   )
 }
 
@@ -150,7 +149,7 @@ server <- function(id, data, input, output) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(ui_components$format_pagination())
+                initComplete = JS(format_table$format_pagination())
               )
             )
           },
@@ -161,14 +160,10 @@ server <- function(id, data, input, output) {
           downloadButton(ns("item_params_download"), "Download")
         })
 
-        # Add download button
-        output$item_params_download <- downloadHandler(
-          filename = function() {
-            paste("item_parameters.csv", sep = "")
-          },
-          content = function(itemParamsFile) {
-            write.csv(item_params_result(), itemParamsFile)
-          }
+        # Dowloand Handler for item parameters
+        output$item_params_download <- ui_components$create_download_handler(
+          item_params_result(),
+          "item_parameters.xlsx"
         )
 
         growth_result <- reactive({
@@ -190,7 +185,7 @@ server <- function(id, data, input, output) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(ui_components$format_pagination())
+              initComplete = JS(format_table$format_pagination())
             )
           )
         })
@@ -200,37 +195,20 @@ server <- function(id, data, input, output) {
         })
 
         # Add download button
-        output$growth_output_download <- downloadHandler(
-          filename = function() {
-            paste("growth_output.csv", sep = "")
-          },
-          content = function(growthFile) {
-            write.csv(growth_result(), growthFile)
-          }
+        output$growth_output_download <- ui_components$create_download_handler(
+          growth_result(),
+          "growth_table.xlsx"
         )
 
-        output$plot_output <- renderPlot(
-          {
-            plot(mtcars$wt, mtcars$mpg)
-          },
-          res = 96
-        )
-
+        # PLOT DOWNLOAD
         output$plot_output_down_wrapper <- renderUI({
           downloadButton(ns("plot_output_download"), "Download")
         })
 
-        # Add download button
-        output$plot_output_download <- downloadHandler(
-          filename = function() {
-            paste("plot_output.csv", sep = "")
-          },
-          content = function(file) {
-            write.csv(result, file)
-          }
-        )
+        # Add download handler for plot here
 
-        plot_result <- reactive({
+        # Render Line Plot
+        line_plot_result <- reactive({
           vals <- computed_values()
           tdcm$visualize(
             data$q_matrix,
@@ -238,27 +216,31 @@ server <- function(id, data, input, output) {
             vals$time_pts,
             vals$attribute_names,
             vals$invariance,
-            vals$rule
+            vals$rule,
+            type = "line"
           )
         })
-        print(plot_result)
-        output$tdcmPlot <- renderPlot({
-          plot_result() # Call the reactive
+        output$tdcmLinePlot <- renderPlot({
+          line_plot_result() # Call the reactive
         })
 
-        output$plot_result_down_wrapper <- renderUI({
-          downloadButton(ns("plot_result_download"), "Download")
+        # Render Bar Plot
+        bar_plot_result <- reactive({
+          vals <- computed_values()
+          tdcm$visualize(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule,
+            type = "bar"
+          )
+        })
+        output$tdcmBarPlot <- renderPlot({
+          bar_plot_result() # Call the reactive
         })
 
-        # Add download button
-        output$plot_result_download <- downloadHandler(
-          filename = function() {
-            paste("plot_result.csv", sep = "")
-          },
-          content = function(plotResultFile) {
-            write.csv(plot_result(), plotResultFile)
-          }
-        )
 
         trans_prob_output_result <- reactive({
           vals <- computed_values()
@@ -273,36 +255,42 @@ server <- function(id, data, input, output) {
         })
 
         output$trans_prob_output <- renderUI({
-          table_list <- lapply(1:dim(trans_prob_output_result())[3], function(i) { # nolint
-            attribute_title <- dimnames(trans_prob_output_result())[[3]][i]
-            renderDT({
-              datatable(trans_prob_output_result()[, , i],
-                options = list(
-                  scrollX = TRUE,
-                  dom = "t",
-                  initComplete = JS(ui_components$format_pagination())
-                ),
-                caption = attribute_title
-              )
-            })
+          table_list <- lapply(1:2, function(row) {
+            fluidRow(
+              lapply(1:2, function(col) {
+                index <- (row - 1) * 2 + col
+                if (index <= dim(trans_prob_output_result())[3]) {
+                  attribute_title <- dimnames(trans_prob_output_result())[[3]][index]
+                  column(
+                    width = 6,
+                    renderDT({
+                      datatable(trans_prob_output_result()[, , index],
+                        options = list(
+                          scrollX = TRUE,
+                          dom = "t",
+                          initComplete = JS(format_table$format_pagination())
+                        ),
+                        caption = attribute_title
+                      )
+                    })
+                  )
+                }
+              })
+            )
           })
           tagList(table_list)
         })
+
 
         output$trans_prob_down_wrapper <- renderUI({
           downloadButton(ns("trans_prob_result_download"), "Download")
         })
 
         # Add download button
-        output$trans_prob_result_download <- downloadHandler(
-          filename = function() {
-            paste("trans_prob_result.csv", sep = "")
-          },
-          content = function(transProbFile) {
-            write.csv(trans_prob_output_result(), transProbFile)
-          }
+        output$trans_prob_result_download <- ui_components$create_download_handler(
+          trans_prob_output_result(),
+          "transition_probabilities.xlsx"
         )
-
 
         # Hide the spinner when all computations are done
         # NEED TO ADD PLOT TO THIS ONCE WE HAVE IT CLEANED
@@ -315,7 +303,7 @@ server <- function(id, data, input, output) {
         })
       }
     })
-
+    ui_components$rb_server("resetBtn")
     ui_components$nb_server("nextButton", "primary_individual_results")
   })
 }

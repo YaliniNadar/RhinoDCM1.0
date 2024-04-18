@@ -247,6 +247,6 @@ server <- function(id, data) {
       generate_model_specs()
     })
 
-    ui_components$nb_server("nextButton", "tdcm_test")
+    ui_components$nb_server("nextButton", "primary_aggregate_results")
   })
 }
