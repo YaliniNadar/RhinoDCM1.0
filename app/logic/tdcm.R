@@ -153,7 +153,7 @@ visualize <-
     if (!is.null(q_matrix) && !is.null(ir_matrix)) {
       print(paste("Type: ", type))
       results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
-      plot <- tdcm.plot(results, attribute.names = attribute_names, type = type)
+      plot <- tdcm.plot(results, attribute.names = attribute_names)
       return(plot)
     }
   }

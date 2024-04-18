@@ -5,8 +5,6 @@ box::use(
     br,
     h2,
     fileInput,
-    renderText,
-    textOutput,
     radioButtons,
     textInput,
     checkboxInput,
@@ -64,9 +62,6 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
     uiOutput(ns("errorBox")),
-
-    # Text output for displaying dimensions
-    textOutput(ns("dataDimensions")),
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewIR")),
@@ -207,10 +202,6 @@ server <- function(id, data) {
         # Save the modified data to ir_matrix
         data$ir_matrix <<- data_temp
 
-        # Update text output to display dimensions
-        output$dataDimensions <- renderText({
-          paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
-        })
       } else {
         # Clear the data if the file is NULL
         output$filePreviewIR <- renderDT(NULL)

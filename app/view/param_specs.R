@@ -57,7 +57,7 @@ ui <- function(id) {
         tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
         tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
         tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
-        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;")
       ),
       data.step = 5,
       data.intro = "These are three short lines next to each other."
@@ -306,24 +306,6 @@ server <- function(id, data) {
     })
     iv$add_rule("attribute_names", num_of_att_validation)
     iv$add_rule("q_matrix_choice", sv_required())
-    # iv$add_rule("num_items_single_time_point", sv_optional())
-    # observe ({
-    #   if (input$q_matrix_choice == "No") {
-    #     iv$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
-    #     iv$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
-    #     iv$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
-    #   } else {
-    #     iv$add_rule("num_items_each_time_point", sv_required())
-
-    #     iv$add_rule("num_items_each_time_point", ~ if (any(grepl("[^0-9,]", .))) {
-    #       "Input must be a comma-separated list of numbers"
-    #     })
-    #     iv$add_rule("num_items_each_time_point", num_item_each_time_point_validation)
-    #     iv$add_rule("num_items_each_time_point", ~ if (any(grepl(" ", trimws(strsplit(., ",")[[1]])))) {
-    #       "Attribute names cannot contain whitespace"
-    #     })
-    #   }
-    # })
 
     q_choice_yes <- InputValidator$new()
     q_choice_yes$condition(~ input$q_matrix_choice == "No")
