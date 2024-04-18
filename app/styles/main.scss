@@ -69,56 +69,16 @@ h2 {
 }
 
 .btn-primary {
-    color: #000000;
-    background-color: #ffc400;
+    color: #ffc400;
+    background-color: #4444446b;
     border-color: #ffc400;
     font-size: 18px;
     font-weight: 500;
-    transition: 0.6s;
+    transition: 0.4s;
     border-radius: 40px;
     padding-left: 22px;
     padding-right: 22px;
 }
-
-// button#app-param_specs-nextButton-nextButton,
-// button#app-ir_matrix-nextButton-nextButton,
-// button#app-model_specs-nextButton-nextButton,
-// button#app-review-nextButton-nextButton,
-// button#app-ui_components-nextButton-nextButton,
-// button#app-q_matrix-nextButton-nextButton{
-//     color: #000000;
-//     background-color: #ffc400;
-//     border-color: #ffc400;
-//     font-size: 18px;
-//     font-weight: 500;
-//     transition: 0.6s;
-//     border-radius: 40px;
-//     padding-left: 22px;
-//     padding-right: 22px;
-//     position: fixed;
-//     bottom: 40px;
-//     right: 20px;
-// }
-
-// button#app-param_specs-backButton-backButton, 
-// button#app-ir_matrix-backButton-backButton,
-// button#app-model_specs-backButton-backButton,
-// button#app-review-backButton-backButton,
-// button#app-ui_components-backButton-backButton,
-// button#app-q_matrix-backButton-backButton{
-//     color: #000000;
-//     background-color: #ffc400;
-//     border-color: #ffc400;
-//     font-size: 18px;
-//     font-weight: 500;
-//     transition: 0.6s;
-//     border-radius: 40px;
-//     padding-left: 22px;
-//     padding-right: 22px;
-//     position: fixed;
-//     bottom: 40px;
-//     right: 120px;
-// }
 
 .btn-primary:hover{
     color: #ffc400;
@@ -250,6 +210,7 @@ table.dataTable {
     color: #333;
     background-color: #ffc400;
     border-color: #9f7a00;
+    border-radius: 10px;
 }
 
 .form-control {
@@ -289,7 +250,6 @@ table.dataTable {
 }
 
 caption {
-    padding-top: 80px;
     padding-bottom: 8px;
     color: #ffc403;
     text-align: left;
@@ -348,4 +308,42 @@ a:hover {
     position: relative;
     padding: 15px;
     color: #000000;
+}
+
+.btn-info {
+    color: #000000;
+    background-color: #ffc400;
+    border-color: #ffc400;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.6s;
+    border-radius: 40px;
+    padding-left: 22px;
+    padding-right: 22px;
+    float: right;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info.active,
+.btn-info:active,
+.open>.dropdown-toggle.btn-info {
+    color: #ffc400;
+    background-color: #4444446b;
+    border-color: #ffc400;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.4s;
+    border-radius: 40px;
+    padding-left: 22px;
+    padding-right: 22px;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate {
+    color: inherit;
+    padding-top: 70px;
 }

@@ -29,8 +29,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
-  app/logic/storage,
+  app / view[ui_components],
+  app / logic / storage,
 )
 
 #' @export
@@ -42,16 +42,27 @@ ui <- function(id) {
     useShinyjs(),
     introjsUI(),
 
-    h2("Parameter Specifications"),
-    br(),
-
     # Trigger button for the tour
     introBox(
-      actionButton(ns("startTour"), "Start Tour", class = "btn-info"),
+      actionButton(ns("startTour"), "Help", class = "btn-info"),
       data.step = 5,
       data.intro = "Click this button to start a guided tour of the application."
     ),
-
+    h2("Parameter Specifications"),
+    br(),
+    introBox(
+      tags$div(
+        style = "display: flex; flex-direction: row; justify-content: space-between;",
+        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: #ffc400;"),
+        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+        tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+      ),
+      data.step = 5,
+      data.intro = "These are three short lines next to each other."
+    ),
+    br(),
     # Input 1: Number of time points
     introBox(
       numericInput(ns("num_time_points"), "Enter number of time points: ", value = 1, min = 1),
@@ -83,17 +94,7 @@ ui <- function(id) {
     ),
     uiOutput(ns("conditional_num_items")),
     # Input 5: Glowing dashes
-    introBox(
-      tags$div(style = "display: flex; flex-direction: row; justify-content: space-between;",
-           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: yellow;"),
-           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
-           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
-           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
-           tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
-      ),
-      data.step = 5,
-      data.intro = "These are three short lines next to each other."
-    ),
+
     div(
       style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),

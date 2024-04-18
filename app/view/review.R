@@ -17,7 +17,8 @@ box::use(
     tagList,
     uiOutput,
     HTML,
-    reactiveVal
+    reactiveVal,
+    tags
   ],
   DT[
     datatable,
@@ -28,7 +29,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components],
+  app / view[ui_components],
 )
 
 #' @export
@@ -38,6 +39,14 @@ ui <- function(id) {
   fluidPage(
     h2("Review"),
     br(),
+    tags$div(
+      style = "display: flex; flex-direction: row; justify-content: space-between;",
+      tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+      tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+      tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+      tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: white;"),
+      tags$div(style = "height: 10px; margin-bottom: 10px; width: 160px; background-color: #ffc400;"),
+    ),
     br(),
     # Main content blocks
     fluidRow(
