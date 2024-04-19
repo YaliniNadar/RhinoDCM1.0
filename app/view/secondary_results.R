@@ -60,7 +60,7 @@ box::use(
 box::use(
   app/view[
     ui_components,
-    format_table,
+    table_helper,
     primary_aggregate_results,
     primary_individual_results,
     secondary_results
@@ -163,7 +163,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(format_table$format_pagination())
+                initComplete = JS(table_helper$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -180,7 +180,7 @@ server <- function(id, data) {
                 options = list(
                   scrollX = TRUE,
                   searching = FALSE,
-                  initComplete = JS(format_table$format_pagination())
+                  initComplete = JS(table_helper$format_pagination())
                 )
               ),
               columns = columns_to_round,
@@ -199,7 +199,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(format_table$format_pagination())
+                initComplete = JS(table_helper$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -219,7 +219,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(format_table$format_pagination())
+                initComplete = JS(table_helper$format_pagination())
               )
             ),
             columns = columns_to_round,
@@ -240,7 +240,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(format_table$format_pagination())
+                initComplete = JS(table_helper$format_pagination())
               )
             ),
             columns = 2,
@@ -262,7 +262,7 @@ server <- function(id, data) {
               options = list(
                 scrollX = TRUE,
                 dom = "t",
-                initComplete = JS(format_table$format_pagination())
+                initComplete = JS(table_helper$format_pagination())
               )
             ),
             columns = 2,
@@ -311,7 +311,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(format_table$format_pagination())
+              initComplete = JS(table_helper$format_pagination())
             )
           )
         })
@@ -322,7 +322,7 @@ server <- function(id, data) {
 
         # Add download button
         output$att_result_download <-
-          ui_components$create_download_handler(
+          table_helper$create_download_handler(
             att_corr_result(),
             "attribute_correlation.xlsx"
           )
@@ -345,7 +345,7 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(format_table$format_pagination())
+              initComplete = JS(table_helper$format_pagination())
             )
           )
         })
@@ -355,7 +355,7 @@ server <- function(id, data) {
 
         # Add download button
         output$reli_result_download <-
-          ui_components$create_download_handler(
+          table_helper$create_download_handler(
             reli_result(),
             "reliability.xlsx"
           )

@@ -42,6 +42,9 @@ box::use(
     datatable,
     JS
   ],
+  datasets[
+    mtcars
+  ]
 )
 
 box::use(
@@ -50,7 +53,7 @@ box::use(
     primary_aggregate_results,
     primary_individual_results,
     secondary_results,
-    format_table
+    table_helper
   ],
   app/logic[tdcm],
 )
@@ -86,16 +89,19 @@ ui <- function(id) {
     uiOutput(ns("dynamic_content")),
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
+
     DTOutput(ns("growth_output")),
     uiOutput(ns("growth_down_wrapper")),
+
     plotOutput(ns("tdcmLinePlot")),
+    uiOutput(ns("tdcmLinePlot_down_wrapper")),
     br(),
     plotOutput(ns("tdcmBarPlot")),
-    # plotOutput(ns("plot_output")),
-    # uiOutput(ns("plot_output_down_wrapper")),
-    uiOutput(ns("plot_result_down_wrapper")),
+    uiOutput(ns("tdcmBarPlot_down_wrapper")),
+
     uiOutput(ns("trans_prob_output")),
     uiOutput(ns("trans_prob_down_wrapper")),
+
     ui_components$next_button(ns("nextButton")),
     ui_components$reset_button(ns("resetBtn")),
   )
@@ -149,7 +155,7 @@ server <- function(id, data, input, output) {
               options = list(
                 scrollX = TRUE,
                 searching = FALSE,
-                initComplete = JS(format_table$format_pagination())
+                initComplete = JS(table_helper$format_pagination())
               )
             )
           },
@@ -161,7 +167,7 @@ server <- function(id, data, input, output) {
         })
 
         # Dowloand Handler for item parameters
-        output$item_params_download <- ui_components$create_download_handler(
+        output$item_params_download <- table_helper$create_download_handler(
           item_params_result(),
           "item_parameters.xlsx"
         )
@@ -185,7 +191,7 @@ server <- function(id, data, input, output) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(format_table$format_pagination())
+              initComplete = JS(table_helper$format_pagination())
             )
           )
         })
@@ -195,17 +201,10 @@ server <- function(id, data, input, output) {
         })
 
         # Add download button
-        output$growth_output_download <- ui_components$create_download_handler(
+        output$growth_output_download <- table_helper$create_download_handler(
           growth_result(),
           "growth_table.xlsx"
         )
-
-        # PLOT DOWNLOAD
-        output$plot_output_down_wrapper <- renderUI({
-          downloadButton(ns("plot_output_download"), "Download")
-        })
-
-        # Add download handler for plot here
 
         # Render Line Plot
         line_plot_result <- reactive({
@@ -221,8 +220,18 @@ server <- function(id, data, input, output) {
           )
         })
         output$tdcmLinePlot <- renderPlot({
-          line_plot_result() # Call the reactive
+          # line_plot_result() # Call the reactive
+          plot(mtcars$wt, mtcars$mpg)
+        }, res = 96)
+
+        output$tdcmLinePlot_down_wrapper <- renderUI({
+          downloadButton(ns("tdcmLinePlot_download"), "Download")
         })
+
+        output$tdcmLinePlot_download <- table_helper$create_image_download_handler(
+          line_plot_result(),
+          "line_plot.png"
+        )
 
         # Render Bar Plot
         bar_plot_result <- reactive({
@@ -240,6 +249,14 @@ server <- function(id, data, input, output) {
         output$tdcmBarPlot <- renderPlot({
           bar_plot_result() # Call the reactive
         })
+        output$tdcmBarPlot_down_wrapper <- renderUI({
+          downloadButton(ns("tdcmBarPlot_download"), "Download")
+        })
+
+        output$tdcmBarPlot_download <- table_helper$create_image_download_handler(
+          bar_plot_result(),
+          "bar_plot.png"
+        )
 
 
         trans_prob_output_result <- reactive({
@@ -268,7 +285,7 @@ server <- function(id, data, input, output) {
                         options = list(
                           scrollX = TRUE,
                           dom = "t",
-                          initComplete = JS(format_table$format_pagination())
+                          initComplete = JS(table_helper$format_pagination())
                         ),
                         caption = attribute_title
                       )
@@ -287,7 +304,7 @@ server <- function(id, data, input, output) {
         })
 
         # Add download button
-        output$trans_prob_result_download <- ui_components$create_download_handler(
+        output$trans_prob_result_download <- table_helper$create_download_handler(
           trans_prob_output_result(),
           "transition_probabilities.xlsx"
         )

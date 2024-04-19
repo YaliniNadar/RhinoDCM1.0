@@ -25,7 +25,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, format_table],
+  app/view[ui_components, table_helper],
   app/logic[storage],
 )
 
@@ -194,7 +194,7 @@ server <- function(id, data) {
               autoWidth = TRUE,
               scrollX = TRUE,
               searching = FALSE,
-              initComplete = JS(format_table$format_pagination())
+              initComplete = JS(table_helper$format_pagination())
             ),
           )
         })

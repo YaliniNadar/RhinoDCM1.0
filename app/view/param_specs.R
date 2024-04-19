@@ -17,9 +17,7 @@ box::use(
     observe,
     reactive,
     div,
-    tags,
-    plotOutput,
-    renderPlot,
+    tags
   ],
   shinyjs[useShinyjs, runjs],
   shinyStorePlus[initStore, setupStorage],

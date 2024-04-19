@@ -10,15 +10,16 @@ write_multiple_sheets <- function(data_with_names, file) {
     sheet_name <- entry$name
     data_table <- entry$data
 
+    print(sheet_name)
+
     if (!file.exists(file)) {
-      write.xlsx(data_table, file = file, sheetName = sheet_name, row.names = FALSE)
+      write.xlsx(data_table, file = file, sheetName = sheet_name, row.names = TRUE)
     } else {
-      row_names <- if (sheet_name == "Item RMSEA") TRUE else FALSE
       write.xlsx(data_table,
                  file = file,
                  sheetName = sheet_name,
                  append = TRUE,
-                 row.names = row_names)
+                 row.names = FALSE)
     }
   }
 }
