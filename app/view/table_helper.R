@@ -1,5 +1,5 @@
 box::use(
-  DT[formatRound, datatable],
+  DT[formatRound, datatable, renderDT],
   shiny[downloadHandler],
   grDevices[
     png,

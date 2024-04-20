@@ -162,14 +162,17 @@ server <- function(id, data) {
             datatable(model_fit_result()$Global.Fit.Stats,
               options = list(
                 scrollX = TRUE,
-                dom = "t",
+                pageLength = 10,
+                searching = FALSE,
                 initComplete = JS(table_helper$format_pagination())
-              )
+              ),
+              autoHideNavigation = TRUE,
             ),
             columns = columns_to_round,
             digits = 3
           )
-        })
+        },
+        server = FALSE)
 
         # Render Item Pairs data frame
         output$item_pairs <- renderDT({
@@ -179,9 +182,11 @@ server <- function(id, data) {
               datatable(model_fit_result()$Item.Pairs,
                 options = list(
                   scrollX = TRUE,
+                  pageLength = 10,
                   searching = FALSE,
                   initComplete = JS(table_helper$format_pagination())
-                )
+                ),
+                autoHideNavigation = TRUE,
               ),
               columns = columns_to_round,
               digits = 3
@@ -189,7 +194,8 @@ server <- function(id, data) {
             columns = c(3:7),
             digits = 0
           )
-        })
+        },
+        server = FALSE)
 
         # Render Gloabl Fit Tests data frame
         output$global_fit_tests <- renderDT({
@@ -198,14 +204,17 @@ server <- function(id, data) {
             datatable(model_fit_result()$Global.Fit.Tests,
               options = list(
                 scrollX = TRUE,
-                dom = "t",
+                pageLength = 10,
+                searching = FALSE,
                 initComplete = JS(table_helper$format_pagination())
-              )
+              ),
+              autoHideNavigation = TRUE,
             ),
             columns = columns_to_round,
             digits = 3
           )
-        })
+        },
+        server = FALSE)
 
         # Render Global Fit Stats 2 data frame
         output$global_fit_stats2 <- renderDT({
@@ -218,19 +227,23 @@ server <- function(id, data) {
             datatable(dt_transposed,
               options = list(
                 scrollX = TRUE,
-                dom = "t",
+                pageLength = 10,
+                searching = FALSE,
                 initComplete = JS(table_helper$format_pagination())
-              )
+              ),
+              autoHideNavigation = TRUE,
             ),
             columns = columns_to_round,
             digits = 3
           )
-        })
+        }, server = FALSE)
 
         # Create a data.table for Item RMSEA table
         item_rmsea_dt <- reactive({
           tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
         })
+        print("Item")
+        print(item_rmsea_dt())
 
         # Render Item RMSEA table
         output$item_rmsea <- renderDT({
@@ -246,7 +259,7 @@ server <- function(id, data) {
             columns = 2,
             digits = 3
           )
-        })
+        },)
 
         # Create a data.table containing specific elements
         misc_data <- reactive({
@@ -261,14 +274,16 @@ server <- function(id, data) {
             datatable(misc_data(),
               options = list(
                 scrollX = TRUE,
-                dom = "t",
+                pageLength = 10,
+                searching = FALSE,
                 initComplete = JS(table_helper$format_pagination())
-              )
+              ),
+              autoHideNavigation = TRUE,
             ),
             columns = 2,
             digits = 3
           )
-        })
+        }, server = FALSE)
 
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
@@ -311,10 +326,12 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
+              pageLength = 10,
               initComplete = JS(table_helper$format_pagination())
-            )
+            ),
+            autoHideNavigation = TRUE,
           )
-        })
+        }, server = FALSE)
 
         output$att_corr_result_down_wrapper <- renderUI({
           downloadButton(ns("att_result_download"), "Download")
@@ -345,10 +362,13 @@ server <- function(id, data) {
             options = list(
               scrollX = TRUE,
               searching = FALSE,
+              pageLength = 10,
               initComplete = JS(table_helper$format_pagination())
-            )
+            ),
+            autoHideNavigation = TRUE,
           )
-        })
+        }, server = FALSE)
+
         output$reli_result_down_wrapper <- renderUI({
           downloadButton(ns("reli_result_download"), "Download")
         })

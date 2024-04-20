@@ -154,9 +154,11 @@ server <- function(id, data, input, output) {
               colnames = colnames(item_params_result()),
               options = list(
                 scrollX = TRUE,
+                pageLength = 10,
                 searching = FALSE,
                 initComplete = JS(table_helper$format_pagination())
-              )
+              ),
+              autoHideNavigation = TRUE,
             )
           },
           server = FALSE
@@ -190,11 +192,14 @@ server <- function(id, data, input, output) {
             caption = "Growth Table",
             options = list(
               scrollX = TRUE,
+              pageLength = 10,
               searching = FALSE,
               initComplete = JS(table_helper$format_pagination())
-            )
+            ),
+            autoHideNavigation = TRUE,
           )
-        })
+        },
+        server = FALSE)
 
         output$growth_down_wrapper <- renderUI({
           downloadButton(ns("growth_output_download"), "Download")
@@ -284,12 +289,15 @@ server <- function(id, data, input, output) {
                       datatable(trans_prob_output_result()[, , index],
                         options = list(
                           scrollX = TRUE,
-                          dom = "t",
+                          pageLength = 10,
+                          searching = FALSE,
                           initComplete = JS(table_helper$format_pagination())
                         ),
+                        autoHideNavigation = TRUE,
                         caption = attribute_title
                       )
-                    })
+                    },
+                    server = FALSE)
                   )
                 }
               })

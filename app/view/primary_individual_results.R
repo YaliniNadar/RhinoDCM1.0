@@ -128,11 +128,14 @@ server <- function(id, data) {
             caption = "Attribute Classification",
             options = list(
               scrollX = TRUE,
+              pageLength = 10,
               searching = FALSE,
               initComplete = JS(table_helper$format_pagination())
-            )
+            ),
+            autoHideNavigation = TRUE,
           )
-        })
+        },
+        server = FALSE)
 
         output$att_class_result_down_wrapper <- renderUI({
           downloadButton(ns("att_class_result_download"), "Download")
@@ -163,11 +166,14 @@ server <- function(id, data) {
             caption = "Most Likely Transitions",
             options = list(
               scrollX = TRUE,
+              pageLength = 10,
               searching = FALSE,
               initComplete = JS(table_helper$format_pagination())
-            )
+            ),
+            autoHideNavigation = TRUE,
           )
-        })
+        },
+        server = FALSE)
 
         output$most_likely_trans_down_wrapper <- renderUI({
           downloadButton(ns("most_likely_trans_output_download"), "Download")
@@ -198,11 +204,14 @@ server <- function(id, data) {
             caption = "Transition Position",
             options = list(
               scrollX = TRUE,
+              pageLength = 10,
               searching = FALSE,
               initComplete = JS(table_helper$format_pagination())
-            )
+            ),
+            autoHideNavigation = TRUE,
           )
-        })
+        },
+        server = FALSE)
 
         output$trans_pos_output_down_wrapper <- renderUI({
           downloadButton(ns("trans_pos_output_download"), "Download")
