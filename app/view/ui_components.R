@@ -6,7 +6,6 @@ box::use(
     actionButton,
     observeEvent,
     moduleServer,
-    downloadHandler,
     HTML,
     showModal,
     modalDialog,
@@ -114,17 +113,4 @@ nb_server <- function(id, route) {
       change_page(route)
     })
   })
-}
-
-# Function to create a download handler for an Excel file
-#' @export
-create_download_handler <- function(data, filename) {
-  downloadHandler(
-    filename = function() {
-      filename
-    },
-    content = function(file) {
-      write.xlsx(data, file, sheetName = "Sheet1", row.names = FALSE)
-    }
-  )
 }

@@ -16,8 +16,6 @@ box::use(
     uiOutput,
     actionButton,
     div,
-    textOutput,
-    renderText,
     tagList,
     HTML,
   ],
@@ -27,7 +25,7 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, format_table],
+  app/view[ui_components, table_helper],
   app/logic[storage],
 )
 
@@ -65,9 +63,6 @@ ui <- function(id) {
     checkboxInput(ns("excludeHeaders"), "First Row Contains Column Names", value = FALSE),
     checkboxInput(ns("excludeIdColumns"), "First Column Contains Row IDs", value = FALSE),
     uiOutput(ns("errorBox")),
-
-    # Text output for displaying dimensions
-    textOutput(ns("dataDimensions")),
 
     # File preview using DTOutput
     DTOutput(ns("filePreviewQ")),
@@ -204,19 +199,13 @@ server <- function(id, data) {
           datatable(data_temp,
             options = list(
               searching = FALSE,
-              initComplete = JS(format_table$format_pagination())
+              initComplete = JS(table_helper$format_pagination())
             )
           )
         })
 
         # Save the modified data to q_matrix
         data$q_matrix <<- data_temp
-
-        # Update text output to display dimensions
-        output$dataDimensions <- renderText({
-          paste("Dimensions: ", nrow(data_temp), " rows, ", ncol(data_temp), " columns")
-          num_cols_in_q_matrix <- ncol(data_temp)
-        })
       } else {
         # Clear the preview if no file is selected
         output$filePreviewQ <- renderDT(NULL)
