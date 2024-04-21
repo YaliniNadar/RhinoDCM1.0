@@ -140,8 +140,7 @@ server <- function(id, data) {
               tabPanel("Item Pairs", DTOutput(ns("item_pairs"))),
               tabPanel("Global Fit Tests", DTOutput(ns("global_fit_tests"))),
               tabPanel("Global Fit Stats 2", DTOutput(ns("global_fit_stats2"))),
-              tabPanel("Item RMSEA", DTOutput(ns("item_RMSEA"))),
-              tabPanel("test", DTOutput(ns("test"))),
+              tabPanel("Item RMSEA", DTOutput(ns("item_rmsea"))),
               tabPanel("Misc", DTOutput(ns("misc_table"))),
               # Add more tabPanels for other elements as needed
             )
@@ -247,9 +246,21 @@ server <- function(id, data) {
         print(item_rmsea_dt())
 
         # Render Item RMSEA table
-        output$item_RMSEA <- renderDT({
-          datatable(model_fit_result()$Global.Fit.Stats2)
-        })
+        output$item_rmsea <- renderDT({
+          formatted_table <- formatRound(
+            datatable(item_rmsea_dt(),
+              options = list(
+                scrollX = TRUE,
+                pageLength = 10,
+                searching = FALSE,
+                initComplete = JS(table_helper$format_pagination())
+              ),
+              autoHideNavigation = TRUE,
+            ),
+            columns = 2,
+            digits = 3
+          )
+        }, server = FALSE)
 
         # Create a data.table containing specific elements
         misc_data <- reactive({
@@ -272,11 +283,6 @@ server <- function(id, data) {
             digits = 3
           )
         }, server = FALSE)
-
-        # Render test data table
-        output$test <- renderDT({
-          datatable(data.frame(A = 1:5, B = letters[1:5]))
-        })
 
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
