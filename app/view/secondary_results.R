@@ -140,7 +140,8 @@ server <- function(id, data) {
               tabPanel("Item Pairs", DTOutput(ns("item_pairs"))),
               tabPanel("Global Fit Tests", DTOutput(ns("global_fit_tests"))),
               tabPanel("Global Fit Stats 2", DTOutput(ns("global_fit_stats2"))),
-              tabPanel("Item RMSEA", DTOutput(ns("item_rmsea"))),
+              tabPanel("Item RMSEA", DTOutput(ns("item_RMSEA"))),
+              tabPanel("test", DTOutput(ns("test"))),
               tabPanel("Misc", DTOutput(ns("misc_table"))),
               # Add more tabPanels for other elements as needed
             )
@@ -246,20 +247,9 @@ server <- function(id, data) {
         print(item_rmsea_dt())
 
         # Render Item RMSEA table
-        output$item_rmsea <- renderDT({
-          columns_to_round <- check_columns_for_rounding(item_rmsea_dt)
-          formatted_table <- formatRound(
-            datatable(item_rmsea_dt(),
-              options = list(
-                scrollX = TRUE,
-                searching = FALSE,
-                initComplete = JS(table_helper$format_pagination())
-              )
-            ),
-            columns = 2,
-            digits = 3
-          )
-        },)
+        output$item_RMSEA <- renderDT({
+          datatable(model_fit_result()$Global.Fit.Stats2)
+        })
 
         # Create a data.table containing specific elements
         misc_data <- reactive({
@@ -268,8 +258,6 @@ server <- function(id, data) {
 
         # Render Misc data table
         output$misc_table <- renderDT({
-          columns_to_round <- check_columns_for_rounding(misc_data)
-          print(columns_to_round)
           formatted_table <- formatRound(
             datatable(misc_data(),
               options = list(
@@ -284,6 +272,11 @@ server <- function(id, data) {
             digits = 3
           )
         }, server = FALSE)
+
+        # Render test data table
+        output$test <- renderDT({
+          datatable(data.frame(A = 1:5, B = letters[1:5]))
+        })
 
         output$model_fit_result_down_wrapper <- renderUI({
           downloadButton(ns("model_fit_download"), "Download")
