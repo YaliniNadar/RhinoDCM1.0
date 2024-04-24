@@ -37,24 +37,9 @@ create_image_download_handler <- function(image_data, filename) {
       filename
     },
     content = function(file) {
-      tryCatch(
-        {
-          png(file)
-          print(image_data)  # Assuming image_data is a plot or binary image data
-          dev.off()
-        },
-        error = function(e) {
-          # Print error message to console
-          cat("Error while generating the image:", conditionMessage(e), "\n")
-          # Optionally, you can save the error message to a log file or display it to the user
-          # For example, you can use the shinyalert package to display an alert to the user
-          shinyalert::showAlert(
-            title = "Error",
-            text = paste("An error occurred while generating the image:", conditionMessage(e)),
-            type = "error"
-          )
-        }
-      )
+      png(file, width = 1280, height = 720 )
+      print(image_data)  # Assuming image_data is a plot or binary image data
+      dev.off()
     }
   )
 }
