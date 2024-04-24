@@ -42,9 +42,6 @@ box::use(
     datatable,
     JS
   ],
-  datasets[
-    mtcars
-  ]
 )
 
 box::use(
@@ -224,17 +221,30 @@ server <- function(id, data, input, output) {
             type = "line"
           )
         })
+
+        # Render Line Plot
+        line_plot_result2 <- reactive({
+          vals <- computed_values()
+          tdcm$visualize(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule,
+            type = "line"
+          )
+        })
         output$tdcmLinePlot <- renderPlot({
           line_plot_result() # Call the reactive
-          # plot(mtcars$wt, mtcars$mpg)
-        }, res = 96)
+        })
 
         output$tdcmLinePlot_down_wrapper <- renderUI({
           downloadButton(ns("tdcmLinePlot_download"), "Download")
         })
 
         output$tdcmLinePlot_download <- table_helper$create_image_download_handler(
-          line_plot_result(),
+          line_plot_result2(),
           "line_plot.png"
         )
 
@@ -251,6 +261,21 @@ server <- function(id, data, input, output) {
             type = "bar"
           )
         })
+
+        # Render Bar Plot
+        bar_plot_result2 <- reactive({
+          vals <- computed_values()
+          tdcm$visualize(
+            data$q_matrix,
+            data$ir_matrix,
+            vals$time_pts,
+            vals$attribute_names,
+            vals$invariance,
+            vals$rule,
+            type = "bar"
+          )
+        })
+
         output$tdcmBarPlot <- renderPlot({
           bar_plot_result() # Call the reactive
         })
@@ -259,7 +284,7 @@ server <- function(id, data, input, output) {
         })
 
         output$tdcmBarPlot_download <- table_helper$create_image_download_handler(
-          bar_plot_result(),
+          bar_plot_result2(),
           "bar_plot.png"
         )
 
