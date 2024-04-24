@@ -242,8 +242,6 @@ server <- function(id, data) {
         item_rmsea_dt <- reactive({
           tdcm$convert_to_datatable(model_fit_result()$Item.RMSEA)
         })
-        print("Item")
-        print(item_rmsea_dt())
 
         # Render Item RMSEA table
         output$item_rmsea <- renderDT({

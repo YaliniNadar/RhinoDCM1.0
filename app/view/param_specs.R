@@ -254,14 +254,6 @@ server <- function(id, data) {
       }
     }
 
-    # Print debugger for input values
-    observe({
-      print(paste("Number of time points:", input$num_time_points))
-      print(paste("Number of attributes:", input$num_attributes))
-      print(paste("Attribute names:", input$attribute_names))
-      print(paste("Q-Matrix choice:", input$q_matrix_choice))
-    })
-
     num_of_att_validation <- function(value) {
       attribute_names <- strsplit(value, ",")[[1]]
       num_attributes <- length(attribute_names)

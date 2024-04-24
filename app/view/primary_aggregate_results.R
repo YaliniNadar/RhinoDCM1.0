@@ -225,8 +225,8 @@ server <- function(id, data, input, output) {
           )
         })
         output$tdcmLinePlot <- renderPlot({
-          # line_plot_result() # Call the reactive
-          plot(mtcars$wt, mtcars$mpg)
+          line_plot_result() # Call the reactive
+          # plot(mtcars$wt, mtcars$mpg)
         }, res = 96)
 
         output$tdcmLinePlot_down_wrapper <- renderUI({

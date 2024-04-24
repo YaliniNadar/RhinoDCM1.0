@@ -151,7 +151,7 @@ growth <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, r
 visualize <- function(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule, type) {
   if (!is.null(q_matrix) && !is.null(ir_matrix)) {
     results <- fit_and_summarize(q_matrix, ir_matrix, time_pts, attribute_names, invariance, rule)
-    plot <- tdcm.plot(results)
+    plot <- tdcm.plot(results, type = type)
     return(plot)
   }
 }

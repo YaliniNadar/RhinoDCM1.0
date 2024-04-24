@@ -16,6 +16,25 @@
       "Repository": "RSPM",
       "Hash": "a8235afbcd6316e6e91433ea47661013"
     },
+    "CDM": {
+      "Package": "CDM",
+      "Version": "8.2-6",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "RcppArmadillo",
+        "grDevices",
+        "graphics",
+        "methods",
+        "mvtnorm",
+        "polycor",
+        "stats",
+        "utils"
+      ],
+      "Hash": "439f9750b26791ca6e9d23f3334b042e"
+    },
     "DT": {
       "Package": "DT",
       "Version": "0.31",
@@ -164,6 +183,50 @@
         "utils"
       ],
       "Hash": "ae6cbbe1492f4de79c45fce06f967ce8"
+    },
+    "RcppArmadillo": {
+      "Package": "RcppArmadillo",
+      "Version": "0.12.8.2.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "d5448fb24fb114c4da1275a37a571f37"
+    },
+    "TDCM": {
+      "Package": "TDCM",
+      "Version": "0.2.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "cotterell",
+      "RemoteRepo": "tdcm",
+      "RemoteRef": "main",
+      "RemoteSha": "fef03e4c160b4abc1c7bef511d60aff506edfaa4",
+      "Requirements": [
+        "CDM",
+        "R",
+        "gtools",
+        "polycor",
+        "stringr"
+      ],
+      "Hash": "7456b7e34450f64ff33c1fa1a22995f9"
+    },
+    "admisc": {
+      "Package": "admisc",
+      "Version": "0.35",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "1b042d902955174bbc9c4bea64c595d4"
     },
     "anytime": {
       "Package": "anytime",
@@ -787,6 +850,18 @@
       ],
       "Hash": "b29cf3031f49b04ab9c852c912547eef"
     },
+    "gtools": {
+      "Package": "gtools",
+      "Version": "3.9.5",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "588d091c35389f1f4a9d533c8d709b35"
+    },
     "highr": {
       "Package": "highr",
       "Version": "0.10",
@@ -1097,6 +1172,17 @@
       ],
       "Hash": "6dfe8bf774944bd5595785e3229d8771"
     },
+    "mvtnorm": {
+      "Package": "mvtnorm",
+      "Version": "1.2-4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "17e96668f44a28aef0981d9e17c49b59"
+    },
     "nlme": {
       "Package": "nlme",
       "Version": "3.1-163",
@@ -1248,6 +1334,21 @@
         "viridisLite"
       ],
       "Hash": "a1ac5c03ad5ad12b9d1597e00e23c3dd"
+    },
+    "polycor": {
+      "Package": "polycor",
+      "Version": "0.8-1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Requirements": [
+        "Matrix",
+        "R",
+        "admisc",
+        "mvtnorm",
+        "parallel",
+        "stats"
+      ],
+      "Hash": "450633138730dbb436ccfcc48e322a9a"
     },
     "praise": {
       "Package": "praise",

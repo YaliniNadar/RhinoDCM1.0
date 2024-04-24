@@ -172,7 +172,6 @@ server <- function(id, data) {
       rule <- data$model_specs_data$dcmEstimate
 
       result <- tdcm$visualize(data$q_matrix, data$ir_matrix, time_pts, attribute_names, invariance, rule)
-      print(result)
       output$tdcmPlot <- renderPlot(result)
       remove_modal_spinner()
     })
