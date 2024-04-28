@@ -7,6 +7,9 @@ box::use(
   ],
   graphics[
     plot
+  ],
+  openxlsx [
+    write.xlsx
   ]
 )
 
@@ -24,7 +27,7 @@ create_download_handler <- function(data, filename) {
       filename
     },
     content = function(file) {
-      write.xlsx(data, file, sheetName = "Sheet1", row.names = FALSE)
+      write.xlsx(data, file, sheetName = "Sheet1", rowNames = FALSE)
     }
   )
 }
@@ -37,7 +40,7 @@ create_image_download_handler <- function(image_data, filename) {
       filename
     },
     content = function(file) {
-      png(file, width = 1280, height = 720 )
+      png(file, width = 1280, height = 720)
       print(image_data)  # Assuming image_data is a plot or binary image data
       dev.off()
     }

@@ -53,7 +53,8 @@ box::use(
     formatRound
   ],
   datasets[
-    mtcars
+    mtcars,
+    iris
   ],
 )
 
@@ -296,12 +297,23 @@ server <- function(id, data) {
           list(name = "Misc Data", data = misc_data())
         )
 
+        data_tables2 <- list(
+          "Global Fit Stats" = model_fit_result()$Global.Fit.Stats,
+          "Item Pairs" = model_fit_result()$Item.Pairs,
+          "Global Fit Tests" = model_fit_result()$Global.Fit.Tests,
+          "Global Fit Stats 2" = model_fit_result()$Global.Fit.Stats2,
+          "Item RMSEA" = item_rmsea_dt(),
+          "Misc Data" = misc_data()
+        )
+
+        l <- list("IRIS" = iris, "MTCARS" = mtcars)
+
         output$model_fit_download <- downloadHandler(
           filename = function() {
             "model_fit.xlsx"
           },
           content = function(file) {
-            table$write_multiple_sheets(data_tables, file)
+            table$write_2(data_tables2, file)
           }
         )
 
