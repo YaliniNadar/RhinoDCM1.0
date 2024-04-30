@@ -52,9 +52,6 @@ box::use(
     JS,
     formatRound
   ],
-  datasets[
-    mtcars
-  ],
 )
 
 box::use(
@@ -288,12 +285,12 @@ server <- function(id, data) {
 
         # Add download button
         data_tables <- list(
-          list(name = "Global Fit Stats", data = model_fit_result()$Global.Fit.Stats),
-          list(name = "Item Pairs", data = model_fit_result()$Item.Pairs),
-          list(name = "Global Fit Tests", data = model_fit_result()$Global.Fit.Tests),
-          list(name = "Global Fit Stats 2", data = model_fit_result()$Global.Fit.Stats2),
-          list(name = "Item RMSEA", data = item_rmsea_dt()),
-          list(name = "Misc Data", data = misc_data())
+          "Global Fit Stats" = model_fit_result()$Global.Fit.Stats,
+          "Item Pairs" = model_fit_result()$Item.Pairs,
+          "Global Fit Tests" = model_fit_result()$Global.Fit.Tests,
+          "Global Fit Stats 2" = model_fit_result()$Global.Fit.Stats2,
+          "Item RMSEA" = item_rmsea_dt(),
+          "Misc Data" = misc_data()
         )
 
         output$model_fit_download <- downloadHandler(
