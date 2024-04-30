@@ -48,14 +48,14 @@ box::use(
 )
 
 box::use(
-  app/view[
+  app / view[
     ui_components,
     primary_aggregate_results,
     primary_individual_results,
     secondary_results,
     table_helper
   ],
-  app/logic[tdcm],
+  app / logic[tdcm],
 )
 
 #' @export
@@ -84,8 +84,13 @@ ui <- function(id) {
     uiOutput(ns("most_likely_trans_down_wrapper")),
     DTOutput(ns("trans_pos_output")),
     uiOutput(ns("trans_pos_output_down_wrapper")),
+    br(),
+    br(),
     ui_components$next_button(ns("nextButton")),
     ui_components$back_button(ns("backButton")),
+    br(),
+    br(),
+    br(),
   )
 }
 
@@ -122,20 +127,22 @@ server <- function(id, data) {
           )
         })
 
-        output$classification_output <- renderDT({
-          datatable(
-            att_class_result(),
-            caption = "Attribute Classification",
-            options = list(
-              scrollX = TRUE,
-              pageLength = 10,
-              searching = FALSE,
-              initComplete = JS(table_helper$format_pagination())
-            ),
-            autoHideNavigation = TRUE,
-          )
-        },
-        server = FALSE)
+        output$classification_output <- renderDT(
+          {
+            datatable(
+              att_class_result(),
+              caption = "Attribute Classification",
+              options = list(
+                scrollX = TRUE,
+                pageLength = 10,
+                searching = FALSE,
+                initComplete = JS(table_helper$format_pagination())
+              ),
+              autoHideNavigation = TRUE,
+            )
+          },
+          server = FALSE
+        )
 
         output$att_class_result_down_wrapper <- renderUI({
           downloadButton(ns("att_class_result_download"), "Download")
@@ -160,20 +167,22 @@ server <- function(id, data) {
           )
         })
 
-        output$most_likely_trans_output <- renderDT({
-          datatable(
-            most_likely_trans_result()[, -1],
-            caption = "Most Likely Transitions",
-            options = list(
-              scrollX = TRUE,
-              pageLength = 10,
-              searching = FALSE,
-              initComplete = JS(table_helper$format_pagination())
-            ),
-            autoHideNavigation = TRUE,
-          )
-        },
-        server = FALSE)
+        output$most_likely_trans_output <- renderDT(
+          {
+            datatable(
+              most_likely_trans_result()[, -1],
+              caption = "Most Likely Transitions",
+              options = list(
+                scrollX = TRUE,
+                pageLength = 10,
+                searching = FALSE,
+                initComplete = JS(table_helper$format_pagination())
+              ),
+              autoHideNavigation = TRUE,
+            )
+          },
+          server = FALSE
+        )
 
         output$most_likely_trans_down_wrapper <- renderUI({
           downloadButton(ns("most_likely_trans_output_download"), "Download")
@@ -198,20 +207,22 @@ server <- function(id, data) {
           )
         })
 
-        output$trans_pos_output <- renderDT({
-          datatable(
-            trans_pos_output_result(),
-            caption = "Transition Position",
-            options = list(
-              scrollX = TRUE,
-              pageLength = 10,
-              searching = FALSE,
-              initComplete = JS(table_helper$format_pagination())
-            ),
-            autoHideNavigation = TRUE,
-          )
-        },
-        server = FALSE)
+        output$trans_pos_output <- renderDT(
+          {
+            datatable(
+              trans_pos_output_result(),
+              caption = "Transition Position",
+              options = list(
+                scrollX = TRUE,
+                pageLength = 10,
+                searching = FALSE,
+                initComplete = JS(table_helper$format_pagination())
+              ),
+              autoHideNavigation = TRUE,
+            )
+          },
+          server = FALSE
+        )
 
         output$trans_pos_output_down_wrapper <- renderUI({
           downloadButton(ns("trans_pos_output_download"), "Download")

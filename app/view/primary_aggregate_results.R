@@ -45,14 +45,14 @@ box::use(
 )
 
 box::use(
-  app/view[
+  app / view[
     ui_components,
     primary_aggregate_results,
     primary_individual_results,
     secondary_results,
     table_helper
   ],
-  app/logic[tdcm],
+  app / logic[tdcm],
 )
 
 #' @export
@@ -86,21 +86,33 @@ ui <- function(id) {
     uiOutput(ns("dynamic_content")),
     DTOutput(ns("item_params_output")),
     uiOutput(ns("item_params_down_wrapper")),
-
+    br(),
+    br(),
     DTOutput(ns("growth_output")),
+    br(),
     uiOutput(ns("growth_down_wrapper")),
-
+    br(),
+    br(),
     plotOutput(ns("tdcmLinePlot")),
+    br(),
     uiOutput(ns("tdcmLinePlot_down_wrapper")),
     br(),
+    br(),
     plotOutput(ns("tdcmBarPlot")),
+    br(),
     uiOutput(ns("tdcmBarPlot_down_wrapper")),
-
+    br(),
+    br(),
     uiOutput(ns("trans_prob_output")),
+    br(),
     uiOutput(ns("trans_prob_down_wrapper")),
-
+    br(),
+    br(),
     ui_components$next_button(ns("nextButton")),
     ui_components$reset_button(ns("resetBtn")),
+    br(),
+    br(),
+    br(),
   )
 }
 
@@ -183,20 +195,22 @@ server <- function(id, data, input, output) {
           )
         })
 
-        output$growth_output <- renderDT({
-          datatable(
-            growth_result(),
-            caption = "Growth Table",
-            options = list(
-              scrollX = TRUE,
-              pageLength = 10,
-              searching = FALSE,
-              initComplete = JS(table_helper$format_pagination())
-            ),
-            autoHideNavigation = TRUE,
-          )
-        },
-        server = FALSE)
+        output$growth_output <- renderDT(
+          {
+            datatable(
+              growth_result(),
+              caption = "Growth Table",
+              options = list(
+                scrollX = TRUE,
+                pageLength = 10,
+                searching = FALSE,
+                initComplete = JS(table_helper$format_pagination())
+              ),
+              autoHideNavigation = TRUE,
+            )
+          },
+          server = FALSE
+        )
 
         output$growth_down_wrapper <- renderUI({
           downloadButton(ns("growth_output_download"), "Download")
@@ -310,19 +324,21 @@ server <- function(id, data, input, output) {
                   attribute_title <- dimnames(trans_prob_output_result())[[3]][index]
                   column(
                     width = 6,
-                    renderDT({
-                      datatable(trans_prob_output_result()[, , index],
-                        options = list(
-                          scrollX = TRUE,
-                          pageLength = 10,
-                          searching = FALSE,
-                          initComplete = JS(table_helper$format_pagination())
-                        ),
-                        autoHideNavigation = TRUE,
-                        caption = attribute_title
-                      )
-                    },
-                    server = FALSE)
+                    renderDT(
+                      {
+                        datatable(trans_prob_output_result()[, , index],
+                          options = list(
+                            scrollX = TRUE,
+                            pageLength = 10,
+                            searching = FALSE,
+                            initComplete = JS(table_helper$format_pagination())
+                          ),
+                          autoHideNavigation = TRUE,
+                          caption = attribute_title
+                        )
+                      },
+                      server = FALSE
+                    )
                   )
                 }
               })

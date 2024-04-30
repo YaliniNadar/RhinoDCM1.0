@@ -25,8 +25,8 @@ box::use(
 )
 
 box::use(
-  app/view[ui_components, table_helper],
-  app/logic[storage],
+  app / view[ui_components, table_helper],
+  app / logic[storage],
 )
 
 #' @export
@@ -69,7 +69,7 @@ ui <- function(id) {
     div(
       style = "display: flex; justify-content: flex-end;", # Aligns the buttons to the right
       ui_components$back_button(ns("backButton")),
-      uiOutput(ns("nextButtonUI")) # Placeholder for dynamic Next button rendering
+      uiOutput(ns("nextButtonUI")), # Placeholder for dynamic Next button rendering
     )
   )
 }
