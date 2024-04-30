@@ -18,13 +18,9 @@ box::use(
 #' @export
 navbar_ui <- function(id) {
   ns <- NS(id)
-
   navbarPage(
     title = "TDCMApp",
     id = ns("navbar"),
-    # tabPanel("Primary Aggregate Results", value = "primary_aggregate_results.R"),
-    # tabPanel("Primary Aggregate Results", value = "primary_individual_results.R"),
-    # tabPanel("Secondary Results", value = "secondary_results.R"),
   )
 }
 
@@ -49,7 +45,6 @@ next_button <- function(id, enabled = TRUE) {
     )
   }
 }
-
 
 #' @export
 back_button <- function(id) {

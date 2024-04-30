@@ -79,11 +79,6 @@ ui <- function(id) {
         tabPanel(a("Secondary Results", href = route_link("secondary_results")))
       )
     ),
-    # router_ui(
-    #   route("primary_aggregate_results", primary_individual_results$ui(ns("primary_aggregate_results"))),
-    #   route("primary_individual_results", primary_individual_results$ui(ns("primary_individual_results"))),
-    #   route("secondary_results", secondary_results$ui(ns("secondary_results")))
-    # ),
     br(),
     uiOutput(ns("model_fit_output")),
     br(),
@@ -120,7 +115,6 @@ server <- function(id, data) {
           time_pts <- data$param_specs_data$num_time_points
           invariance <- data$model_specs_data$itemParameter
           rule <- data$model_specs_data$dcmEstimate
-
           # Return a list of all computed values
           list(
             attribute_names = attribute_names,
@@ -131,7 +125,7 @@ server <- function(id, data) {
         })
 
         model_fit_result <- reactive({
-          vals <- computedValues()
+          vals <- computedValues() # Correctly access the computed values here
           tdcm$model_fit(
             data$q_matrix,
             data$ir_matrix,
@@ -151,7 +145,6 @@ server <- function(id, data) {
               tabPanel("Global Fit Stats 2", DTOutput(ns("global_fit_stats2"))),
               tabPanel("Item RMSEA", DTOutput(ns("item_rmsea"))),
               tabPanel("Misc", DTOutput(ns("misc_table"))),
-              # Add more tabPanels for other elements as needed
             )
           )
         })
@@ -237,7 +230,6 @@ server <- function(id, data) {
             dt <- model_fit_result()$Global.Fit.Stats2
             dt_transposed <- as.data.frame(t(dt))
             colnames(dt_transposed) <- c("Value")
-
             columns_to_round <- check_columns_for_rounding(dt_transposed)
             formatted_table <- formatRound(
               datatable(dt_transposed,
@@ -330,7 +322,7 @@ server <- function(id, data) {
         )
 
         att_corr_result <- reactive({
-          vals <- computedValues()
+          vals <- computedValues() # Correctly access the computed values here
           tdcm$att_corr(
             data$q_matrix,
             data$ir_matrix,
@@ -340,6 +332,8 @@ server <- function(id, data) {
             vals$rule
           )
         })
+
+        # Render Attribute Correlation output
         output$att_corr_output <- renderDT(
           {
             datatable(
@@ -369,7 +363,7 @@ server <- function(id, data) {
           )
 
         reli_result <- reactive({
-          vals <- computedValues()
+          vals <- computedValues() # Correctly access the computed values here
           tdcm$reliability(
             data$q_matrix,
             data$ir_matrix,
@@ -379,6 +373,8 @@ server <- function(id, data) {
             vals$rule
           )
         })
+
+        # Render Reliability output
         output$rel_output <- renderDT(
           {
             datatable(
