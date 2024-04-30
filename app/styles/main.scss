@@ -347,3 +347,48 @@ a:hover {
     color: inherit;
     padding-top: 70px;
 }
+
+.modal-title {
+    margin: 0;
+    line-height: 1.42857143;
+    color: #000000;
+}
+
+#app-primary_aggregate_results-resetBtn-confirmLeave {
+    background-color: #000000;
+    color: #ffc400;
+}
+
+#app-primary_aggregate_results-resetBtn-confirmLeave:hover {
+    background-color: #4444446b;
+    color: #ffc400;
+}
+
+caption {
+    padding-top: 30px;
+}
+
+.btn-primary.disabled.focus,
+.btn-primary.disabled:focus,
+.btn-primary.disabled:hover,
+.btn-primary[disabled].focus,
+.btn-primary[disabled]:focus,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary.focus,
+fieldset[disabled] .btn-primary:focus,
+fieldset[disabled] .btn-primary:hover {
+    background-color: #4444446b;
+    border-color: #4444446b;
+    transition: none;
+    transform: none;
+}
+
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+    background-color: #4444446b;
+    border-color: #4444446b;
+    color: #959595;
+    transition: none;
+    transform: none;
+}
