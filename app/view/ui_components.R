@@ -12,10 +12,7 @@ box::use(
     modalButton,
     tagList
   ],
-  shiny.router[change_page],
-  xlsx[
-    write.xlsx
-  ]
+  shiny.router[change_page]
 )
 
 #' @export
