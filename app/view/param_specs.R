@@ -300,11 +300,11 @@ server <- function(id, data) {
 
     q_choice_yes <- InputValidator$new()
     q_choice_yes$condition(~ input$q_matrix_choice == "No")
-    validation$pos_int_input(ns("num_items_single_time_point"))
-    # q_choice_yes$add_rule("num_items_single_time_point", sv_required())
-    # q_choice_yes$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
-    # q_choice_yes$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
-    # q_choice_yes$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
+    # validation$pos_int_input(ns("num_items_single_time_point"))
+    q_choice_yes$add_rule("num_items_single_time_point", sv_required())
+    q_choice_yes$add_rule("num_items_single_time_point", ~ if (!is.numeric(.)) "Input must be a number")
+    q_choice_yes$add_rule("num_items_single_time_point", ~ if (. != round(.)) "Input must be an integer")
+    q_choice_yes$add_rule("num_items_single_time_point", ~ if (. <= 0) "Input must be positive")
 
     q_choice_no <- InputValidator$new()
     q_choice_no$condition(~ input$q_matrix_choice == "Yes")
