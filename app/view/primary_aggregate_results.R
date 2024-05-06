@@ -73,10 +73,6 @@ ui <- function(id) {
         "primary_individual_results",
         primary_individual_results$ui(ns("primary_individual_results"))
       ),
-      # route(
-      #   "primary_aggregate_results",
-      #   primary_individual_results$ui(ns("primary_aggregate_results"))
-      # ),
       route(
         "secondary_results",
         secondary_results$ui(ns("secondary_results"))
@@ -130,7 +126,6 @@ server <- function(id, data, input, output) {
           time_pts <- data$param_specs_data$num_time_points
           invariance <- data$model_specs_data$itemParameter
           rule <- data$model_specs_data$dcmEstimate
-
           # Return a list of all computed values
           list(
             attribute_names = attribute_names,
@@ -140,7 +135,6 @@ server <- function(id, data, input, output) {
           )
         })
 
-        # Then use the reactive expression in other reactive contexts
         item_params_result <- reactive({
           # Access the values from computedValues() reactive expression
           vals <- computed_values() # This is now a reactive access
@@ -154,7 +148,7 @@ server <- function(id, data, input, output) {
           )
         })
 
-        # Use result() inside your render functions
+        # Render Item Parameters output
         output$item_params_output <- renderDT(
           {
             datatable(item_params_result(),
@@ -173,11 +167,12 @@ server <- function(id, data, input, output) {
           server = FALSE
         )
 
+        # Download Button
         output$item_params_down_wrapper <- renderUI({
           downloadButton(ns("item_params_download"), "Download")
         })
 
-        # Dowloand Handler for item parameters
+        # Download Handler for item parameters
         output$item_params_download <- table_helper$create_download_handler(
           item_params_result(),
           "item_parameters.xlsx"
@@ -195,6 +190,7 @@ server <- function(id, data, input, output) {
           )
         })
 
+        # Render Growth Table output
         output$growth_output <- renderDT(
           {
             datatable(
@@ -212,11 +208,11 @@ server <- function(id, data, input, output) {
           server = FALSE
         )
 
+        # Download Button
         output$growth_down_wrapper <- renderUI({
           downloadButton(ns("growth_output_download"), "Download")
         })
 
-        # Add download button
         output$growth_output_download <- table_helper$create_download_handler(
           growth_result(),
           "growth_table.xlsx"
@@ -224,7 +220,7 @@ server <- function(id, data, input, output) {
 
         # Render Line Plot
         line_plot_result <- reactive({
-          vals <- computed_values()
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$visualize(
             data$q_matrix,
             data$ir_matrix,
@@ -238,7 +234,7 @@ server <- function(id, data, input, output) {
 
         # Render Line Plot
         line_plot_result2 <- reactive({
-          vals <- computed_values()
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$visualize(
             data$q_matrix,
             data$ir_matrix,
@@ -253,6 +249,7 @@ server <- function(id, data, input, output) {
           line_plot_result() # Call the reactive
         })
 
+        # Download Button
         output$tdcmLinePlot_down_wrapper <- renderUI({
           downloadButton(ns("tdcmLinePlot_download"), "Download")
         })
@@ -264,7 +261,7 @@ server <- function(id, data, input, output) {
 
         # Render Bar Plot
         bar_plot_result <- reactive({
-          vals <- computed_values()
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$visualize(
             data$q_matrix,
             data$ir_matrix,
@@ -293,6 +290,8 @@ server <- function(id, data, input, output) {
         output$tdcmBarPlot <- renderPlot({
           bar_plot_result() # Call the reactive
         })
+
+        # Download Button
         output$tdcmBarPlot_down_wrapper <- renderUI({
           downloadButton(ns("tdcmBarPlot_download"), "Download")
         })
@@ -302,9 +301,8 @@ server <- function(id, data, input, output) {
           "bar_plot.png"
         )
 
-
         trans_prob_output_result <- reactive({
-          vals <- computed_values()
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$trans_prob(
             data$q_matrix,
             data$ir_matrix,
@@ -315,6 +313,7 @@ server <- function(id, data, input, output) {
           )
         })
 
+        # Render Transition Probability output
         output$trans_prob_output <- renderUI({
           table_list <- lapply(1:2, function(row) {
             fluidRow(
@@ -347,12 +346,11 @@ server <- function(id, data, input, output) {
           tagList(table_list)
         })
 
-
+        # Download Button
         output$trans_prob_down_wrapper <- renderUI({
           downloadButton(ns("trans_prob_result_download"), "Download")
         })
 
-        # Add download button
         output$trans_prob_result_download <- table_helper$create_download_handler(
           trans_prob_output_result(),
           "transition_probabilities.xlsx"

@@ -61,7 +61,6 @@ box::use(
 #' @export
 ui <- function(id) {
   ns <- NS(id)
-
   fluidPage(
     h2("Primary Individual Results"),
     tagList(
@@ -72,11 +71,6 @@ ui <- function(id) {
         tabPanel(a("Secondary Results", href = route_link("secondary_results")))
       )
     ),
-    # router_ui(
-    #   route("primary_aggregate_results", primary_individual_results$ui(ns("primary_aggregate_results"))),
-    #   route("primary_individual_results", primary_individual_results$ui(ns("primary_individual_results"))),
-    #   route("secondary_results", secondary_results$ui(ns("secondary_results")))
-    # ),
     br(),
     DTOutput(ns("classification_output")),
     uiOutput(ns("att_class_result_down_wrapper")),
@@ -106,7 +100,6 @@ server <- function(id, data) {
           time_pts <- data$param_specs_data$num_time_points
           invariance <- data$model_specs_data$itemParameter
           rule <- data$model_specs_data$dcmEstimate
-
           # Return a list of all computed values
           list(
             attribute_names = attribute_names,
@@ -127,6 +120,7 @@ server <- function(id, data) {
           )
         })
 
+        # Render Attribute Classification output
         output$classification_output <- renderDT(
           {
             datatable(
@@ -156,7 +150,7 @@ server <- function(id, data) {
           )
 
         most_likely_trans_result <- reactive({
-          vals <- computed_values() # This is now a reactive access
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$most_likely_trans(
             data$q_matrix,
             data$ir_matrix,
@@ -167,6 +161,7 @@ server <- function(id, data) {
           )
         })
 
+        # Render Most Likely Transitions output
         output$most_likely_trans_output <- renderDT(
           {
             datatable(
@@ -196,7 +191,7 @@ server <- function(id, data) {
           )
 
         trans_pos_output_result <- reactive({
-          vals <- computed_values() # This is now a reactive access
+          vals <- computed_values() # Correctly access the computed values here
           tdcm$trans_pos(
             data$q_matrix,
             data$ir_matrix,
@@ -207,6 +202,7 @@ server <- function(id, data) {
           )
         })
 
+        # Render Transition Position output
         output$trans_pos_output <- renderDT(
           {
             datatable(
@@ -244,7 +240,6 @@ server <- function(id, data) {
           )
       }
     })
-
     ui_components$nb_server("nextButton", "secondary_results")
   })
 }
