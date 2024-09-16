@@ -156,7 +156,7 @@ server <- function(id, data) {
           print(paste("num_time_points: ", num_time_points))
 
           if (!is.null(num_cols_in_ir_matrix) && !is.null(num_rows_in_q_matrix) && !is.null(num_time_points) && num_rows_in_q_matrix * num_time_points != num_cols_in_ir_matrix) {
-            error_message <- paste("The number of IR columns does not equal the number of columns in the
+            error_message <- paste("The number of IR columns does not equal the number of rows in the
             Q matrix multiplied by time points.", sep = "")
           }
 
