@@ -44,7 +44,7 @@ ui <- function(id) {
           actionButton(
             inputId = ns("go_to_param_specs"),
             label = "Single Group",
-            class = "btn-primary btn-md",
+            class = "btn-primary btn-md"
           )
         ),
         column(
@@ -54,9 +54,15 @@ ui <- function(id) {
             inputId = ns("button2"),
             label = "Multi Group",
             class = "btn-primary btn-md",
+            disabled = "disabled"
+          ),
+          br(),
+          p(
+            "Multi Group functionality will be available in a future update.",
+            style = "color: grey; margin-top: 10px;"
           )
         )
-      ),
+      )
     )
   )
 }
