@@ -2257,5 +2257,12 @@
       "Repository": "RSPM",
       "Hash": "fcc4bd8e6da2d2011eb64a5e5cc685ab"
     }
+    "shinyBS": {
+      "Package": "shinyBS",
+      "Version": "0.61",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
   }
 }
