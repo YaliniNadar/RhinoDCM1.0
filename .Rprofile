@@ -6,6 +6,8 @@ if (file.exists("renv")) {
   message("No 'renv' directory found; renv won't be activated.")
 }
 
+options(repos = c(CRAN = "https://packagemanager.posit.co/cran/latest"))
+
 # Allow absolute module imports (relative to the app root).
 options(box.path = getwd())
 
