@@ -186,9 +186,9 @@
     },
     "RcppArmadillo": {
       "Package": "RcppArmadillo",
-      "Version": "0.12.8.2.1",
+      "Version": "0.12.8.0.0",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "Rcpp",
@@ -196,18 +196,13 @@
         "stats",
         "utils"
       ],
-      "Hash": "d5448fb24fb114c4da1275a37a571f37"
+      "Hash": "847fc78bd9f83f55696b4b016482f7ed"
     },
     "TDCM": {
       "Package": "TDCM",
-      "Version": "0.2.0.9000",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "cotterell",
-      "RemoteRepo": "tdcm",
-      "RemoteRef": "main",
-      "RemoteSha": "fef03e4c160b4abc1c7bef511d60aff506edfaa4",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
       "Requirements": [
         "CDM",
         "R",
@@ -215,18 +210,18 @@
         "polycor",
         "stringr"
       ],
-      "Hash": "7456b7e34450f64ff33c1fa1a22995f9"
+      "Hash": "73dfdca9dd657ce13ac7817d62610385"
     },
     "admisc": {
       "Package": "admisc",
-      "Version": "0.35",
+      "Version": "0.34",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "methods"
       ],
-      "Hash": "1b042d902955174bbc9c4bea64c595d4"
+      "Hash": "50cde02a35bca22b7b315e8e09af97ee"
     },
     "anytime": {
       "Package": "anytime",
@@ -1209,9 +1204,9 @@
     },
     "openxlsx": {
       "Package": "openxlsx",
-      "Version": "4.2.5.2",
+      "Version": "4.2.7",
       "Source": "Repository",
-      "Repository": "RSPM",
+      "Repository": "CRAN",
       "Requirements": [
         "R",
         "Rcpp",
@@ -1222,7 +1217,7 @@
         "utils",
         "zip"
       ],
-      "Hash": "c03b4c18d42da881fb8e15a085c2b9d6"
+      "Hash": "4eb6bb5d6b95b2e3177f0dd1e7b9ca0e"
     },
     "pillar": {
       "Package": "pillar",
@@ -1799,6 +1794,17 @@
         "shiny"
       ],
       "Hash": "704f0167ce6857051a48547e31d38060"
+    },
+    "shinyBS": {
+      "Package": "shinyBS",
+      "Version": "0.61.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "htmltools",
+        "shiny"
+      ],
+      "Hash": "e44255f073ecdc26ba6bc2ce3fcf174d"
     },
     "shinyStorePlus": {
       "Package": "shinyStorePlus",

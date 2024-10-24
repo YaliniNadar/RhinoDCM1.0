@@ -15,5 +15,5 @@
 1. Initialize a new Rhino project: ```rhino::init(“RhinoApplication”)```
 2. Run app: ```shiny::runApp()```
 3. Take a snapshot in R console: ```renv::snapshot()```
-4. Build JS Code: 
+4. Build JS Code:
 ```rhino::build_js()```
